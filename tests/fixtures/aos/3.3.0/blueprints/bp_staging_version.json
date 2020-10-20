@@ -1,0 +1,12 @@
+{
+  "status": "undeployed",
+  "logical_diff_supported": true,
+  "deployed_version": 0,
+  "staging_version": 3,
+  "cache_diff_supported": true,
+  "deploy_config_version": 0,
+  "deploy_status_version": 0,
+  "operation_version": 0,
+  "deploy_status": "success",
+  "deploy_error": null
+}

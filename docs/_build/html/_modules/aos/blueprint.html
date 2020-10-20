@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aos.blueprint &mdash; aos-api 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> aos-api
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aos-api</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>aos.blueprint</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aos.blueprint</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020-present, Apstra, Inc. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under End User License Agreement found in the</span>
+<span class="c1"># LICENSE file at http://www.apstra.com/eula</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">Blueprint</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Blueprint&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="AosBlueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint">[docs]</a><span class="k">class</span> <span class="nc">AosBlueprint</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AOS blueprint specific actions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosBlueprint.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return complete details for all blueprints</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) &quot;[Blueprint&quot;, (&quot;label&quot;, &quot;id&quot;),...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/blueprints&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_all_ids"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all_ids">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all blueprint IDs</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) &quot;[Blueprint&quot;, (&quot;label&quot;, &quot;id&quot;),...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">blueprints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">Blueprint</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">blueprints</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.find_id_by_label"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.find_id_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">find_id_by_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Blueprint</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns blueprint id of specified blueprint by name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        label</span>
+<span class="sd">            (str) Name of AOS blueprint</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) &quot;Blueprint&quot;, (&quot;label&quot;, &quot;id&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">blueprints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">blueprints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">blueprints</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Blueprint</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_configlets"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_configlets">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all configlets currently imported into blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">c_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.apply_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">apply_configlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configlet</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import and apply existing configlet to AOS Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        configlet</span>
+<span class="sd">            (Str) ID of AOS configlet to use</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">c_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">configlet</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all property-sets currently imported into blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.apply_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">apply_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">property_set</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import and apply existing property-set to AOS Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        property_set</span>
+<span class="sd">            (Str) ID of AOS property-set to use</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ps_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">ps_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">property_set</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_staging_version"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_staging_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_staging_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the latest version of staged changes for the given blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">commit_diff_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/diff-status&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">commit_diff_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;staging_version&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;deploy_error&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;deploy_error&quot;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.commit_staging"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.commit_staging">[docs]</a>    <span class="k">def</span> <span class="nf">commit_staging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Commit all changes in staging to Blueprint.</span>
+<span class="sd">        Uses latest staging version number available on a Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        description</span>
+<span class="sd">            (str) description to use during commit</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">commit_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/deploy&quot;</span>
+
+        <span class="n">staging_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_staging_version</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">description</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">description</span>
+
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">staging_version</span><span class="p">[</span><span class="s2">&quot;staging_version&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">d</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">commit_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Ryan Booth
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+.cache
+.env
+.venv
+.tox
+.setup-complete
+.vscode
+.project
+.pydevproject
+aos_api_client.egg-info
+build
+dist
+*/.pytest_cache

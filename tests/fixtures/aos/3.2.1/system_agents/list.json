@@ -1,0 +1,229 @@
+{
+  "items": [
+    {
+      "device_key": "525400F03ECE",
+      "facts": {
+        "aos_hcl_model": "Cumulus_VX",
+        "aos_server": "172.20.199.3",
+        "aos_version": "AOS_3.2.1_OB.298",
+        "chassis_mac_ranges": "52:54:00:f0:3e:ce-52:54:00:f0:3e:d6",
+        "hw_model": "VX",
+        "hw_version": "3",
+        "mgmt_ifname": "eth0",
+        "mgmt_ipaddr": "172.20.199.15",
+        "mgmt_macaddr": "52:54:00:F0:3E:CE",
+        "os_arch": "x86_64",
+        "os_family": "Cumulus",
+        "os_version": "3.7.11",
+        "os_version_info": {
+          "build": "11",
+          "major": "3",
+          "minor": "7"
+        },
+        "serial_number": "525400F03ECE",
+        "vendor": "Cumulus"
+      },
+      "id": "525400F03ECE",
+      "status": {
+        "agent_start_time": "2020-05-20T18:11:59.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2020-05-20T18:11:47.258631Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "leaf2",
+        "hostname": "leaf2",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Cumulus_VX",
+        "location": "leaf2"
+      }
+    },
+    {
+      "device_key": "5254008E9D94",
+      "facts": {
+        "aos_hcl_model": "Cumulus_VX",
+        "aos_server": "172.20.199.3",
+        "aos_version": "AOS_3.2.1_OB.298",
+        "chassis_mac_ranges": "52:54:00:8e:9d:94-52:54:00:8e:9d:9c",
+        "hw_model": "VX",
+        "hw_version": "3",
+        "mgmt_ifname": "eth0",
+        "mgmt_ipaddr": "172.20.199.13",
+        "mgmt_macaddr": "52:54:00:8E:9D:94",
+        "os_arch": "x86_64",
+        "os_family": "Cumulus",
+        "os_version": "3.7.11",
+        "os_version_info": {
+          "build": "11",
+          "major": "3",
+          "minor": "7"
+        },
+        "serial_number": "5254008E9D94",
+        "vendor": "Cumulus"
+      },
+      "id": "5254008E9D94",
+      "status": {
+        "agent_start_time": "2020-05-20T18:12:03.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2020-05-20T18:11:51.099913Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "leaf1",
+        "hostname": "leaf1",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Cumulus_VX",
+        "location": "leaf1"
+      }
+    },
+    {
+      "device_key": "5254005162A2",
+      "facts": {
+        "aos_hcl_model": "Cumulus_VX",
+        "aos_server": "172.20.199.3",
+        "aos_version": "AOS_3.2.1_OB.298",
+        "chassis_mac_ranges": "52:54:00:51:62:a2-52:54:00:51:62:aa",
+        "hw_model": "VX",
+        "hw_version": "3",
+        "mgmt_ifname": "eth0",
+        "mgmt_ipaddr": "172.20.199.12",
+        "mgmt_macaddr": "52:54:00:51:62:A2",
+        "os_arch": "x86_64",
+        "os_family": "Cumulus",
+        "os_version": "3.7.11",
+        "os_version_info": {
+          "build": "11",
+          "major": "3",
+          "minor": "7"
+        },
+        "serial_number": "5254005162A2",
+        "vendor": "Cumulus"
+      },
+      "id": "5254005162A2",
+      "status": {
+        "agent_start_time": "2020-05-20T18:12:02.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2020-05-20T18:11:51.111532Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "spine2",
+        "hostname": "spine2",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Cumulus_VX",
+        "location": "spine2"
+      }
+    },
+    {
+      "device_key": "505400B45628",
+      "facts": {
+        "aos_hcl_model": "Arista_vEOS",
+        "aos_server": "172.20.199.3",
+        "aos_version": "AOS_3.2.1_OB.298",
+        "chassis_mac_ranges": "50:54:00:13:68:cb-50:54:00:13:68:cb",
+        "hw_model": "vEOS",
+        "hw_version": "",
+        "mgmt_ifname": "Management1",
+        "mgmt_ipaddr": "172.20.199.14",
+        "mgmt_macaddr": "50:54:00:13:68:CB",
+        "os_arch": "x86_64",
+        "os_family": "EOS",
+        "os_version": "4.22.3M",
+        "os_version_info": {
+          "build": "3M",
+          "major": "4",
+          "minor": "22"
+        },
+        "serial_number": "5054001368CB",
+        "vendor": "Arista"
+      },
+      "id": "505400B45628",
+      "status": {
+        "agent_start_time": "2020-05-20T18:13:06.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2020-05-20T18:12:00.735001Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "leaf3",
+        "hostname": "leaf3",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Arista_vEOS",
+        "location": "leaf3"
+      }
+    },
+    {
+      "device_key": "52540006FE33",
+      "facts": {
+        "aos_hcl_model": "Cumulus_VX",
+        "aos_server": "172.20.199.3",
+        "aos_version": "AOS_3.2.1_OB.298",
+        "chassis_mac_ranges": "52:54:00:06:fe:33-52:54:00:06:fe:3b",
+        "hw_model": "VX",
+        "hw_version": "3",
+        "mgmt_ifname": "eth0",
+        "mgmt_ipaddr": "172.20.199.11",
+        "mgmt_macaddr": "52:54:00:06:FE:33",
+        "os_arch": "x86_64",
+        "os_family": "Cumulus",
+        "os_version": "3.7.11",
+        "os_version_info": {
+          "build": "11",
+          "major": "3",
+          "minor": "7"
+        },
+        "serial_number": "52540006FE33",
+        "vendor": "Cumulus"
+      },
+      "id": "52540006FE33",
+      "status": {
+        "agent_start_time": "2020-05-20T18:12:02.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2020-05-20T18:11:51.053580Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "spine1",
+        "hostname": "spine1",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Cumulus_VX",
+        "location": "spine1"
+      }
+    }
+  ]
+}
