@@ -1,9 +1,9 @@
-#AOS RestAPI Python Library
+# AOS RestAPI Python Library
 
 Python library used to programmatically interact with AOS and integrate the AOS 
 RestAPI.
 
-##Getting started
+## Getting started
 ```
 >>> from aos.client import AosClient
 >>> 
@@ -18,7 +18,7 @@ RestAPI.
 ```
 
 
-##Testing
+## Testing
 ### Setup Development Environment
 
 Create a virtual environment and install aos-api:
@@ -27,11 +27,11 @@ Create a virtual environment and install aos-api:
 $ cd aos-api
 $ python3.8 -m venv .venv
 $ source .venv/bin/activate
-$ python setup.py
+$ python setup.py install
 $ pip install -r dev-requirements.txt
 ```
 
-###Running Tests
+### Running Tests
 - Run full test suite
 ```
 $ tox
@@ -45,5 +45,11 @@ $ tox -e py38
  - Run linters:
 ```
 $ tox -e flake8
-$ tox -e pylint
+```
+
+### Format code
+Black is used to format code
+```
+black aos/
+black tests/
 ```

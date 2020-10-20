@@ -125,8 +125,7 @@ def test_get_staging_version(
         f"http://aos:80/api/blueprints/{bp_id}/diff-status",
         status=202,
         resp=read_fixture(
-            f"aos/{aos_api_version}/blueprints/bp_staging_version.json"
-        ),
+            f"aos/{aos_api_version}/blueprints/bp_staging_version.json"),
     )
 
     assert aos_logged_in.blueprint.get_staging_version(bp_id) == {

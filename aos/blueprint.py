@@ -37,9 +37,8 @@ class AosBlueprint(AosSubsystem):
         """
         blueprints = self.get_all()
 
-        return [
-            Blueprint(label=bp["label"], id=bp["id"]) for bp in blueprints["items"]
-        ]
+        return [Blueprint(label=bp["label"], id=bp["id"])
+                for bp in blueprints["items"]]
 
     def find_id_by_label(self, label: str) -> Optional[Blueprint]:
         """

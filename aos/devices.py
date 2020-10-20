@@ -57,8 +57,7 @@ class SystemAgents(AosSubsystem):
 
     def iter_anomalies(self, system_agent_id: str) -> Generator[Anomaly, None, None]:
         anomalies = self.rest.json_resp_get(
-            f"api/systems/{system_agent_id}/anomalies"
-        )
+            f"api/systems/{system_agent_id}/anomalies")
         if anomalies is None:
             return
 
