@@ -16,6 +16,11 @@ RestAPI.
 >>> aos.auth.login(AOS_USER, AOS_PW)
 
 ```
+## Documentation
+Documentation is currently found in docs/_build/html folder. 
+
+### Generating documentation:
+Docs Readme located in docs/
 
 
 ## Testing
