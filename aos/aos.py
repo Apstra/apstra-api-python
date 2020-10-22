@@ -29,6 +29,11 @@ def err_message(resp: requests.Response) -> str:
         return f"{resp.text}"
 
 
+AosVersion = namedtuple(
+    "AosVersion", ["major", "version", "build", "minor", "full_version"]
+)
+
+
 class AosRestAPI:
     """
     The core class for rest api integration with AOS
@@ -96,7 +101,8 @@ class AosRestAPI:
 
         if resp.status_code == 401:
             raise AosAuthenticationError(
-                f"Authentication failed: {err_message(resp)}")
+                f"Authentication failed: {err_message(resp)}"
+            )
         elif resp.status_code >= 400:
             raise AosAPIError(err_message(resp))
 
@@ -171,6 +177,30 @@ class AosRestAPI:
             (obj) - Rest Api Response object
         """
         return self.raw_request_json("GET", uri, params, data, headers)
+
+    def get_aos_version(self):
+        """
+        Get AOS server version installed
+
+        Returns
+        -------
+            (obj) - "AosVersion": ("major", "version",
+                                    "build", "minor", "
+                                    server_version")
+        """
+        v_path = "/api/version"
+        server_path = "/api/versions/server"
+
+        aos_ver = self.json_resp_get(v_path)
+        server_ver = self.json_resp_get(server_path)
+
+        return AosVersion(
+            major=aos_ver["major"],
+            version=aos_ver["version"],
+            build=aos_ver["build"],
+            minor=aos_ver["minor"],
+            full_version=server_ver["version"],
+        )
 
 
 class AosSubsystem:

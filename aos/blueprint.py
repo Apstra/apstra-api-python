@@ -5,7 +5,7 @@
 import logging
 from collections import namedtuple
 from typing import Optional
-from .aos import AosSubsystem
+from .aos import AosSubsystem, AosAPIError
 
 
 logger = logging.getLogger(__name__)
@@ -20,27 +20,28 @@ class AosBlueprint(AosSubsystem):
 
     def get_all(self):
         """
-        Return complete details for all blueprints
+        Return all blueprints configured
         Returns
         -------
-            (obj) "[Blueprint", ("label", "id"),...]
+            (obj) json object
         """
 
         return self.rest.json_resp_get("/api/blueprints")
 
     def get_all_ids(self):
         """
-        Return all blueprint IDs
+        Returns all blueprint names and IDs
         Returns
         -------
             (obj) "[Blueprint", ("label", "id"),...]
         """
         blueprints = self.get_all()
 
-        return [Blueprint(label=bp["label"], id=bp["id"])
-                for bp in blueprints["items"]]
+        return [
+            Blueprint(label=bp["label"], id=bp["id"]) for bp in blueprints["items"]
+        ]
 
-    def find_id_by_label(self, label: str) -> Optional[Blueprint]:
+    def get_id_by_name(self, label: str) -> Optional[Blueprint]:
         """
         returns blueprint id of specified blueprint by name
         Parameters
@@ -58,6 +59,30 @@ class AosBlueprint(AosSubsystem):
             for bp in blueprints["items"]:
                 if bp["label"] == label:
                     return Blueprint(label=bp["label"], id=bp["id"])
+
+    def get_bp(self, bp_id: str = None, bp_name: str = None) -> Optional[Blueprint]:
+        """
+        returns blueprint by either id or name
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint (optional)
+        bp_name
+            (str) Name or label of AOS Blueprint (optional)
+
+        Returns
+        -------
+            (obj) json object
+        """
+
+        if bp_name:
+            blueprint = self.get_id_by_name(bp_name)
+            if blueprint:
+                bp_id = blueprint.id
+            else:
+                raise AosAPIError(f"Blueprint {bp_name} not found")
+
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}")
 
     def get_configlets(self, bp_id: str):
         """

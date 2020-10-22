@@ -9,7 +9,7 @@ import json
 import pytest
 
 from aos.client import AosClient
-from aos.aos import AosRestAPI
+from aos.aos import AosRestAPI, AosAPIError
 from aos.blueprint import Blueprint
 
 
@@ -88,7 +88,56 @@ def test_get_all_ids(
     )
 
 
-def test_find_by_label(
+def test_get_bp_by_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_name = "evpn-cvx-virtual"
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/blueprints",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/blueprints.json"),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_name}",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/single_blueprint.json"),
+    )
+
+    resp = aos_logged_in.blueprint.get_bp(bp_name=bp_name)
+
+    assert resp["label"] == bp_name
+    assert resp["id"] == bp_name
+    assert resp["design"] == "two_stage_l3clos"
+
+
+def test_get_bp_by_name_invalid(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_name = "BP-does-not-exist"
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/blueprints",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/blueprints.json"),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_name}",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/single_blueprint.json"),
+    )
+
+    with pytest.raises(AosAPIError):
+        aos_logged_in.blueprint.get_bp(bp_name=bp_name)
+
+
+def test_get_bp_by_id(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
 
@@ -100,18 +149,41 @@ def test_find_by_label(
         status=200,
         resp=read_fixture(f"aos/{aos_api_version}/blueprints/blueprints.json"),
     )
-
-    assert aos_logged_in.blueprint.find_id_by_label(bp_id) == Blueprint(
-        id=bp_id, label=bp_id
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/single_blueprint.json"),
     )
 
-    aos_session.request.assert_called_once_with(
+    resp = aos_logged_in.blueprint.get_bp(bp_id=bp_id)
+
+    assert resp["label"] == bp_id
+    assert resp["id"] == bp_id
+    assert resp["design"] == "two_stage_l3clos"
+
+
+def test_get_bp_by_id_invalid(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "BP-does-not-exist"
+
+    aos_session.add_response(
         "GET",
         "http://aos:80/api/blueprints",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/blueprints.json"),
     )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}",
+        status=404,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/blueprint_404.json"),
+    )
+
+    with pytest.raises(AosAPIError):
+        aos_logged_in.blueprint.get_bp(bp_id=bp_id)
 
 
 def test_get_staging_version(
@@ -125,7 +197,8 @@ def test_get_staging_version(
         f"http://aos:80/api/blueprints/{bp_id}/diff-status",
         status=202,
         resp=read_fixture(
-            f"aos/{aos_api_version}/blueprints/bp_staging_version.json"),
+            f"aos/{aos_api_version}/blueprints/bp_staging_version.json"
+        ),
     )
 
     assert aos_logged_in.blueprint.get_staging_version(bp_id) == {

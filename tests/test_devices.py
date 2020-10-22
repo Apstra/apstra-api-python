@@ -10,7 +10,7 @@ import pytest
 
 from aos.client import AosClient
 from aos.aos import AosAPIError, AosRestAPI
-from aos.devices import SystemAgent, Anomaly
+from aos.devices import SystemAgent, Anomaly, DevicePackage, DeviceOSImage
 
 from tests.util import make_session, read_fixture
 
@@ -213,3 +213,117 @@ def test_has_anomalies_of_type(
         json=None,
         headers=expected_auth_headers,
     )
+
+
+def test_get_packages(aos_logged_in, aos_session, expected_auth_headers):
+
+    aos = aos_logged_in
+    package_resp = {
+        "items": [
+            {"version": "0.1.0", "name": "aosstdcollectors-builtin-linux"},
+            {"version": "0.1.0", "name": "aosstdcollectors-custom-cumulus"},
+        ]
+    }
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/packages",
+        status=200,
+        resp=json.dumps(package_resp),
+    )
+
+    assert aos.system_agent.get_packages() == [
+        DevicePackage(
+            version="0.1.0",
+            name="aosstdcollectors-builtin-linux",
+        ),
+        DevicePackage(
+            version="0.1.0",
+            name="aosstdcollectors-custom-cumulus",
+        ),
+    ]
+
+
+def test_get_packages_empty(aos_logged_in, aos_session, expected_auth_headers):
+
+    aos = aos_logged_in
+    package_resp = {"items": []}
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/packages",
+        status=200,
+        resp=json.dumps(package_resp),
+    )
+
+    assert aos.system_agent.get_packages() == []
+
+
+def test_get_os_images(aos_logged_in, aos_session, expected_auth_headers):
+
+    aos = aos_logged_in
+    img_resp = {
+        "items": [
+            {
+                "description": "Testtest",
+                "checksum": "string",
+                "image_name": "test_os_image",
+                "platform": "EOS",
+                "image_url": "test_url",
+                "type": "string",
+                "id": "111111",
+            },
+            {
+                "description": "Testtest2",
+                "checksum": "string2",
+                "image_name": "test_os_image2",
+                "platform": "EOS",
+                "image_url": "test_url2",
+                "type": "string2",
+                "id": "222222",
+            },
+        ]
+    }
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/device-os/images",
+        status=200,
+        resp=json.dumps(img_resp),
+    )
+
+    assert aos.system_agent.get_os_images() == [
+        DeviceOSImage(
+            description="Testtest",
+            checksum="string",
+            image_name="test_os_image",
+            platform="EOS",
+            image_url="test_url",
+            type="string",
+            id="111111",
+        ),
+        DeviceOSImage(
+            description="Testtest2",
+            checksum="string2",
+            image_name="test_os_image2",
+            platform="EOS",
+            image_url="test_url2",
+            type="string2",
+            id="222222",
+        ),
+    ]
+
+
+def test_get_os_images_empty(aos_logged_in, aos_session, expected_auth_headers):
+
+    aos = aos_logged_in
+    img_resp = {"items": []}
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/device-os/images",
+        status=200,
+        resp=json.dumps(img_resp),
+    )
+
+    assert aos.system_agent.get_os_images() == []

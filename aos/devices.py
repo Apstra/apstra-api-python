@@ -11,6 +11,11 @@ logger = logging.getLogger(__name__)
 
 SystemAgent = namedtuple("SystemAgent", ["id", "fqdn", "operation_mode", "vendor"])
 Anomaly = namedtuple("Anomaly", ["type", "id", "agent_id", "severity"])
+DevicePackage = namedtuple("Package", ["name", "version"])
+DeviceOSImage = namedtuple(
+    "DeviceOsImage",
+    ["description", "checksum", "image_name", "platform", "image_url", "type", "id"],
+)
 
 
 class SystemAgents(AosSubsystem):
@@ -57,7 +62,8 @@ class SystemAgents(AosSubsystem):
 
     def iter_anomalies(self, system_agent_id: str) -> Generator[Anomaly, None, None]:
         anomalies = self.rest.json_resp_get(
-            f"api/systems/{system_agent_id}/anomalies")
+            f"api/systems/{system_agent_id}/anomalies"
+        )
         if anomalies is None:
             return
 
@@ -115,3 +121,37 @@ class SystemAgents(AosSubsystem):
             if anomaly.type == anomaly_type:
                 return True
         return False
+
+    def get_packages(self):
+        """
+        Get a list of all device packages imported into AOS
+        """
+        p_path = "/api/packages"
+
+        resp = self.rest.json_resp_get(p_path)
+
+        return [
+            DevicePackage(name=package["name"], version=package["version"])
+            for package in resp["items"]
+        ]
+
+    def get_os_images(self):
+        """
+        Get a list of all OS images imported into AOS
+        """
+        p_path = "/api/device-os/images"
+
+        resp = self.rest.json_resp_get(p_path)
+
+        return [
+            DeviceOSImage(
+                description=image["description"],
+                checksum=image["checksum"],
+                image_name=image["image_name"],
+                platform=image["platform"],
+                image_url=image["image_url"],
+                type=image["type"],
+                id=image["id"],
+            )
+            for image in resp["items"]
+        ]

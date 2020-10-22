@@ -9,7 +9,7 @@ import json
 import pytest
 
 from aos.client import AosClient
-from aos.aos import AosAuthenticationError, AosRestAPI
+from aos.aos import AosAuthenticationError, AosRestAPI, AosVersion
 
 from tests.util import make_session
 
@@ -113,4 +113,34 @@ def test_change_password_makes_request_to_aos(
             "new_password2": "newpass",
         },
         headers=expected_auth_headers,
+    )
+
+
+def test_get_aos_version(aos_logged_in, aos_session, expected_auth_headers):
+
+    aos = aos_logged_in
+    aos_ver_resp = {"major": "3", "version": "3.3.0", "build": "0", "minor": "3"}
+    serv_ver_resp = {
+        "version": "3.3.0-730",
+        "build_datetime": "2020-08-15_02:00:23_PDT",
+    }
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/version",
+        status=200,
+        resp=json.dumps(aos_ver_resp),
+    )
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/versions/server",
+        status=200,
+        resp=json.dumps(serv_ver_resp),
+    )
+
+    assert aos.rest.get_aos_version() == AosVersion(
+        major="3",
+        version="3.3.0",
+        minor="3",
+        build="0",
+        full_version="3.3.0-730",
     )
