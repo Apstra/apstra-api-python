@@ -18,7 +18,20 @@ DeviceOSImage = namedtuple(
 )
 
 
-class SystemAgents(AosSubsystem):
+class AosDevices(AosSubsystem):
+    """
+    Management of AOS managed device and system-agents:
+    - Managed Devices
+    - System Agents
+    - Device Profiles
+    """
+    def __init__(self, rest):
+        self.managed_devices = AosManagedDevices(rest)
+        self.system_agents = AosSystemAgents(rest)
+        self.device_profiles = AosDeviceProfiles(rest)
+
+
+class AosManagedDevices(AosSubsystem):
     """
     Management of system-agent for AOS controlled devices
     """
@@ -122,6 +135,12 @@ class SystemAgents(AosSubsystem):
                 return True
         return False
 
+
+class AosSystemAgents(AosSubsystem):
+    """
+    Management of system-agent for AOS controlled devices
+    """
+
     def get_packages(self):
         """
         Get a list of all device packages imported into AOS
@@ -155,3 +174,22 @@ class SystemAgents(AosSubsystem):
             )
             for image in resp["items"]
         ]
+
+
+class AosDeviceProfiles(AosSubsystem):
+    """
+    Manage AOS device profiles.
+    This does not apply the resource to a rack type, template or
+    existing blueprint. See `aos.rack_type`, `aos.template` or `aos.blueprint`
+    to apply to the respective resource.
+    """
+    def get_device_profiles(self):
+        """
+        Return all device profiles configured from AOS
+
+        Returns
+        -------
+            (obj) json response
+        """
+        dp_path = '/api/device-profiles'
+        return self.rest.json_resp_get(dp_path)

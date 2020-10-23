@@ -10,7 +10,7 @@ import pytest
 
 from aos.client import AosClient
 from aos.aos import AosAPIError, AosRestAPI
-from aos.devices import SystemAgent, Anomaly, DevicePackage, DeviceOSImage
+from aos.devices import Anomaly, SystemAgent, DevicePackage, DeviceOSImage
 
 from tests.util import make_session, read_fixture
 
@@ -59,6 +59,7 @@ def aos_logged_in(aos, aos_session):
 def test_accept_running_config_as_golden_posts_request(
     aos_logged_in, aos_session, expected_auth_headers
 ):
+    aos = aos_logged_in.devices.managed_devices
     system_id = "system_id"
     aos_session.add_response(
         "POST",
@@ -67,7 +68,7 @@ def test_accept_running_config_as_golden_posts_request(
         resp=json.dumps({}),
     )
 
-    resp = aos_logged_in.system_agent.accept_running_config_as_golden(system_id)
+    resp = aos.accept_running_config_as_golden(system_id)
 
     assert resp is None
     aos_session.request.assert_called_once_with(
@@ -83,6 +84,7 @@ def test_accept_running_config_as_golden_posts_request(
 def test_accept_running_config_as_golden_raises_exception_on_failure(
     aos_logged_in, aos_session, status, expected_auth_headers
 ):
+    aos = aos_logged_in.devices.managed_devices
     system_id = "system_id"
     aos_session.add_response(
         "POST",
@@ -92,7 +94,7 @@ def test_accept_running_config_as_golden_raises_exception_on_failure(
     )
 
     with pytest.raises(AosAPIError):
-        aos_logged_in.system_agent.accept_running_config_as_golden(system_id)
+        aos.accept_running_config_as_golden(system_id)
         aos_session.request.assert_called_once_with(
             "POST",
             f"http://aos:80/api/systems/{system_id}/"
@@ -106,6 +108,7 @@ def test_accept_running_config_as_golden_raises_exception_on_failure(
 def test_system_agent_get_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
+    aos = aos_logged_in.devices.managed_devices
     aos_session.add_response(
         "GET",
         "http://aos:80/api/systems",
@@ -113,7 +116,7 @@ def test_system_agent_get_all(
         resp=read_fixture(f"aos/{aos_api_version}/system_agents/list.json"),
     )
 
-    assert aos_logged_in.system_agent.get_all() == [
+    assert aos.get_all() == [
         SystemAgent(
             id="525400F03ECE",
             fqdn="leaf2",
@@ -157,6 +160,7 @@ def test_system_agent_get_all(
 def test_system_agent_anomalies(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
+    aos = aos_logged_in.devices.managed_devices
     system_id = "system_id"
     aos_session.add_response(
         "GET",
@@ -165,7 +169,7 @@ def test_system_agent_anomalies(
         resp=read_fixture(f"aos/{aos_api_version}/system_agents/anomalies.json"),
     )
 
-    assert aos_logged_in.system_agent.get_anomalies(system_id) == [
+    assert aos.get_anomalies(system_id) == [
         Anomaly(
             type="config",
             id="aa6723a7-5f8c-40af-a486-5f16d0b9ea6c",
@@ -193,6 +197,7 @@ def test_has_anomalies_of_type(
     anomaly_type,
     expected,
 ):
+    aos = aos_logged_in.devices.managed_devices
     system_id = "system_id"
     aos_session.add_response(
         "GET",
@@ -201,7 +206,7 @@ def test_has_anomalies_of_type(
         resp=read_fixture(f"aos/{aos_api_version}/system_agents/anomalies.json"),
     )
 
-    has_anomalies = aos_logged_in.system_agent.has_anomalies_of_type(
+    has_anomalies = aos.has_anomalies_of_type(
         system_id,
         anomaly_type,
     )
@@ -217,7 +222,7 @@ def test_has_anomalies_of_type(
 
 def test_get_packages(aos_logged_in, aos_session, expected_auth_headers):
 
-    aos = aos_logged_in
+    aos = aos_logged_in.devices.system_agents
     package_resp = {
         "items": [
             {"version": "0.1.0", "name": "aosstdcollectors-builtin-linux"},
@@ -232,7 +237,7 @@ def test_get_packages(aos_logged_in, aos_session, expected_auth_headers):
         resp=json.dumps(package_resp),
     )
 
-    assert aos.system_agent.get_packages() == [
+    assert aos.get_packages() == [
         DevicePackage(
             version="0.1.0",
             name="aosstdcollectors-builtin-linux",
@@ -246,7 +251,7 @@ def test_get_packages(aos_logged_in, aos_session, expected_auth_headers):
 
 def test_get_packages_empty(aos_logged_in, aos_session, expected_auth_headers):
 
-    aos = aos_logged_in
+    aos = aos_logged_in.devices.system_agents
     package_resp = {"items": []}
 
     aos_session.add_response(
@@ -256,12 +261,12 @@ def test_get_packages_empty(aos_logged_in, aos_session, expected_auth_headers):
         resp=json.dumps(package_resp),
     )
 
-    assert aos.system_agent.get_packages() == []
+    assert aos.get_packages() == []
 
 
 def test_get_os_images(aos_logged_in, aos_session, expected_auth_headers):
 
-    aos = aos_logged_in
+    aos = aos_logged_in.devices.system_agents
     img_resp = {
         "items": [
             {
@@ -292,7 +297,7 @@ def test_get_os_images(aos_logged_in, aos_session, expected_auth_headers):
         resp=json.dumps(img_resp),
     )
 
-    assert aos.system_agent.get_os_images() == [
+    assert aos.get_os_images() == [
         DeviceOSImage(
             description="Testtest",
             checksum="string",
@@ -316,7 +321,7 @@ def test_get_os_images(aos_logged_in, aos_session, expected_auth_headers):
 
 def test_get_os_images_empty(aos_logged_in, aos_session, expected_auth_headers):
 
-    aos = aos_logged_in
+    aos = aos_logged_in.devices.system_agents
     img_resp = {"items": []}
 
     aos_session.add_response(
@@ -326,4 +331,4 @@ def test_get_os_images_empty(aos_logged_in, aos_session, expected_auth_headers):
         resp=json.dumps(img_resp),
     )
 
-    assert aos.system_agent.get_os_images() == []
+    assert aos.get_os_images() == []

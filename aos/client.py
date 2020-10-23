@@ -6,9 +6,9 @@ import logging
 import requests
 from .aos import AosRestAPI, AosAuth
 from .blueprint import AosBlueprint
-from .devices import SystemAgents
-from .resources import AosConfiglet, AosPropertySet
-
+from .devices import AosDevices
+from .design import AosDesign
+from .resources import AosResources
 logger = logging.getLogger(__name__)
 
 
@@ -28,13 +28,13 @@ class AosClient:
         (obj) Established session with AOS server
 
 
-    :class:`aos.blueprint.AosBlueprint` - AOS blueprint specific actions
+    :class:`aos.blueprint.AosBlueprint` - Manage AOS blueprints
 
-    :class:`aos.devices.SystemAgents` - AOS system-agent create, modify, delete
+    :class:`aos.devices.Devices` - Manage AOS controlled devices and agents
 
-    :class:`aos.resources.AosConfiglet` - AOS configlet create, modify, delete
+    :class:`aos.design.AosDesign` - Manage AOS Design elements
 
-    :class:`aos.resources.AosPropertySet` -AOS property-set create, modify, delete
+    :class:`aos.resources.AosResources` - Manage AOS resource pools
     """
 
     def __init__(
@@ -44,6 +44,6 @@ class AosClient:
         self.rest = AosRestAPI(protocol, host, port, session)
         self.auth = AosAuth(self.rest)
         self.blueprint = AosBlueprint(self.rest)
-        self.system_agent = SystemAgents(self.rest)
-        self.configlet = AosConfiglet(self.rest)
-        self.property_set = AosPropertySet(self.rest)
+        self.devices = AosDevices(self.rest)
+        self.design = AosDesign(self.rest)
+        self.resources = AosResources(self.rest)

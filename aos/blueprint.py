@@ -62,7 +62,7 @@ class AosBlueprint(AosSubsystem):
 
     def get_bp(self, bp_id: str = None, bp_name: str = None) -> Optional[Blueprint]:
         """
-        returns blueprint by either id or name
+        returns blueprint by id or name
         Parameters
         ----------
         bp_id
