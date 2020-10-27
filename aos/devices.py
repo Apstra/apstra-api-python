@@ -3,9 +3,10 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 import logging
+import time
 from collections import namedtuple
 from typing import List, Generator
-from .aos import AosSubsystem
+from .aos import AosSubsystem, AosAPIError
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ class AosDevices(AosSubsystem):
     - System Agents
     - Device Profiles
     """
+
     def __init__(self, rest):
         self.managed_devices = AosManagedDevices(rest)
         self.system_agents = AosSystemAgents(rest)
@@ -35,22 +37,6 @@ class AosManagedDevices(AosSubsystem):
     """
     Management of system-agent for AOS controlled devices
     """
-
-    def accept_running_config_as_golden(self, system_agent_id: str):
-        """
-        Accept current running configuration of device as AOS golden config
-        Parameters
-        ----------
-        system_agent_id
-            (str) ID of system_agent
-
-        Returns
-        -------
-
-        """
-        self.rest.json_resp_post(
-            f"/api/systems/{system_agent_id}/accept-running-config-as-golden"
-        )
 
     def get_all(self) -> List[SystemAgent]:
         """
@@ -73,7 +59,25 @@ class AosManagedDevices(AosSubsystem):
             for s in systems["items"]
         ]
 
-    def iter_anomalies(self, system_agent_id: str) -> Generator[Anomaly, None, None]:
+    def accept_running_config_as_golden(self, system_agent_id: str):
+        """
+        Accept current running configuration of device as AOS golden config
+        Parameters
+        ----------
+        system_agent_id
+            (str) ID of system_agent
+
+        Returns
+        -------
+
+        """
+        self.rest.json_resp_post(
+            f"/api/systems/{system_agent_id}/accept-running-config-as-golden"
+        )
+
+    def _iter_anomalies(
+        self, system_agent_id: str
+    ) -> Generator[Anomaly, None, None]:
         anomalies = self.rest.json_resp_get(
             f"api/systems/{system_agent_id}/anomalies"
         )
@@ -100,7 +104,7 @@ class AosManagedDevices(AosSubsystem):
         -------
             (obj) ["Anomaly", ["type", "id", "agent_id", "severity"], ...]
         """
-        return list(self.iter_anomalies(system_agent_id))
+        return list(self._iter_anomalies(system_agent_id))
 
     def has_anomalies(self, system_agent_id: str) -> bool:
         """
@@ -130,7 +134,7 @@ class AosManagedDevices(AosSubsystem):
         -------
             (bool) True or False
         """
-        for anomaly in self.iter_anomalies(system_agent_id):
+        for anomaly in self._iter_anomalies(system_agent_id):
             if anomaly.type == anomaly_type:
                 return True
         return False
@@ -183,7 +187,8 @@ class AosDeviceProfiles(AosSubsystem):
     existing blueprint. See `aos.rack_type`, `aos.template` or `aos.blueprint`
     to apply to the respective resource.
     """
-    def get_device_profiles(self):
+
+    def get_all(self):
         """
         Return all device profiles configured from AOS
 
@@ -191,5 +196,58 @@ class AosDeviceProfiles(AosSubsystem):
         -------
             (obj) json response
         """
-        dp_path = '/api/device-profiles'
+        dp_path = "/api/device-profiles"
         return self.rest.json_resp_get(dp_path)
+
+    def get_device_profile(self, dp_id: str = None, dp_name: str = None):
+        """
+        Return an existing rack type by id or name
+        Parameters
+        ----------
+        dp_id
+            (str) ID of AOS external router (optional)
+        dp_name
+            (str) Name or label of AOS external router (optional)
+
+
+        Returns
+        -------
+            (obj) json response
+        """
+
+        if dp_name:
+            dev_profs = self.get_all()
+            if dev_profs:
+                for dp in dev_profs:
+                    if dp.get("display_name") == dp_name:
+                        return dp
+                raise AosAPIError(f"External Router {dp_name} not found")
+
+        return self.rest.json_resp_get(f"/api/device-profiles/{dp_id}")
+
+    def add_device_profiles(self, dp_list):
+        """
+        Add one or more device profiles to AOS
+
+        Parameters
+        ----------
+        dp_list
+            (list) - list of json payloads
+
+        Returns
+        -------
+            (list) device profile IDs
+        """
+        p_path = "/api/device-profiles"
+
+        ids = []
+        i = 0
+        while i < len(dp_list):
+            resp = self.rest.json_resp_post(p_path, dp_list[i])
+            if resp:
+                ids.append(resp['id'])
+            i += 1
+            if i % 30 == 0:
+                time.sleep(3)
+
+        return ids

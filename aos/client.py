@@ -9,6 +9,7 @@ from .blueprint import AosBlueprint
 from .devices import AosDevices
 from .design import AosDesign
 from .resources import AosResources
+
 logger = logging.getLogger(__name__)
 
 

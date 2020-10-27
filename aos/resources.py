@@ -3,7 +3,7 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 import logging
-from .aos import AosSubsystem
+from .aos import AosSubsystem, AosAPIError
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ class AosResources(AosSubsystem):
     - IPv4 address Pools
     - IPv6 address Pools
     """
+
     def __init__(self, rest):
         self.asn_pools = AosAsnPools(rest)
         self.vni_pools = AosVniPools(rest)
@@ -30,7 +31,7 @@ class AosAsnPools(AosSubsystem):
     See `aos.blueprint` to apply to blueprint
     """
 
-    def get_asn_pools(self):
+    def get_all(self):
         """
         Return all asn pools configured from AOS
 
@@ -38,8 +39,57 @@ class AosAsnPools(AosSubsystem):
         -------
             (obj) json response
         """
-        a_path = '/api/resources/asn-pools'
+        a_path = "/api/resources/asn-pools"
         return self.rest.json_resp_get(a_path)
+
+    def get_pool(self, pool_id: str = None, pool_name: str = None):
+        """
+        Return an existing ASN pool by id or name
+        Parameters
+        ----------
+        pool_id
+            (str) ID of AOS asn pool (optional)
+        pool_name
+            (str) Name or label of AOS asn pool (optional)
+
+
+        Returns
+        -------
+            (obj) json response
+        """
+
+        if pool_name:
+            pools = self.get_all()
+            if pools:
+                for pool in pools:
+                    if pool.get("display_name") == pool_name:
+                        return pool
+                raise AosAPIError(f"ASN Pool {pool_name} not found")
+
+        return self.rest.json_resp_get(f"/api/resources/asn-pools/{pool_id}")
+
+    def add_pool(self, pool_list: list):
+        """
+        Add one or more ASN pools to AOS
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of json payloads
+
+        Returns
+        -------
+            (list) ASN pool IDs
+        """
+        p_path = "/api/resources/asn-pools"
+
+        ids = []
+        for pool in pool_list:
+            item_id = self.rest.json_resp_post(p_path, pool)
+            if item_id:
+                ids.append(item_id)
+
+        return ids
 
 
 class AosVniPools(AosSubsystem):
@@ -48,7 +98,8 @@ class AosVniPools(AosSubsystem):
     This does not apply the resource to a blueprint
     See `aos.blueprint` to apply to blueprint
     """
-    def get_vni_pools(self):
+
+    def get_all(self):
         """
         Return all vni pools configured from AOS
 
@@ -56,8 +107,57 @@ class AosVniPools(AosSubsystem):
         -------
             (obj) json response
         """
-        v_path = '/api/resources/vni-pools'
+        v_path = "/api/resources/vni-pools"
         return self.rest.json_resp_get(v_path)
+
+    def get_pool(self, pool_id: str = None, pool_name: str = None):
+        """
+        Return an existing VNI pool by id or name
+        Parameters
+        ----------
+        pool_id
+            (str) ID of AOS vni pool (optional)
+        pool_name
+            (str) Name or label of AOS vni pool (optional)
+
+
+        Returns
+        -------
+            (obj) json response
+        """
+
+        if pool_name:
+            pools = self.get_all()
+            if pools:
+                for pool in pools:
+                    if pool.get("display_name") == pool_name:
+                        return pool
+                raise AosAPIError(f"VNI Pool {pool_name} not found")
+
+        return self.rest.json_resp_get(f"/api/resources/vni-pools/{pool_id}")
+
+    def add_pool(self, pool_list: list):
+        """
+        Add one or more vni pools to AOS
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of json payloads
+
+        Returns
+        -------
+            (list) VNI pool IDs
+        """
+        p_path = "/api/resources/vni-pools"
+
+        ids = []
+        for pool in pool_list:
+            item_id = self.rest.json_resp_post(p_path, pool)
+            if item_id:
+                ids.append(item_id)
+
+        return ids
 
 
 class AosIpv4Pools(AosSubsystem):
@@ -67,7 +167,7 @@ class AosIpv4Pools(AosSubsystem):
     See `aos.blueprint` to apply to blueprint
     """
 
-    def get_ip_pools(self):
+    def get_all(self):
         """
         Return all ip pools from AOS
 
@@ -78,21 +178,54 @@ class AosIpv4Pools(AosSubsystem):
         ip_path = "/api/resources/ip-pools"
         return self.rest.json_resp_get(ip_path)
 
-    def get_ip_pool_by_name(self, name: str):
+    def get_pool(self, pool_id: str = None, pool_name: str = None):
         """
-        Return an existing IP pool by pool name
+        Return an existing IPv4 pool by id or name
+        Parameters
+        ----------
+        pool_id
+            (str) ID of AOS ipv4 pool (optional)
+        pool_name
+            (str) Name or label of AOS ipv4 pool (optional)
+
 
         Returns
         -------
             (obj) json response
         """
-        pools = self.get_ip_pools()
 
-        for pool in pools:
-            if pool.get("display_name") == name:
-                return pool
+        if pool_name:
+            pools = self.get_all()
+            if pools:
+                for pool in pools:
+                    if pool.get("display_name") == pool_name:
+                        return pool
+                raise AosAPIError(f"IPv4 Pool {pool_name} not found")
 
-        return None
+        return self.rest.json_resp_get(f"/api/resources/ip-pools/{pool_id}")
+
+    def add_pool(self, pool_list: list):
+        """
+        Add one or more ip pools to AOS
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of json payloads
+
+        Returns
+        -------
+            (list) ip pool IDs
+        """
+        p_path = "/api/resources/ip-pools"
+
+        ids = []
+        for pool in pool_list:
+            item_id = self.rest.json_resp_post(p_path, pool)
+            if item_id:
+                ids.append(item_id)
+
+        return ids
 
 
 class AosIpv6Pools(AosSubsystem):
@@ -102,7 +235,7 @@ class AosIpv6Pools(AosSubsystem):
     See `aos.blueprint` to apply to blueprint
     """
 
-    def get_ip_pools(self):
+    def get_all(self):
         """
         Return all ip pools from AOS
 
@@ -113,18 +246,51 @@ class AosIpv6Pools(AosSubsystem):
         ip_path = "/api/resources/ipv6-pools"
         return self.rest.json_resp_get(ip_path)
 
-    def get_ip_pool_by_name(self, name: str):
+    def get_pool(self, pool_id: str = None, pool_name: str = None):
         """
-        Return an existing IP pool by pool name
+        Return an existing IPv6 pool by id or name
+        Parameters
+        ----------
+        pool_id
+            (str) ID of AOS ipv6 pool (optional)
+        pool_name
+            (str) Name or label of AOS ipv6 pool (optional)
+
 
         Returns
         -------
             (obj) json response
         """
-        pools = self.get_ip_pools()
 
-        for pool in pools:
-            if pool.get("display_name") == name:
-                return pool
+        if pool_name:
+            pools = self.get_all()
+            if pools:
+                for pool in pools:
+                    if pool.get("display_name") == pool_name:
+                        return pool
+                raise AosAPIError(f"IPv6 Pool {pool_name} not found")
 
-        return None
+        return self.rest.json_resp_get(f"/api/resources/ipv6-pools/{pool_id}")
+
+    def add_pool(self, pool_list: list):
+        """
+        Add one or more ipv6 pools to AOS
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of json payloads
+
+        Returns
+        -------
+            (list) ip pool IDs
+        """
+        p_path = "/api/resources/ipv6-pools"
+
+        ids = []
+        for pool in pool_list:
+            item_id = self.rest.json_resp_post(p_path, pool)
+            if item_id:
+                ids.append(item_id)
+
+        return ids

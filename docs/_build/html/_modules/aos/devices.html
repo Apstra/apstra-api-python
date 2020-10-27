@@ -205,7 +205,7 @@
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">systems</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
         <span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">iter_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_iter_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="n">anomalies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;api/systems/</span><span class="si">{</span><span class="n">system_agent_id</span><span class="si">}</span><span class="s2">/anomalies&quot;</span>
         <span class="p">)</span>
@@ -232,7 +232,7 @@
 <span class="sd">        -------</span>
 <span class="sd">            (obj) [&quot;Anomaly&quot;, [&quot;type&quot;, &quot;id&quot;, &quot;agent_id&quot;, &quot;severity&quot;], ...]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="SystemAgents.has_anomalies"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.has_anomalies">[docs]</a>    <span class="k">def</span> <span class="nf">has_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -262,7 +262,7 @@
 <span class="sd">        -------</span>
 <span class="sd">            (bool) True or False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">anomaly</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">anomaly</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">anomaly</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">anomaly_type</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div></div>
