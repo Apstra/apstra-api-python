@@ -160,6 +160,28 @@ def test_asn_add_pool(
         headers=expected_auth_headers,
     )
 
+def test_asn_delete(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    pool_id = 'test-pool1'
+
+    aos_session.add_response(
+        "DELETE",
+        f"http://aos:80/api/resources/asn-pools/{pool_id}",
+        status=202,
+        resp=json.dumps({}),
+    )
+
+    assert aos_logged_in.resources.asn_pools.delete_pool([pool_id]) == [pool_id]
+
+    aos_session.request.assert_called_once_with(
+        "DELETE",
+        f"http://aos:80/api/resources/asn-pools/{pool_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
 
 # VNI Pools
 def test_vni_get_all(
@@ -266,6 +288,29 @@ def test_vni_add_pool(
         json=new_pool,
         headers=expected_auth_headers,
     )
+
+def test_vni_delete(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    pool_id = 'test-pool1'
+
+    aos_session.add_response(
+        "DELETE",
+        f"http://aos:80/api/resources/vni-pools/{pool_id}",
+        status=202,
+        resp=json.dumps({}),
+    )
+
+    assert aos_logged_in.resources.vni_pools.delete_pool([pool_id]) == [pool_id]
+
+    aos_session.request.assert_called_once_with(
+        "DELETE",
+        f"http://aos:80/api/resources/vni-pools/{pool_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
 
 
 # IPv4 Pools
@@ -374,6 +419,29 @@ def test_ipv4_add_pool(
         headers=expected_auth_headers,
     )
 
+def test_ipv4_delete(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    pool_id = 'test-pool1'
+
+    aos_session.add_response(
+        "DELETE",
+        f"http://aos:80/api/resources/ip-pools/{pool_id}",
+        status=202,
+        resp=json.dumps({}),
+    )
+
+    assert aos_logged_in.resources.ipv4_pools.delete_pool([pool_id]) == [pool_id]
+
+    aos_session.request.assert_called_once_with(
+        "DELETE",
+        f"http://aos:80/api/resources/ip-pools/{pool_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
 
 # IPv6 Pools
 def test_ipv6_get_all(
@@ -478,5 +546,27 @@ def test_ipv6_add_pool(
         "http://aos:80/api/resources/ipv6-pools",
         params=None,
         json=new_pool,
+        headers=expected_auth_headers,
+    )
+
+def test_ipv6_delete(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    pool_id = 'test-pool1'
+
+    aos_session.add_response(
+        "DELETE",
+        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
+        status=202,
+        resp=json.dumps({}),
+    )
+
+    assert aos_logged_in.resources.ipv6_pools.delete_pool([pool_id]) == [pool_id]
+
+    aos_session.request.assert_called_once_with(
+        "DELETE",
+        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
+        params=None,
+        json=None,
         headers=expected_auth_headers,
     )
