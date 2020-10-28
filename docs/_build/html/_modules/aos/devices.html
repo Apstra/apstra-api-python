@@ -153,38 +153,42 @@
 <span class="c1"># This source code is licensed under End User License Agreement found in the</span>
 <span class="c1"># LICENSE file at http://www.apstra.com/eula</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generator</span>
-<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span>
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">SystemAgent</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;SystemAgent&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;fqdn&quot;</span><span class="p">,</span> <span class="s2">&quot;operation_mode&quot;</span><span class="p">,</span> <span class="s2">&quot;vendor&quot;</span><span class="p">])</span>
 <span class="n">Anomaly</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Anomaly&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;agent_id&quot;</span><span class="p">,</span> <span class="s2">&quot;severity&quot;</span><span class="p">])</span>
+<span class="n">DevicePackage</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Package&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">])</span>
+<span class="n">DeviceOSImage</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;DeviceOsImage&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;checksum&quot;</span><span class="p">,</span> <span class="s2">&quot;image_name&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<span class="p">)</span>
 
 
-<div class="viewcode-block" id="SystemAgents"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents">[docs]</a><span class="k">class</span> <span class="nc">SystemAgents</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+<div class="viewcode-block" id="AosDevices"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDevices">[docs]</a><span class="k">class</span> <span class="nc">AosDevices</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Management of AOS managed device and system-agents:</span>
+<span class="sd">    - Managed Devices</span>
+<span class="sd">    - System Agents</span>
+<span class="sd">    - Device Profiles</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rest</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">managed_devices</span> <span class="o">=</span> <span class="n">AosManagedDevices</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_agents</span> <span class="o">=</span> <span class="n">AosSystemAgents</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_profiles</span> <span class="o">=</span> <span class="n">AosDeviceProfiles</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AosManagedDevices"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices">[docs]</a><span class="k">class</span> <span class="nc">AosManagedDevices</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Management of system-agent for AOS controlled devices</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SystemAgents.accept_running_config_as_golden"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.accept_running_config_as_golden">[docs]</a>    <span class="k">def</span> <span class="nf">accept_running_config_as_golden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Accept current running configuration of device as AOS golden config</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        system_agent_id</span>
-<span class="sd">            (str) ID of system_agent</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;/api/systems/</span><span class="si">{</span><span class="n">system_agent_id</span><span class="si">}</span><span class="s2">/accept-running-config-as-golden&quot;</span>
-        <span class="p">)</span></div>
-
-<div class="viewcode-block" id="SystemAgents.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SystemAgent</span><span class="p">]:</span>
+<div class="viewcode-block" id="AosManagedDevices.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SystemAgent</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return all system-agents configured in AOS</span>
 <span class="sd">        Returns</span>
@@ -205,7 +209,25 @@
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">systems</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
         <span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">_iter_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="AosManagedDevices.accept_running_config_as_golden"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices.accept_running_config_as_golden">[docs]</a>    <span class="k">def</span> <span class="nf">accept_running_config_as_golden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accept current running configuration of device as AOS golden config</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        system_agent_id</span>
+<span class="sd">            (str) ID of system_agent</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;/api/systems/</span><span class="si">{</span><span class="n">system_agent_id</span><span class="si">}</span><span class="s2">/accept-running-config-as-golden&quot;</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_iter_anomalies</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="n">anomalies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;api/systems/</span><span class="si">{</span><span class="n">system_agent_id</span><span class="si">}</span><span class="s2">/anomalies&quot;</span>
         <span class="p">)</span>
@@ -220,7 +242,7 @@
                 <span class="n">severity</span><span class="o">=</span><span class="n">anomaly</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">],</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="SystemAgents.get_anomalies"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.get_anomalies">[docs]</a>    <span class="k">def</span> <span class="nf">get_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">]:</span>
+<div class="viewcode-block" id="AosManagedDevices.get_anomalies"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices.get_anomalies">[docs]</a>    <span class="k">def</span> <span class="nf">get_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Anomaly</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return list of all anomalies and errors for a specific device</span>
 <span class="sd">        Parameters</span>
@@ -234,7 +256,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="SystemAgents.has_anomalies"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.has_anomalies">[docs]</a>    <span class="k">def</span> <span class="nf">has_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="AosManagedDevices.has_anomalies"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices.has_anomalies">[docs]</a>    <span class="k">def</span> <span class="nf">has_anomalies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns True if given device has anomalies or errors.</span>
 <span class="sd">        False if none are returned</span>
@@ -248,7 +270,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_anomalies</span><span class="p">(</span><span class="n">system_agent_id</span><span class="p">)</span> <span class="o">!=</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="SystemAgents.has_anomalies_of_type"><a class="viewcode-back" href="../../source/aos.html#aos.devices.SystemAgents.has_anomalies_of_type">[docs]</a>    <span class="k">def</span> <span class="nf">has_anomalies_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">anomaly_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="AosManagedDevices.has_anomalies_of_type"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosManagedDevices.has_anomalies_of_type">[docs]</a>    <span class="k">def</span> <span class="nf">has_anomalies_of_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system_agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">anomaly_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns True if an anomaly of a specific type is returned for the</span>
 <span class="sd">        specified device. False if none are returned</span>
@@ -266,6 +288,141 @@
             <span class="k">if</span> <span class="n">anomaly</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">anomaly_type</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="AosSystemAgents"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosSystemAgents">[docs]</a><span class="k">class</span> <span class="nc">AosSystemAgents</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Management of system-agent for AOS controlled devices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosSystemAgents.get_packages"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosSystemAgents.get_packages">[docs]</a>    <span class="k">def</span> <span class="nf">get_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of all device packages imported into AOS</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/packages&quot;</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">DevicePackage</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">package</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">version</span><span class="o">=</span><span class="n">package</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">package</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosSystemAgents.get_os_images"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosSystemAgents.get_os_images">[docs]</a>    <span class="k">def</span> <span class="nf">get_os_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of all OS images imported into AOS</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/device-os/images&quot;</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">DeviceOSImage</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                <span class="n">checksum</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;checksum&quot;</span><span class="p">],</span>
+                <span class="n">image_name</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;image_name&quot;</span><span class="p">],</span>
+                <span class="n">platform</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;platform&quot;</span><span class="p">],</span>
+                <span class="n">image_url</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;image_url&quot;</span><span class="p">],</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="AosDeviceProfiles"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDeviceProfiles">[docs]</a><span class="k">class</span> <span class="nc">AosDeviceProfiles</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS device profiles.</span>
+<span class="sd">    This does not apply the resource to a rack type, template or</span>
+<span class="sd">    existing blueprint. See `aos.rack_type`, `aos.template` or `aos.blueprint`</span>
+<span class="sd">    to apply to the respective resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosDeviceProfiles.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDeviceProfiles.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all device profiles configured from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dp_path</span> <span class="o">=</span> <span class="s2">&quot;/api/device-profiles&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">dp_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosDeviceProfiles.get_device_profile"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDeviceProfiles.get_device_profile">[docs]</a>    <span class="k">def</span> <span class="nf">get_device_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dp_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing rack type by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dp_id</span>
+<span class="sd">            (str) ID of AOS external router (optional)</span>
+<span class="sd">        dp_name</span>
+<span class="sd">            (str) Name or label of AOS external router (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dp_name</span><span class="p">:</span>
+            <span class="n">dev_profs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">dev_profs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">dev_profs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">dp_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">dp</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;External Router </span><span class="si">{</span><span class="n">dp_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/device-profiles/</span><span class="si">{</span><span class="n">dp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosDeviceProfiles.add_device_profiles"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDeviceProfiles.add_device_profiles">[docs]</a>    <span class="k">def</span> <span class="nf">add_device_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more device profiles to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dp_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) device profile IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/device-profiles&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_list</span><span class="p">):</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">dp_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">30</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosDeviceProfiles.delete_device_profiles"><a class="viewcode-back" href="../../source/aos.html#aos.devices.AosDeviceProfiles.delete_device_profiles">[docs]</a>    <span class="k">def</span> <span class="nf">delete_device_profiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more device profiles from AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dp_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/device-profiles&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dp_id</span> <span class="ow">in</span> <span class="n">dp_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">dp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
 </pre></div>
 
            </div>

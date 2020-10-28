@@ -1,0 +1,20 @@
+{
+  "status": "not_in_use",
+  "subnets": [
+    {
+      "status": "pool_element_available",
+      "used": "0",
+      "network": "10.10.0.0/22",
+      "total": "1024",
+      "used_percentage": 0
+    }
+  ],
+  "used": "0",
+  "display_name": "spine-leaf",
+  "tags": [],
+  "created_at": "2020-10-26T18:22:49.854241Z",
+  "last_modified_at": "2020-10-26T18:22:49.854241Z",
+  "used_percentage": 0,
+  "total": "1024",
+  "id": "adb5641b-3182-4092-bcc4-85c49befe122"
+}

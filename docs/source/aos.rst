@@ -32,10 +32,24 @@ aos.devices module
    :members:
    :show-inheritance:
 
+aos.design module
+-----------------
+
+.. automodule:: aos.design
+   :members:
+   :show-inheritance:
+
 aos.resources module
 --------------------
 
 .. automodule:: aos.resources
+   :members:
+   :show-inheritance:
+
+aos.external_systems module
+---------------------------
+
+.. automodule:: aos.external_systems
    :members:
    :show-inheritance:
 

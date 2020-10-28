@@ -243,11 +243,33 @@ class AosDeviceProfiles(AosSubsystem):
         ids = []
         i = 0
         while i < len(dp_list):
-            resp = self.rest.json_resp_post(p_path, dp_list[i])
+            resp = self.rest.json_resp_post(uri=p_path, data=dp_list[i])
             if resp:
                 ids.append(resp['id'])
             i += 1
             if i % 30 == 0:
                 time.sleep(3)
+
+        return ids
+
+    def delete_device_profiles(self, dp_list: str):
+        """
+        Delete one or more device profiles from AOS
+
+        Parameters
+        ----------
+        dp_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/device-profiles"
+
+        ids = []
+        for dp_id in dp_list:
+            self.rest.json_resp_delete(f"{p_path}/{dp_id}")
+            ids.append(dp_id)
 
         return ids

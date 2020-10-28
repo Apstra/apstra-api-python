@@ -85,9 +85,32 @@ class AosAsnPools(AosSubsystem):
 
         ids = []
         for pool in pool_list:
-            item_id = self.rest.json_resp_post(p_path, pool)
+            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_pool(self, pool_list: str):
+        """
+        Delete one or more asn pools from AOS.
+        ASN Pools can not be deleted if they are "in_us" by a Blueprint
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/resources/asn-pools"
+
+        ids = []
+        for pool_id in pool_list:
+            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            ids.append(pool_id)
 
         return ids
 
@@ -153,9 +176,32 @@ class AosVniPools(AosSubsystem):
 
         ids = []
         for pool in pool_list:
-            item_id = self.rest.json_resp_post(p_path, pool)
+            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_pool(self, pool_list: str):
+        """
+        Delete one or more vni pools from AOS.
+        VNI Pools can not be deleted if they are "in_us" by a Blueprint
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/resources/vni-pools"
+
+        ids = []
+        for pool_id in pool_list:
+            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            ids.append(pool_id)
 
         return ids
 
@@ -221,9 +267,32 @@ class AosIpv4Pools(AosSubsystem):
 
         ids = []
         for pool in pool_list:
-            item_id = self.rest.json_resp_post(p_path, pool)
+            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_pool(self, pool_list: str):
+        """
+        Delete one or more asn pools from AOS.
+        ASN Pools can not be deleted if they are "in_us" by a Blueprint
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/resources/ip-pools"
+
+        ids = []
+        for pool_id in pool_list:
+            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            ids.append(pool_id)
 
         return ids
 
@@ -289,8 +358,31 @@ class AosIpv6Pools(AosSubsystem):
 
         ids = []
         for pool in pool_list:
-            item_id = self.rest.json_resp_post(p_path, pool)
+            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_pool(self, pool_list: str):
+        """
+        Delete one or more IPv6 pools from AOS.
+        IPv6 Pools can not be deleted if they are "in_us" by a Blueprint
+
+        Parameters
+        ----------
+        pool_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/resources/ipv6-pools"
+
+        ids = []
+        for pool_id in pool_list:
+            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            ids.append(pool_id)
 
         return ids

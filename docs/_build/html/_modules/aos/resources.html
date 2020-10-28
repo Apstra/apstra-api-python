@@ -153,57 +153,388 @@
 <span class="c1"># This source code is licensed under End User License Agreement found in the</span>
 <span class="c1"># LICENSE file at http://www.apstra.com/eula</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span>
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AosConfiglet"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosConfiglet">[docs]</a><span class="k">class</span> <span class="nc">AosConfiglet</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+<div class="viewcode-block" id="AosResources"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosResources">[docs]</a><span class="k">class</span> <span class="nc">AosResources</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AOS configlet create, modify, delete.</span>
-<span class="sd">    This does not apply the configlet to a blueprint</span>
-<span class="sd">    Use `blueprint.apply_configlet` to apply to blueprint</span>
+<span class="sd">    Management of AOS Resource elements:</span>
+<span class="sd">    - ASN Pools</span>
+<span class="sd">    - VNI Pools</span>
+<span class="sd">    - IPv4 address Pools</span>
+<span class="sd">    - IPv6 address Pools</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AosConfiglet.create"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosConfiglet.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rest</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asn_pools</span> <span class="o">=</span> <span class="n">AosAsnPools</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vni_pools</span> <span class="o">=</span> <span class="n">AosVniPools</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipv4_pools</span> <span class="o">=</span> <span class="n">AosIpv4Pools</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipv6_pools</span> <span class="o">=</span> <span class="n">AosIpv6Pools</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AosAsnPools"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosAsnPools">[docs]</a><span class="k">class</span> <span class="nc">AosAsnPools</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS ASN Pools.</span>
+<span class="sd">    This does not apply the resource to a blueprint</span>
+<span class="sd">    See `aos.blueprint` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosAsnPools.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosAsnPools.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create new configlet in AOS.</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        payload</span>
-<span class="sd">            (dict) json payload of generated configlet</span>
+<span class="sd">        Return all asn pools configured from AOS</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        (obj) RestAPI response</span>
+<span class="sd">            (obj) json response</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/configlets&quot;</span>
+        <span class="n">a_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/asn-pools&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">a_path</span><span class="p">)</span></div>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">c_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="AosPropertySet"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosPropertySet">[docs]</a><span class="k">class</span> <span class="nc">AosPropertySet</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AOS property-set create, modify, delete.</span>
-<span class="sd">    This does not apply the property-set to a blueprint</span>
-<span class="sd">    Use `blueprint.apply_property_set` to apply to blueprint</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="AosPropertySet.create"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosPropertySet.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<div class="viewcode-block" id="AosAsnPools.get_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosAsnPools.get_pool">[docs]</a>    <span class="k">def</span> <span class="nf">get_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create new property-set in AOS.</span>
+<span class="sd">        Return an existing ASN pool by id or name</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        payload</span>
-<span class="sd">            (dict) json payload of generated property-set</span>
+<span class="sd">        pool_id</span>
+<span class="sd">            (str) ID of AOS asn pool (optional)</span>
+<span class="sd">        pool_name</span>
+<span class="sd">            (str) Name or label of AOS asn pool (optional)</span>
+
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        (obj) RestAPI response</span>
+<span class="sd">            (obj) json response</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ps_path</span> <span class="o">=</span> <span class="s2">&quot;/api/property-sets&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">ps_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="n">pool_name</span><span class="p">:</span>
+            <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">pool</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ASN Pool </span><span class="si">{</span><span class="n">pool_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/asn-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosAsnPools.add_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosAsnPools.add_pool">[docs]</a>    <span class="k">def</span> <span class="nf">add_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more ASN pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) ASN pool IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/asn-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosAsnPools.delete_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosAsnPools.delete_pool">[docs]</a>    <span class="k">def</span> <span class="nf">delete_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more asn pools from AOS.</span>
+<span class="sd">        ASN Pools can not be deleted if they are &quot;in_us&quot; by a Blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/asn-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool_id</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+
+
+<div class="viewcode-block" id="AosVniPools"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosVniPools">[docs]</a><span class="k">class</span> <span class="nc">AosVniPools</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS VNI Pools.</span>
+<span class="sd">    This does not apply the resource to a blueprint</span>
+<span class="sd">    See `aos.blueprint` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosVniPools.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosVniPools.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all vni pools configured from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/vni-pools&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">v_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosVniPools.get_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosVniPools.get_pool">[docs]</a>    <span class="k">def</span> <span class="nf">get_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing VNI pool by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_id</span>
+<span class="sd">            (str) ID of AOS vni pool (optional)</span>
+<span class="sd">        pool_name</span>
+<span class="sd">            (str) Name or label of AOS vni pool (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">pool_name</span><span class="p">:</span>
+            <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">pool</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;VNI Pool </span><span class="si">{</span><span class="n">pool_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/vni-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosVniPools.add_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosVniPools.add_pool">[docs]</a>    <span class="k">def</span> <span class="nf">add_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more vni pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) VNI pool IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/vni-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosVniPools.delete_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosVniPools.delete_pool">[docs]</a>    <span class="k">def</span> <span class="nf">delete_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more vni pools from AOS.</span>
+<span class="sd">        VNI Pools can not be deleted if they are &quot;in_us&quot; by a Blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/vni-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool_id</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+
+
+<div class="viewcode-block" id="AosIpv4Pools"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv4Pools">[docs]</a><span class="k">class</span> <span class="nc">AosIpv4Pools</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS IPv4 address Pools.</span>
+<span class="sd">    This does not apply the resource to a blueprint</span>
+<span class="sd">    See `aos.blueprint` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosIpv4Pools.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv4Pools.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all ip pools from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ip_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ip-pools&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">ip_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosIpv4Pools.get_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv4Pools.get_pool">[docs]</a>    <span class="k">def</span> <span class="nf">get_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing IPv4 pool by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_id</span>
+<span class="sd">            (str) ID of AOS ipv4 pool (optional)</span>
+<span class="sd">        pool_name</span>
+<span class="sd">            (str) Name or label of AOS ipv4 pool (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">pool_name</span><span class="p">:</span>
+            <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">pool</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IPv4 Pool </span><span class="si">{</span><span class="n">pool_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/ip-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosIpv4Pools.add_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv4Pools.add_pool">[docs]</a>    <span class="k">def</span> <span class="nf">add_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more ip pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) ip pool IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ip-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosIpv4Pools.delete_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv4Pools.delete_pool">[docs]</a>    <span class="k">def</span> <span class="nf">delete_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more asn pools from AOS.</span>
+<span class="sd">        ASN Pools can not be deleted if they are &quot;in_us&quot; by a Blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ip-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool_id</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+
+<div class="viewcode-block" id="AosIpv6Pools"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools">[docs]</a><span class="k">class</span> <span class="nc">AosIpv6Pools</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS IPv6 address Pools.</span>
+<span class="sd">    This does not apply the resource to a blueprint</span>
+<span class="sd">    See `aos.blueprint` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosIpv6Pools.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all ip pools from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ip_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ipv6-pools&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">ip_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosIpv6Pools.get_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools.get_pool">[docs]</a>    <span class="k">def</span> <span class="nf">get_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing IPv6 pool by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_id</span>
+<span class="sd">            (str) ID of AOS ipv6 pool (optional)</span>
+<span class="sd">        pool_name</span>
+<span class="sd">            (str) Name or label of AOS ipv6 pool (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">pool_name</span><span class="p">:</span>
+            <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">pool</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IPv6 Pool </span><span class="si">{</span><span class="n">pool_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/ipv6-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosIpv6Pools.add_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools.add_pool">[docs]</a>    <span class="k">def</span> <span class="nf">add_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more ipv6 pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) ip pool IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ipv6-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosIpv6Pools.delete_pool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools.delete_pool">[docs]</a>    <span class="k">def</span> <span class="nf">delete_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more IPv6 pools from AOS.</span>
+<span class="sd">        IPv6 Pools can not be deleted if they are &quot;in_us&quot; by a Blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pool_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/resources/ipv6-pools&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pool_id</span> <span class="ow">in</span> <span class="n">pool_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
 </pre></div>
 
            </div>

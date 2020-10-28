@@ -179,6 +179,11 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
+<span class="n">AosVersion</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;AosVersion&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;major&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;build&quot;</span><span class="p">,</span> <span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="s2">&quot;full_version&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
 <div class="viewcode-block" id="AosRestAPI"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI">[docs]</a><span class="k">class</span> <span class="nc">AosRestAPI</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The core class for rest api integration with AOS</span>
@@ -321,7 +326,44 @@
 <span class="sd">        -------</span>
 <span class="sd">            (obj) - Rest Api Response object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosRestAPI.json_resp_delete"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI.json_resp_delete">[docs]</a>    <span class="k">def</span> <span class="nf">json_resp_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AOS rest API DELETE.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        uri - (str) API endpoint ex: /api/blueprints</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - Rest Api Response object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosRestAPI.get_aos_version"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI.get_aos_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_aos_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get AOS server version installed</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - &quot;AosVersion&quot;: (&quot;major&quot;, &quot;version&quot;,</span>
+<span class="sd">                                    &quot;build&quot;, &quot;minor&quot;, &quot;</span>
+<span class="sd">                                    server_version&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_path</span> <span class="o">=</span> <span class="s2">&quot;/api/version&quot;</span>
+        <span class="n">server_path</span> <span class="o">=</span> <span class="s2">&quot;/api/versions/server&quot;</span>
+
+        <span class="n">aos_ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">v_path</span><span class="p">)</span>
+        <span class="n">server_ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">server_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AosVersion</span><span class="p">(</span>
+            <span class="n">major</span><span class="o">=</span><span class="n">aos_ver</span><span class="p">[</span><span class="s2">&quot;major&quot;</span><span class="p">],</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">aos_ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
+            <span class="n">build</span><span class="o">=</span><span class="n">aos_ver</span><span class="p">[</span><span class="s2">&quot;build&quot;</span><span class="p">],</span>
+            <span class="n">minor</span><span class="o">=</span><span class="n">aos_ver</span><span class="p">[</span><span class="s2">&quot;minor&quot;</span><span class="p">],</span>
+            <span class="n">full_version</span><span class="o">=</span><span class="n">server_ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">AosSubsystem</span><span class="p">:</span>

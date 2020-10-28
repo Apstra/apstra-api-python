@@ -155,7 +155,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span>
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -170,17 +170,17 @@
 
 <div class="viewcode-block" id="AosBlueprint.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return complete details for all blueprints</span>
+<span class="sd">        Return all blueprints configured</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            (obj) &quot;[Blueprint&quot;, (&quot;label&quot;, &quot;id&quot;),...]</span>
+<span class="sd">            (obj) json object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/blueprints&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AosBlueprint.get_all_ids"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all_ids">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return all blueprint IDs</span>
+<span class="sd">        Returns all blueprint names and IDs</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">            (obj) &quot;[Blueprint&quot;, (&quot;label&quot;, &quot;id&quot;),...]</span>
@@ -191,7 +191,7 @@
             <span class="n">Blueprint</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">blueprints</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.find_id_by_label"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.find_id_by_label">[docs]</a>    <span class="k">def</span> <span class="nf">get_id_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Blueprint</span><span class="p">]:</span>
+<div class="viewcode-block" id="AosBlueprint.get_id_by_name"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_id_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_id_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Blueprint</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns blueprint id of specified blueprint by name</span>
 <span class="sd">        Parameters</span>
@@ -209,6 +209,62 @@
             <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">blueprints</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">Blueprint</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="n">bp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_bp"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_bp">[docs]</a>    <span class="k">def</span> <span class="nf">get_bp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bp_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Blueprint</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns blueprint by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+<span class="sd">        bp_name</span>
+<span class="sd">            (str) Name or label of AOS Blueprint (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">bp_name</span><span class="p">:</span>
+            <span class="n">blueprint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_id_by_name</span><span class="p">(</span><span class="n">bp_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">blueprint</span><span class="p">:</span>
+                <span class="n">bp_id</span> <span class="o">=</span> <span class="n">blueprint</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Blueprint </span><span class="si">{</span><span class="n">bp_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.delete_blueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.delete_blueprint">[docs]</a>    <span class="k">def</span> <span class="nf">delete_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes blueprint by id</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.delete_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.delete_all">[docs]</a>    <span class="k">def</span> <span class="nf">delete_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes all AOS blueprint</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">deleted_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bp_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_ids</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bp_ids</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="n">bp_ids</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">delete_blueprint</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="n">deleted_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">deleted_ids</span></div>
 
 <div class="viewcode-block" id="AosBlueprint.get_configlets"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_configlets">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

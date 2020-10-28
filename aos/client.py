@@ -9,6 +9,7 @@ from .blueprint import AosBlueprint
 from .devices import AosDevices
 from .design import AosDesign
 from .resources import AosResources
+from .external_systems import AosExternalSystems
 
 logger = logging.getLogger(__name__)
 
@@ -31,11 +32,14 @@ class AosClient:
 
     :class:`aos.blueprint.AosBlueprint` - Manage AOS blueprints
 
-    :class:`aos.devices.Devices` - Manage AOS controlled devices and agents
+    :class:`aos.devices.AosDevices` - Manage AOS controlled devices and agents
 
     :class:`aos.design.AosDesign` - Manage AOS Design elements
 
     :class:`aos.resources.AosResources` - Manage AOS resource pools
+
+    :class:`aos.external_systems.AosExternalSystems`
+    - Manage AOS external system integrations
     """
 
     def __init__(
@@ -48,3 +52,4 @@ class AosClient:
         self.devices = AosDevices(self.rest)
         self.design = AosDesign(self.rest)
         self.resources = AosResources(self.rest)
+        self.external_systems = AosExternalSystems

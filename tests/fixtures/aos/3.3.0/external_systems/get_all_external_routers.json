@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "ipv6_address": null,
+      "display_name": "example_router1",
+      "tags": [
+        "default"
+      ],
+      "created_at": "2020-08-15T09:05:36.076648Z",
+      "last_modified_at": "2020-08-15T09:05:36.076648Z",
+      "id": "example_router1",
+      "address": "198.51.100.1",
+      "asn": 65534
+    },
+    {
+      "ipv6_address": "fc01:a05:198:51:100::2",
+      "display_name": "dualstack_example_router2",
+      "tags": [
+        "default"
+      ],
+      "created_at": "2020-08-15T09:05:36.076305Z",
+      "last_modified_at": "2020-08-15T09:05:36.076305Z",
+      "id": "dualstack_example_router2",
+      "address": "198.51.100.2",
+      "asn": 65533
+    }
+  ]
+}

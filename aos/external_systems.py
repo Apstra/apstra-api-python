@@ -8,7 +8,7 @@ from .aos import AosSubsystem, AosAPIError
 logger = logging.getLogger(__name__)
 
 
-class ExternalSystems(AosSubsystem):
+class AosExternalSystems(AosSubsystem):
     """
     Management of AOS Resource elements:
     - Providers
@@ -81,8 +81,32 @@ class AosExternalRouters(AosSubsystem):
 
         ids = []
         for rtr in router_list:
-            item_id = self.rest.json_resp_post(p_path, rtr)
+            item_id = self.rest.json_resp_post(uri=p_path, data=rtr)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_external_router(self, ext_list: str):
+        """
+        Delete one or more device profiles from AOS
+        External routers can not be deleted if they are associated with
+        a blueprint.
+
+        Parameters
+        ----------
+        ext_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/resources/external-routers"
+
+        ids = []
+        for ext_id in ext_list:
+            self.rest.json_resp_delete(f"{p_path}/{ext_id}")
+            ids.append(ext_id)
 
         return ids

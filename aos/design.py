@@ -90,9 +90,31 @@ class AosLogicalDevices(AosSubsystem):
 
         ids = []
         for ld in ld_list:
-            item_id = self.rest.json_resp_post(p_path, ld)
+            item_id = self.rest.json_resp_post(uri=p_path, data=ld)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_logical_device(self, ld_list: str):
+        """
+        Delete one or more logical devices from AOS
+
+        Parameters
+        ----------
+        ld_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/logical-devices"
+
+        ids = []
+        for ld_id in ld_list:
+            self.rest.json_resp_delete(f"{p_path}/{ld_id}")
+            ids.append(ld_id)
 
         return ids
 
@@ -158,9 +180,31 @@ class AosInterfaceMaps(AosSubsystem):
 
         ids = []
         for im in im_list:
-            item_id = self.rest.json_resp_post(p_path, im)
+            item_id = self.rest.json_resp_post(uri=p_path, data=im)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_interface_maps(self, im_list: str):
+        """
+        Delete one or more logical devices from AOS
+
+        Parameters
+        ----------
+        im_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/interface-maps"
+
+        ids = []
+        for im_id in im_list:
+            self.rest.json_resp_delete(f"{p_path}/{im_id}")
+            ids.append(im_id)
 
         return ids
 
@@ -226,9 +270,31 @@ class AosRackTypes(AosSubsystem):
 
         ids = []
         for im in rt_list:
-            item_id = self.rest.json_resp_post(p_path, im)
+            item_id = self.rest.json_resp_post(uri=p_path, data=im)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_rack_type(self, rt_list: str):
+        """
+        Delete one or more rack types from AOS
+
+        Parameters
+        ----------
+        rt_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/rack-types"
+
+        ids = []
+        for rt_id in rt_list:
+            self.rest.json_resp_delete(f"{p_path}/{rt_id}")
+            ids.append(rt_id)
 
         return ids
 
@@ -294,9 +360,31 @@ class AosTemplates(AosSubsystem):
 
         ids = []
         for template in template_list:
-            item_id = self.rest.json_resp_post(t_path, template)
+            item_id = self.rest.json_resp_post(uri=t_path, data=template)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_templates(self, temp_list: str):
+        """
+        Delete one or more templates from AOS
+
+        Parameters
+        ----------
+        temp_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/rack-types"
+
+        ids = []
+        for temp_id in temp_list:
+            self.rest.json_resp_delete(f"{p_path}/{temp_id}")
+            ids.append(temp_id)
 
         return ids
 
@@ -362,9 +450,31 @@ class AosConfiglets(AosSubsystem):
 
         ids = []
         for conf in conf_list:
-            item_id = self.rest.json_resp_post(p_path, conf)
+            item_id = self.rest.json_resp_post(uri=p_path, data=conf)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_configlet(self, conf_list: str):
+        """
+        Delete one or more configlets from AOS
+
+        Parameters
+        ----------
+        conf_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/configlets"
+
+        ids = []
+        for conf_id in conf_list:
+            self.rest.json_resp_delete(f"{p_path}/{conf_id}")
+            ids.append(conf_id)
 
         return ids
 
@@ -430,8 +540,30 @@ class AosPropertySets(AosSubsystem):
 
         ids = []
         for ps in ps_list:
-            item_id = self.rest.json_resp_post(p_path, ps)
+            item_id = self.rest.json_resp_post(uri=p_path, data=ps)
             if item_id:
                 ids.append(item_id)
+
+        return ids
+
+    def delete_property_set(self, ps_list: str):
+        """
+        Delete one or more property sets from AOS
+
+        Parameters
+        ----------
+        ps_list
+            (list) - list of ids
+
+        Returns
+        -------
+            (list) deleted IDs
+        """
+        p_path = "/api/design/property-sets"
+
+        ids = []
+        for ps_id in ps_list:
+            self.rest.json_resp_delete(f"{p_path}/{ps_id}")
+            ids.append(ps_id)
 
         return ids

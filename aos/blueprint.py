@@ -84,6 +84,38 @@ class AosBlueprint(AosSubsystem):
 
         return self.rest.json_resp_get(f"/api/blueprints/{bp_id}")
 
+    def delete_blueprint(self, bp_id: str):
+        """
+        Deletes blueprint by id
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint (optional)
+
+        Returns
+        -------
+            (obj) json object
+        """
+
+        return self.rest.json_resp_delete(f"/api/blueprints/{bp_id}")
+
+    def delete_all(self):
+        """
+        Deletes all AOS blueprint
+
+        Returns
+        -------
+            (obj) json object
+        """
+        deleted_ids = []
+        bp_ids = self.get_all_ids()
+        if bp_ids:
+            for bp in bp_ids:
+                self.delete_blueprint(bp.id)
+                deleted_ids.append(bp.id)
+
+        return deleted_ids
+
     def get_configlets(self, bp_id: str):
         """
         Return all configlets currently imported into blueprint
@@ -115,7 +147,7 @@ class AosBlueprint(AosSubsystem):
 
         """
         c_path = f"/api/blueprints/{bp_id}/configlets"
-        self.rest.json_resp_post(c_path, data=configlet)
+        self.rest.json_resp_post(uri=c_path, data=configlet)
 
     def get_property_set(self, bp_id: str):
         """
@@ -148,7 +180,7 @@ class AosBlueprint(AosSubsystem):
 
         """
         ps_path = f"/api/blueprints/{bp_id}/property-sets"
-        self.rest.json_resp_post(ps_path, data=property_set)
+        self.rest.json_resp_post(uri=ps_path, data=property_set)
 
     def get_staging_version(self, bp_id: str):
         """

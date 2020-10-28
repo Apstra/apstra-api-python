@@ -156,8 +156,10 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosRestAPI</span><span class="p">,</span> <span class="n">AosAuth</span>
 <span class="kn">from</span> <span class="nn">.blueprint</span> <span class="kn">import</span> <span class="n">AosBlueprint</span>
-<span class="kn">from</span> <span class="nn">.devices</span> <span class="kn">import</span> <span class="n">SystemAgents</span>
-<span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">AosConfiglet</span><span class="p">,</span> <span class="n">AosPropertySet</span>
+<span class="kn">from</span> <span class="nn">.devices</span> <span class="kn">import</span> <span class="n">AosDevices</span>
+<span class="kn">from</span> <span class="nn">.design</span> <span class="kn">import</span> <span class="n">AosDesign</span>
+<span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">AosResources</span>
+<span class="kn">from</span> <span class="nn">.external_systems</span> <span class="kn">import</span> <span class="n">AosExternalSystems</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -178,13 +180,16 @@
 <span class="sd">        (obj) Established session with AOS server</span>
 
 
-<span class="sd">    :class:`aos.blueprint.AosBlueprint` - AOS blueprint specific actions</span>
+<span class="sd">    :class:`aos.blueprint.AosBlueprint` - Manage AOS blueprints</span>
 
-<span class="sd">    :class:`aos.devices.SystemAgents` - AOS system-agent create, modify, delete</span>
+<span class="sd">    :class:`aos.devices.AosDevices` - Manage AOS controlled devices and agents</span>
 
-<span class="sd">    :class:`aos.resources.AosConfiglet` - AOS configlet create, modify, delete</span>
+<span class="sd">    :class:`aos.design.AosDesign` - Manage AOS Design elements</span>
 
-<span class="sd">    :class:`aos.resources.AosPropertySet` -AOS property-set create, modify, delete</span>
+<span class="sd">    :class:`aos.resources.AosResources` - Manage AOS resource pools</span>
+
+<span class="sd">    :class:`aos.external_systems.AosExternalSystems`</span>
+<span class="sd">    - Manage AOS external system integrations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -194,9 +199,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rest</span> <span class="o">=</span> <span class="n">AosRestAPI</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">AosAuth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span> <span class="o">=</span> <span class="n">AosBlueprint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">system_agent</span> <span class="o">=</span> <span class="n">SystemAgents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">configlet</span> <span class="o">=</span> <span class="n">AosConfiglet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">property_set</span> <span class="o">=</span> <span class="n">AosPropertySet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="n">AosDevices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">design</span> <span class="o">=</span> <span class="n">AosDesign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="n">AosResources</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">external_systems</span> <span class="o">=</span> <span class="n">AosExternalSystems</span></div>
 </pre></div>
 
            </div>
