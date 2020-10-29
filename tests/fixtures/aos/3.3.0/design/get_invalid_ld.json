@@ -1,0 +1,23 @@
+
+  "errors": {
+    "panels": {
+      "0": {
+        "panel_layout": {
+          "row_count": [
+            "Must be at least 1."
+          ],
+          "column_count": [
+            "Must be at least 1."
+          ]
+        },
+        "port_groups": {
+          "0": {
+            "count": [
+              "Must be at least 1."
+            ]
+          }
+        }
+      }
+    }
+  }
+}

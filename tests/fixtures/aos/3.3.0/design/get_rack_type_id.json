@@ -1,0 +1,120 @@
+{
+      "created_at": "2020-10-26T18:22:49.539074Z",
+      "display_name": "evpn-single",
+      "description": "",
+      "leafs": [
+        {
+          "external_router_links": [],
+          "external_router_facing": false,
+          "leaf_leaf_l3_link_speed": null,
+          "redundancy_protocol": null,
+          "leaf_leaf_link_port_channel_id": 0,
+          "leaf_leaf_l3_link_count": 0,
+          "logical_device": "slicer-7x10-1",
+          "leaf_leaf_link_speed": null,
+          "link_per_spine_count": 1,
+          "leaf_leaf_link_count": 0,
+          "link_per_spine_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "label": "evpn-single",
+          "leaf_leaf_l3_link_port_channel_id": 0
+        }
+      ],
+      "logical_devices": [
+        {
+          "panels": [
+            {
+              "panel_layout": {
+                "row_count": 1,
+                "column_count": 7
+              },
+              "port_indexing": {
+                "order": "L-R, T-B",
+                "start_index": 1,
+                "schema": "absolute"
+              },
+              "port_groups": [
+                {
+                  "count": 7,
+                  "speed": {
+                    "unit": "G",
+                    "value": 10
+                  },
+                  "roles": [
+                    "superspine",
+                    "leaf",
+                    "peer",
+                    "l2_server",
+                    "access",
+                    "l3_server",
+                    "spine",
+                    "external_router"
+                  ]
+                }
+              ]
+            }
+          ],
+          "display_name": "slicer-7x10-1",
+          "id": "slicer-7x10-1"
+        },
+        {
+          "panels": [
+            {
+              "panel_layout": {
+                "row_count": 1,
+                "column_count": 1
+              },
+              "port_indexing": {
+                "order": "T-B, L-R",
+                "start_index": 1,
+                "schema": "absolute"
+              },
+              "port_groups": [
+                {
+                  "count": 1,
+                  "speed": {
+                    "unit": "G",
+                    "value": 10
+                  },
+                  "roles": [
+                    "leaf",
+                    "access"
+                  ]
+                }
+              ]
+            }
+          ],
+          "display_name": "AOS-1x10-1",
+          "id": "AOS-1x10-1"
+        }
+      ],
+      "access_switches": [],
+      "id": "evpn-single",
+      "last_modified_at": "2020-10-26T18:22:49.539074Z",
+      "servers": [
+        {
+          "count": 1,
+          "connectivity_type": "l2",
+          "port_channel_id_min": 0,
+          "links": [
+            {
+              "link_per_switch_count": 1,
+              "label": "single-link",
+              "link_speed": {
+                "unit": "G",
+                "value": 10
+              },
+              "target_switch_label": "evpn-single",
+              "attachment_type": "singleAttached",
+              "lag_mode": null
+            }
+          ],
+          "ip_version": "ipv4",
+          "port_channel_id_max": 0,
+          "logical_device": "AOS-1x10-1",
+          "label": "single-server"
+        }
+      ]
+    }

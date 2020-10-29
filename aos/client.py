@@ -52,4 +52,4 @@ class AosClient:
         self.devices = AosDevices(self.rest)
         self.design = AosDesign(self.rest)
         self.resources = AosResources(self.rest)
-        self.external_systems = AosExternalSystems
+        self.external_systems = AosExternalSystems(self.rest)

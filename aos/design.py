@@ -379,7 +379,7 @@ class AosTemplates(AosSubsystem):
         -------
             (list) deleted IDs
         """
-        p_path = "/api/design/rack-types"
+        p_path = "/api/design/templates"
 
         ids = []
         for temp_id in temp_list:
@@ -494,7 +494,7 @@ class AosPropertySets(AosSubsystem):
         -------
             (obj) json response
         """
-        t_path = "/api/design/property-sets"
+        t_path = "/api/property-sets"
         return self.rest.json_resp_get(t_path)
 
     def get_property_set(self, ps_id: str = None, ps_name: str = None):
@@ -521,7 +521,7 @@ class AosPropertySets(AosSubsystem):
                         return ps
                 raise AosAPIError(f"Configlet {ps_name} not found")
 
-        return self.rest.json_resp_get(f"/api/design/property-sets/{ps_id}")
+        return self.rest.json_resp_get(f"/api/property-sets/{ps_id}")
 
     def add_property_set(self, ps_list):
         """
@@ -536,7 +536,7 @@ class AosPropertySets(AosSubsystem):
         -------
             (list) property set IDs
         """
-        p_path = "/api/design/property-sets"
+        p_path = "/api/property-sets"
 
         ids = []
         for ps in ps_list:
@@ -559,7 +559,7 @@ class AosPropertySets(AosSubsystem):
         -------
             (list) deleted IDs
         """
-        p_path = "/api/design/property-sets"
+        p_path = "/api/property-sets"
 
         ids = []
         for ps_id in ps_list:

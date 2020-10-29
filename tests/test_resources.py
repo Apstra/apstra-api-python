@@ -160,10 +160,11 @@ def test_asn_add_pool(
         headers=expected_auth_headers,
     )
 
+
 def test_asn_delete(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    pool_id = 'test-pool1'
+    pool_id = "test-pool1"
 
     aos_session.add_response(
         "DELETE",
@@ -289,10 +290,11 @@ def test_vni_add_pool(
         headers=expected_auth_headers,
     )
 
+
 def test_vni_delete(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    pool_id = 'test-pool1'
+    pool_id = "test-pool1"
 
     aos_session.add_response(
         "DELETE",
@@ -310,7 +312,6 @@ def test_vni_delete(
         json=None,
         headers=expected_auth_headers,
     )
-
 
 
 # IPv4 Pools
@@ -419,10 +420,11 @@ def test_ipv4_add_pool(
         headers=expected_auth_headers,
     )
 
+
 def test_ipv4_delete(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    pool_id = 'test-pool1'
+    pool_id = "test-pool1"
 
     aos_session.add_response(
         "DELETE",
@@ -440,7 +442,6 @@ def test_ipv4_delete(
         json=None,
         headers=expected_auth_headers,
     )
-
 
 
 # IPv6 Pools
@@ -549,10 +550,11 @@ def test_ipv6_add_pool(
         headers=expected_auth_headers,
     )
 
+
 def test_ipv6_delete(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    pool_id = 'test-pool1'
+    pool_id = "test-pool1"
 
     aos_session.add_response(
         "DELETE",
