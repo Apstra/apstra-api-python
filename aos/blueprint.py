@@ -2,6 +2,7 @@
 #
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
+import json
 import logging
 from collections import namedtuple
 from typing import Optional
@@ -118,6 +119,7 @@ class AosBlueprint(AosSubsystem):
 
         return deleted_ids
 
+    # Commit, staging and rollback
     def get_staging_version(self, bp_id: str):
         """
         Get the latest version of staged changes for the given blueprint
@@ -167,6 +169,7 @@ class AosBlueprint(AosSubsystem):
         }
         self.rest.json_resp_put(commit_path, data=payload)
 
+    # Graph Queries
     def qe_query(self, bp_id: str, query: str):
         """
         QE query aginst a Blueprint graphDB
@@ -188,6 +191,7 @@ class AosBlueprint(AosSubsystem):
 
         return resp["items"]
 
+    # configlets, property-sets
     def get_configlets(self, bp_id: str):
         """
         Return all configlets currently imported into blueprint
@@ -254,6 +258,7 @@ class AosBlueprint(AosSubsystem):
         ps_path = f"/api/blueprints/{bp_id}/property-sets"
         self.rest.json_resp_post(uri=ps_path, data=property_set)
 
+    # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):
         """
         Return all IBA probes for a given blueprint
@@ -472,6 +477,30 @@ class AosBlueprint(AosSubsystem):
         sz_path = f"/api/blueprints/{bp_id}/security-zones"
 
         return self.rest.json_resp_delete(uri=sz_path)
+
+    def apply_leaf_loopback_ip_to_sz(self, bp_id: str, sz_id: str, pool_id: str):
+        """
+        Assign IP Pool to a specified security-zone for use by leaf nodes for
+        loopback IPs.
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+        pool_id
+            (str) - ID of AOS resource pool
+
+        Returns
+        -------
+
+        """
+        data = json.dumps({
+            "pool_ids": [str(pool_id)]
+        })
+        p_path = f'/api/blueprints/{bp_id}/resource_groups/ip/sz:{sz_id},leaf_loopback_ips'
+
+        return self.rest.json_resp_put(uri=p_path, data=data)
 
     # Virtual Networks
     def get_virtual_networks_all(self, bp_id: str):
