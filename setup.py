@@ -23,7 +23,7 @@ setup(
     url="https://github.com/Apstra/aos-api-python",
     author="Apstra Inc",
     author_email="support@apstra.com",
-    packages=find_packages(),
+    packages=find_packages(include=['aos']),
     include_package_data=True,
     python_requires=">=3.5",
     install_requires=REQUIRES,

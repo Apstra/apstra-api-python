@@ -11,6 +11,7 @@ from .aos import AosSubsystem, AosAPIError
 logger = logging.getLogger(__name__)
 
 Blueprint = namedtuple("Blueprint", ["label", "id"])
+Device = namedtuple("Device", ["label", "system_id"])
 
 
 class AosBlueprint(AosSubsystem):
@@ -63,6 +64,7 @@ class AosBlueprint(AosSubsystem):
     def get_bp(self, bp_id: str = None, bp_name: str = None) -> Optional[Blueprint]:
         """
         returns blueprint by id or name
+
         Parameters
         ----------
         bp_id
@@ -115,6 +117,76 @@ class AosBlueprint(AosSubsystem):
                 deleted_ids.append(bp.id)
 
         return deleted_ids
+
+    def get_staging_version(self, bp_id: str):
+        """
+        Get the latest version of staged changes for the given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        Returns
+        -------
+            int
+        """
+        commit_diff_path = f"/api/blueprints/{bp_id}/diff-status"
+        resp = self.rest.json_resp_get(commit_diff_path)
+
+        return {
+            "version": int(resp["staging_version"]),
+            "status": resp["status"],
+            "deploy_error": resp["deploy_error"],
+        }
+
+    def commit_staging(self, bp_id: str, description=None):
+        """
+        Commit all changes in staging to Blueprint.
+        Uses latest staging version number available on a Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        description
+            (str) description to use during commit
+
+        Returns
+        -------
+
+        """
+        commit_path = f"/api/blueprints/{bp_id}/deploy"
+
+        staging_version = self.get_staging_version(bp_id)
+
+        d = ""
+        if description:
+            d = description
+
+        payload = {
+            "version": int(staging_version["staging_version"]),
+            "description": d,
+        }
+        self.rest.json_resp_put(commit_path, data=payload)
+
+    def qe_query(self, bp_id: str, query: str):
+        """
+        QE query aginst a Blueprint graphDB
+
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint (optional)
+        query
+            (str) qe query string
+
+        Returns
+        -------
+            (obj) - json object
+        """
+        qe_path = f"/api/blueprints/{bp_id}/qe"
+        data = {"query": query}
+        resp = self.rest.json_resp_post(uri=qe_path, data=data)
+
+        return resp["items"]
 
     def get_configlets(self, bp_id: str):
         """
@@ -182,51 +254,360 @@ class AosBlueprint(AosSubsystem):
         ps_path = f"/api/blueprints/{bp_id}/property-sets"
         self.rest.json_resp_post(uri=ps_path, data=property_set)
 
-    def get_staging_version(self, bp_id: str):
+    def get_all_probes(self, bp_id: str):
         """
-        Get the latest version of staged changes for the given blueprint
+        Return all IBA probes for a given blueprint
         Parameters
         ----------
         bp_id
             (str) ID of blueprint
         Returns
         -------
-            int
+            (obj) json object
         """
-        commit_diff_path = f"/api/blueprints/{bp_id}/diff-status"
-        resp = self.rest.json_resp_get(commit_diff_path)
+        p_path = f"/api/blueprints/{bp_id}/probes"
+        return self.rest.json_resp_get(p_path)
 
-        return {
-            "version": int(resp["staging_version"]),
-            "status": resp["status"],
-            "deploy_error": resp["deploy_error"],
-        }
-
-    def commit_staging(self, bp_id: str, description=None):
+    def get_predefined_probes(self, bp_id: str):
         """
-        Commit all changes in staging to Blueprint.
-        Uses latest staging version number available on a Blueprint
+        Return all IBA predefined probes for a given blueprint
         Parameters
         ----------
         bp_id
             (str) ID of blueprint
-        description
-            (str) description to use during commit
+        Returns
+        -------
+            (obj) json object
+        """
+        p_path = f"/api/blueprints/{bp_id}/iba/predefined-probes"
+        return self.rest.json_resp_get(p_path)
+
+    def get_probe(self, bp_id: str, probe_id: str = None, probe_name: str = None):
+        """
+        Return IBA probe for a given blueprint by ID or name
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        probe_id
+            (str) ID of IBA probe
+        probe_name
+            (str) name of IBA probe
+        Returns
+        -------
+            (obj) json object
+        """
+        probes = self.get_all_probes(bp_id=bp_id)
+
+        if probes:
+            if probe_name:
+                for p in probes["items"]:
+                    if p["label"] == probe_name:
+                        return p
+                raise AosAPIError(f"IBA Probe {probe_name} not found")
+
+            if probe_id:
+                for p in probes["items"]:
+                    if p["id"] == probe_id:
+                        return p
+                raise AosAPIError(f"IBA Probe {probe_id} not found")
+
+    def get_deployed_devices(self, bp_id: str):
+        """
+        Return all AOS managed devices deployed in the given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
 
         Returns
         -------
-
+            (obj) - json object
         """
-        commit_path = f"/api/blueprints/{bp_id}/deploy"
+        devices = []
+        d_query = (
+            "match(node('system', role='leaf', name='system')"
+            ".having(node(name='system')"
+            ".out('part_of_redundancy_group')"
+            ".node('redundancy_group'),at_most=0,))"
+        )
+        mlag_query = (
+            "match(node('redundancy_group', name='system', rg_type='mlag'),)"
+        )
 
-        staging_version = self.get_staging_version(bp_id)
+        d_items = self.qe_query(bp_id, d_query)
+        if d_items:
+            for item in d_items:
+                i = item.get("system")
+                devices.append(
+                    Device(
+                        label=f'{i["hostname"]}-{i["role"]}' f'-{i["system_type"]}',
+                        system_id=i["id"],
+                    )
+                )
 
-        d = ""
-        if description:
-            d = description
+        m_items = self.qe_query(bp_id, mlag_query)
+        if m_items:
+            for item in m_items:
+                i = item.get("system")
+                devices.append(Device(label=i["label"], system_id=i["id"]))
+        return devices
 
-        payload = {
-            "version": int(staging_version["staging_version"]),
-            "description": d,
-        }
-        self.rest.json_resp_put(commit_path, data=payload)
+    # Security Zones
+    def get_security_zones_all(self, bp_id: str):
+        """
+        Return all security-zones in a given blueprint.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (obj) - json object
+        """
+        sz_path = f"/api/blueprints/{bp_id}/security-zones"
+
+        resp = self.rest.json_resp_get(uri=sz_path)
+        return resp["items"]
+
+    def get_security_zone(
+            self, bp_id: str, sz_id: str = None, sz_name: str = None
+    ):
+        """
+        Return security-zone in a given blueprint based on name or ID.
+
+        Parameters
+        ----------
+
+        bp_id
+            (str) - ID of AOS blueprint
+
+        sz_id
+            (str) - ID of security-zone (optional)
+
+        sz_name
+            (str) - Name or label of security-zone (optional)
+
+        Returns
+        -------
+            (obj) - json object
+        """
+
+        sec_zones = self.get_security_zones_all(bp_id)
+
+        if sec_zones:
+            if sz_name:
+                for sz, value in sec_zones.items():
+                    if value["label"] == sz_name:
+                        return value
+                raise AosAPIError(f"Security-zone {sz_name} not found")
+
+            if sz_id:
+                for sz, value in sec_zones.items():
+                    if value["id"] == sz_id:
+                        return value
+                raise AosAPIError(f"Security-zone {sz_name} not found")
+
+    def add_security_zone(self, bp_id: str, payload: str):
+        """
+        Create a security-zone in the given blueprint using a
+        preformatted json object.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        payload
+            (str) - json object for payload
+
+        Returns
+        -------
+            (obj) - security-zone ID
+        """
+        sz_path = f"/api/blueprints/{bp_id}/security-zones"
+
+        return self.rest.json_resp_post(uri=sz_path, data=payload)
+
+    def update_security_zone(self, bp_id: str, sz_id: str, payload: str):
+        """
+        Update a security-zone in the given blueprint using a
+        preformatted json object.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+        payload
+            (str) - json object for payload
+
+        Returns
+        -------
+            (obj) - security-zone ID
+        """
+        sz_path = f"/api/blueprints/{bp_id}/security-zones/{sz_id}"
+
+        return self.rest.json_resp_patch(uri=sz_path, data=payload)
+
+    def delete_security_zone(self, bp_id: str, sz_id: str):
+        """
+        Delete a given security-zone from a blueprint
+
+        Parameters
+        ----------
+
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - Id of security-zone
+
+        Returns
+        -------
+            (obj) {}
+        """
+        sz_path = f"/api/blueprints/{bp_id}/security-zones"
+
+        return self.rest.json_resp_delete(uri=sz_path)
+
+    # Virtual Networks
+    def get_virtual_networks_all(self, bp_id: str):
+        """
+        Return all virtual networks in a given blueprint.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (obj) - json object
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
+
+        resp = self.rest.json_resp_get(uri=vn_path)
+        return resp["virtual_networks"]
+
+    def get_virtual_network(
+        self, bp_id: str, vn_id: str = None, vn_name: str = None
+    ):
+        """
+        Return virtual network in a given blueprint based on name or ID.
+
+        Parameters
+        ----------
+
+        bp_id
+            (str) - ID of AOS blueprint
+
+        vn_id
+            (str) - ID of virtual network (optional)
+
+        vn_name
+            (str) - Name or label of virtual networks (optional)
+
+        Returns
+        -------
+            (obj) - json object
+        """
+
+        virt_networks = self.get_virtual_networks_all(bp_id)
+
+        if virt_networks:
+            if vn_name:
+                for vn, value in virt_networks.items():
+                    if value["label"] == vn_name:
+                        return value
+                raise AosAPIError(f"Virtual Network {vn_name} not found")
+
+            if vn_id:
+                for vn, value in virt_networks.items():
+                    if value["id"] == vn_id:
+                        return value
+                raise AosAPIError(f"Virtual Network {vn_name} not found")
+
+    def add_virtual_network(self, bp_id: str, payload: str):
+        """
+        Create a virtual network in the given blueprint using a
+        preformatted json object.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        payload
+            (str) - json object for payload
+
+        Returns
+        -------
+            (obj) - virtual network ID
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
+
+        return self.rest.json_resp_post(uri=vn_path, data=payload)
+
+    def add_virtual_network_batch(self, bp_id: str, payload: str):
+        """
+        Create multiple virtual networks in the given blueprint using a
+        preformatted json object.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        payload
+            (str) - json object for payload
+
+        Returns
+        -------
+            (obj) - virtual network IDs
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks-batch"
+
+        return self.rest.json_resp_post(uri=vn_path, data=payload)
+
+    def update_virtual_network(self, bp_id: str, vn_id: str, payload: str):
+        """
+        Update a virtual network in the given blueprint using a
+        preformatted json object.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        vn_id
+            (str) - ID of virtual network
+        payload
+            (str) - json object for payload
+
+        Returns
+        -------
+            (obj) - virtual network ID
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
+
+        return self.rest.json_resp_patch(uri=vn_path, data=payload)
+
+    def delete_virtual_network(self, bp_id: str, vn_id: str):
+        """
+        Delete a given virtual network from a blueprint
+
+        Parameters
+        ----------
+
+        bp_id
+            (str) - ID of AOS blueprint
+        vn_id
+            (str) - Id of virtual network
+
+        Returns
+        -------
+            (obj) {}
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
+
+        return self.rest.json_resp_delete(uri=vn_path)

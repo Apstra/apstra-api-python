@@ -162,6 +162,22 @@ class AosRestAPI:
         """
         return self.raw_request_json("PUT", uri, params, data, headers)
 
+    def json_resp_patch(self, uri: str, params=None, data=None, headers=None):
+        """
+        AOS rest API PATCH using json formatted payload.
+        Parameters
+        ----------
+        uri - (str) API endpoint ex: /api/blueprints
+        params - Optional rest api parameters
+        data - (json) Optional data payload
+        headers - Optional rest api headers
+
+        Returns
+        -------
+            (obj) - Rest Api Response object
+        """
+        return self.raw_request_json("PATCH", uri, params, data, headers)
+
     def json_resp_get(self, uri: str, params=None, data=None, headers=None):
         """
         AOS rest API GET using json formatted payload.

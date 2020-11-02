@@ -10,10 +10,10 @@ import pytest
 
 from aos.client import AosClient
 from aos.aos import AosRestAPI, AosAPIError
-from aos.blueprint import Blueprint
+from aos.blueprint import Blueprint, Device
 
 
-from tests.util import make_session, read_fixture
+from tests.util import make_session, read_fixture, deserialize_fixture
 
 
 @pytest.fixture(params=["3.3.0"])
@@ -210,6 +210,102 @@ def test_get_staging_version(
     aos_session.request.assert_called_once_with(
         "GET",
         f"http://aos:80/api/blueprints/{bp_id}/diff-status",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_deployed_devices(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = "evpn-cvx-virtual"
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/qe",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/get_deployed_devices_devices.json"
+        ),
+    )
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/qe",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/get_deployed_devices_MLAG.json"
+        ),
+    )
+
+    assert aos_logged_in.blueprint.get_deployed_devices(bp_id) == [
+        Device(
+            label="leaf3-leaf-switch",
+            system_id="84819c8a-a402-424e-94fd-90c459f046d9",
+        ),
+        Device(
+            label="evpn_mlag_001_leaf_pair1",
+            system_id="d120c55b-4f40-4b10-8376-021fe099d632",
+        ),
+    ]
+
+
+def test_get_security_zone(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
+    sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
+    bp_id = "evpn-cvx-virtual"
+    sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        status=200,
+        resp=read_fixture(all_fixture),
+    )
+
+    sz_dict = deserialize_fixture(sz_fixture)
+
+    assert (
+        aos_logged_in.blueprint.get_security_zone(bp_id=bp_id, sz_id=sz_id)
+        == sz_dict
+    )
+
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_virtual_network(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    all_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_networks.json"
+    vn_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_network_id.json"
+    bp_id = "evpn-cvx-virtual"
+    vn_id = "678f0440-0eef-4e9a-9f59-3b69a913aef2"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
+        status=200,
+        resp=read_fixture(all_fixture),
+    )
+
+    vn_dict = deserialize_fixture(vn_fixture)
+
+    assert (
+        aos_logged_in.blueprint.get_virtual_network(bp_id=bp_id, vn_id=vn_id)
+        == vn_dict
+    )
+
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
         params=None,
         json=None,
         headers=expected_auth_headers,
