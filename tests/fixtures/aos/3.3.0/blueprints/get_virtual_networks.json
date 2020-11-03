@@ -1,0 +1,300 @@
+{
+  "virtual_networks": {
+    "46d35a28-24cf-4c37-a3af-850daad73a0a": {
+      "route_target": "10000:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 100
+        },
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 100
+        }
+      ],
+      "description": "blue_vxlan_100_v4",
+      "virtual_gateway_ipv4": "192.168.100.1",
+      "vn_id": "10000",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "blue_vxlan_100_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.100.0/24",
+      "ipv6_enabled": false,
+      "id": "46d35a28-24cf-4c37-a3af-850daad73a0a",
+      "ipv4_enabled": true,
+      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "07104e04-3e1c-46a2-939f-b0731252791e": {
+      "route_target": "25002:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 122
+        }
+      ],
+      "description": "red_122_evpn_mlag_001_l_v4",
+      "virtual_gateway_ipv4": "192.168.122.1",
+      "vn_id": "25002",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "red_122_evpn_mlag_001_l_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.122.0/24",
+      "ipv6_enabled": false,
+      "id": "07104e04-3e1c-46a2-939f-b0731252791e",
+      "ipv4_enabled": true,
+      "security_zone_id": "6c9ae89a-f0e4-4063-bc76-cd85f7959a31",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "37fae700-7480-4292-acf4-83bed90340e3": {
+      "route_target": "62:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 62
+        }
+      ],
+      "description": "External L2 VN for VL 62 VRF red",
+      "virtual_gateway_ipv4": null,
+      "vn_id": "62",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "L2_62_red",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "external",
+      "rt_policy": null,
+      "ipv4_subnet": "10.60.62.0/24",
+      "ipv6_enabled": false,
+      "id": "37fae700-7480-4292-acf4-83bed90340e3",
+      "ipv4_enabled": true,
+      "security_zone_id": "6c9ae89a-f0e4-4063-bc76-cd85f7959a31",
+      "dhcp_service": "dhcpServiceDisabled"
+    },
+    "275d9581-d0f3-4674-ba4a-99756540f10c": {
+      "route_target": "25000:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 120
+        }
+      ],
+      "description": "blue_120_evpn_mlag_001_l_v4",
+      "virtual_gateway_ipv4": "192.168.120.1",
+      "vn_id": "25000",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "blue_120_evpn_mlag_001_l_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.120.0/24",
+      "ipv6_enabled": false,
+      "id": "275d9581-d0f3-4674-ba4a-99756540f10c",
+      "ipv4_enabled": true,
+      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "d39f5444-67b7-43e4-93c6-8d0472020af1": {
+      "route_target": "61:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 61
+        }
+      ],
+      "description": "External L2 VN for VL 61 VRF default",
+      "virtual_gateway_ipv4": null,
+      "vn_id": "61",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "L2_61_default",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "external",
+      "rt_policy": null,
+      "ipv4_subnet": "10.60.61.0/24",
+      "ipv6_enabled": false,
+      "id": "d39f5444-67b7-43e4-93c6-8d0472020af1",
+      "ipv4_enabled": true,
+      "security_zone_id": "b542ef64-effc-47c5-bab3-ad5158bddce4",
+      "dhcp_service": "dhcpServiceDisabled"
+    },
+    "3958451d-abe1-431d-a821-34dc640815da": {
+      "route_target": null,
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 30
+        }
+      ],
+      "description": "vlan_30_evpn_mlag_001_l_v4",
+      "virtual_gateway_ipv4": "192.168.30.1",
+      "vn_id": "30",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "vlan_30_evpn_mlag_001_l_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.30.0/24",
+      "ipv6_enabled": false,
+      "id": "3958451d-abe1-431d-a821-34dc640815da",
+      "ipv4_enabled": true,
+      "security_zone_id": "b542ef64-effc-47c5-bab3-ad5158bddce4",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "7e74e6af-ed9f-433b-96d4-593ed5ee2d87": {
+      "route_target": "60:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 60
+        }
+      ],
+      "description": "External L2 VN for VL 60 VRF blue",
+      "virtual_gateway_ipv4": null,
+      "vn_id": "60",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "L2_60_blue",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "external",
+      "rt_policy": null,
+      "ipv4_subnet": "10.60.60.0/24",
+      "ipv6_enabled": false,
+      "id": "7e74e6af-ed9f-433b-96d4-593ed5ee2d87",
+      "ipv4_enabled": true,
+      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "dhcp_service": "dhcpServiceDisabled"
+    },
+    "2ee777b1-b42a-4d5f-882b-c650e43ec474": {
+      "route_target": "25003:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 123
+        }
+      ],
+      "description": "red_123_leaf3_v4",
+      "virtual_gateway_ipv4": "192.168.123.1",
+      "vn_id": "25003",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "red_123_leaf3_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.123.0/24",
+      "ipv6_enabled": false,
+      "id": "2ee777b1-b42a-4d5f-882b-c650e43ec474",
+      "ipv4_enabled": true,
+      "security_zone_id": "6c9ae89a-f0e4-4063-bc76-cd85f7959a31",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "cebd72b9-3a19-4930-8629-3db34d0111ff": {
+      "route_target": "10001:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "d120c55b-4f40-4b10-8376-021fe099d632",
+          "vlan_id": 101
+        },
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 101
+        }
+      ],
+      "description": "red_vxlan_101_v4",
+      "virtual_gateway_ipv4": "192.168.101.1",
+      "vn_id": "10001",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "red_vxlan_101_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.101.0/24",
+      "ipv6_enabled": false,
+      "id": "cebd72b9-3a19-4930-8629-3db34d0111ff",
+      "ipv4_enabled": true,
+      "security_zone_id": "6c9ae89a-f0e4-4063-bc76-cd85f7959a31",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "678f0440-0eef-4e9a-9f59-3b69a913aef2": {
+      "route_target": "25001:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 121
+        }
+      ],
+      "description": "blue_121_leaf3_v4",
+      "virtual_gateway_ipv4": "192.168.121.1",
+      "vn_id": "25001",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "blue_121_leaf3_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.121.0/24",
+      "ipv6_enabled": false,
+      "id": "678f0440-0eef-4e9a-9f59-3b69a913aef2",
+      "ipv4_enabled": true,
+      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "724fa95f-3638-4851-b837-1826e7677d2a": {
+      "route_target": null,
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 31
+        }
+      ],
+      "description": "vlan_31_leaf3_v4",
+      "virtual_gateway_ipv4": null,
+      "vn_id": "31",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "vlan_31_leaf3_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.31.0/24",
+      "ipv6_enabled": false,
+      "id": "724fa95f-3638-4851-b837-1826e7677d2a",
+      "ipv4_enabled": true,
+      "security_zone_id": "b542ef64-effc-47c5-bab3-ad5158bddce4",
+      "dhcp_service": "dhcpServiceEnabled"
+    }
+  }
+}

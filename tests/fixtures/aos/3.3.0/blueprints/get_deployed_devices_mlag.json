@@ -1,0 +1,16 @@
+{
+  "count": 1,
+  "items": [
+    {
+      "system": {
+        "rg_type": "mlag",
+        "rg_id": 1,
+        "tags": null,
+        "property_set": null,
+        "type": "redundancy_group",
+        "id": "d120c55b-4f40-4b10-8376-021fe099d632",
+        "label": "evpn_mlag_001_leaf_pair1"
+      }
+    }
+  ]
+}

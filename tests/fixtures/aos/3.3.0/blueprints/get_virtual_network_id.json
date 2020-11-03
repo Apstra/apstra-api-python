@@ -1,0 +1,26 @@
+{
+      "route_target": "25001:1",
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
+          "vlan_id": 121
+        }
+      ],
+      "description": "blue_121_leaf3_v4",
+      "virtual_gateway_ipv4": "192.168.121.1",
+      "vn_id": "25001",
+      "virtual_gateway_ipv6": null,
+      "virtual_mac": null,
+      "label": "blue_121_leaf3_v4",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "192.168.121.0/24",
+      "ipv6_enabled": false,
+      "id": "678f0440-0eef-4e9a-9f59-3b69a913aef2",
+      "ipv4_enabled": true,
+      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "dhcp_service": "dhcpServiceEnabled"
+}
