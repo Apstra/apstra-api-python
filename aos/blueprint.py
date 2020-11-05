@@ -135,9 +135,11 @@ class AosBlueprint(AosSubsystem):
         commit_diff_path = f"/api/blueprints/{bp_id}/diff-status"
         resp = self.rest.json_resp_get(commit_diff_path)
 
-        return StagingVersion(version=int(resp["staging_version"]),
-                              status=resp["status"],
-                              deploy_error=resp["deploy_error"])
+        return StagingVersion(
+            version=int(resp["staging_version"]),
+            status=resp["status"],
+            deploy_error=resp["deploy_error"],
+        )
 
     def commit_staging(self, bp_id: str, description=None):
         """
@@ -377,9 +379,7 @@ class AosBlueprint(AosSubsystem):
         resp = self.rest.json_resp_get(uri=sz_path)
         return resp["items"]
 
-    def get_security_zone(
-            self, bp_id: str, sz_id: str = None, sz_name: str = None
-    ):
+    def get_security_zone(self, bp_id: str, sz_id: str = None, sz_name: str = None):
         """
         Return security-zone in a given blueprint based on name or ID.
 
@@ -494,10 +494,8 @@ class AosBlueprint(AosSubsystem):
         -------
 
         """
-        data = json.dumps({
-            "pool_ids": [str(pool_id)]
-        })
-        p_path = f'/api/blueprints/{bp_id}/resource_groups/ip/sz:{sz_id},leaf_loopback_ips'
+        data = json.dumps({"pool_ids": [str(pool_id)]})
+        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/sz:{sz_id},leaf_loopback_ips"
 
         return self.rest.json_resp_put(uri=p_path, data=data)
 
