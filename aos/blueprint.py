@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 Blueprint = namedtuple("Blueprint", ["label", "id"])
 Device = namedtuple("Device", ["label", "system_id"])
+StagingVersion = namedtuple("Staging", ["version", "status", "deploy_error"])
 
 
 class AosBlueprint(AosSubsystem):
@@ -134,11 +135,9 @@ class AosBlueprint(AosSubsystem):
         commit_diff_path = f"/api/blueprints/{bp_id}/diff-status"
         resp = self.rest.json_resp_get(commit_diff_path)
 
-        return {
-            "version": int(resp["staging_version"]),
-            "status": resp["status"],
-            "deploy_error": resp["deploy_error"],
-        }
+        return StagingVersion(version=int(resp["staging_version"]),
+                              status=resp["status"],
+                              deploy_error=resp["deploy_error"])
 
     def commit_staging(self, bp_id: str, description=None):
         """
@@ -164,10 +163,10 @@ class AosBlueprint(AosSubsystem):
             d = description
 
         payload = {
-            "version": int(staging_version["staging_version"]),
+            "version": int(staging_version.version),
             "description": d,
         }
-        self.rest.json_resp_put(commit_path, data=payload)
+        return self.rest.json_resp_put(commit_path, data=payload)
 
     # Graph Queries
     def qe_query(self, bp_id: str, query: str):
