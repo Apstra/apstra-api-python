@@ -186,7 +186,7 @@ def test_get_bp_by_id_invalid(
         aos_logged_in.blueprint.get_bp(bp_id=bp_id)
 
 
-def test_get_staging_version(
+def test_commit_staging(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
 
@@ -200,18 +200,20 @@ def test_get_staging_version(
             f"aos/{aos_api_version}/blueprints/bp_staging_version.json"
         ),
     )
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/deploy",
+        status=202,
+        resp=json.dumps(""),
+    )
 
-    assert aos_logged_in.blueprint.get_staging_version(bp_id) == {
-        "version": 3,
-        "status": "undeployed",
-        "deploy_error": None,
-    }
+    assert aos_logged_in.blueprint.commit_staging(bp_id, "test_test") == ""
 
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/blueprints/{bp_id}/diff-status",
+    aos_session.request.assert_called_with(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/deploy",
         params=None,
-        json=None,
+        json={"version": 3, "description": "test_test"},
         headers=expected_auth_headers,
     )
 
