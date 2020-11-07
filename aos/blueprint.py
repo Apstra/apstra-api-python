@@ -549,7 +549,8 @@ class AosBlueprint(AosSubsystem):
 
         """
         data = json.dumps({"pool_ids": [str(pool_id)]})
-        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/sz:{sz_id},leaf_loopback_ips"
+        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/" \
+                 f"sz:{sz_id},leaf_loopback_ips"
 
         return self.rest.json_resp_put(uri=p_path, data=data)
 
