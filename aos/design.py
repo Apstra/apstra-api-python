@@ -494,8 +494,8 @@ class AosPropertySets(AosSubsystem):
         -------
             (obj) json response
         """
-        t_path = "/api/property-sets"
-        return self.rest.json_resp_get(t_path)
+        ps_path = "/api/property-sets"
+        return self.rest.json_resp_get(ps_path)
 
     def get_property_set(self, ps_id: str = None, ps_name: str = None):
         """

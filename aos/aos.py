@@ -22,6 +22,10 @@ class AosAuthenticationError(AosAPIError):
     pass
 
 
+class AosInputError(AosAPIError):
+    pass
+
+
 def err_message(resp: requests.Response) -> str:
     try:
         return resp.json().get("errors", "Unknown error")

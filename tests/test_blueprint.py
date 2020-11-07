@@ -9,7 +9,7 @@ import json
 import pytest
 
 from aos.client import AosClient
-from aos.aos import AosRestAPI, AosAPIError
+from aos.aos import AosRestAPI, AosAPIError, AosInputError
 from aos.blueprint import Blueprint, Device
 
 
@@ -310,5 +310,222 @@ def test_get_virtual_network(
         f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
         params=None,
         json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_apply_configlet(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    conf_id = "test-conf-id"
+    conf_fixture = f"aos/{aos_api_version}/design/get_configlet_id.json"
+    conf_role = ["spine", "leaf"]
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/design/configlets/{conf_id}",
+        status=200,
+        resp=read_fixture(conf_fixture),
+    )
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/configlets",
+        status=202,
+        resp=json.dumps({"id": conf_id}),
+    )
+
+    resp_payload = {"id": conf_id}
+
+    assert (
+        aos_logged_in.blueprint.apply_configlet(
+            bp_id=bp_id, configlet_id=conf_id, role=conf_role
+        )
+        == resp_payload
+    )
+
+    conf_dict = deserialize_fixture(conf_fixture)
+
+    json_body = {
+        "configlet": conf_dict,
+        "label": conf_dict["display_name"],
+        "condition": f"role in {conf_role}",
+    }
+
+    aos_session.request.assert_called_with(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/configlets",
+        params=None,
+        json=json_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_apply_configlet_invalid_roles(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    conf_id = "test-conf-id"
+    conf_fixture = f"aos/{aos_api_version}/design/get_configlet_id.json"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/design/configlets/{conf_id}",
+        status=200,
+        resp=read_fixture(conf_fixture),
+    )
+
+    with pytest.raises(AosInputError):
+        aos_logged_in.blueprint.apply_configlet(bp_id=bp_id, configlet_id=conf_id)
+
+    aos_session.request.assert_called_with(
+        "GET",
+        f"http://aos:80/api/design/configlets/{conf_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_apply_configlet_combined_conditions(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    conf_id = "test-conf-id"
+    conf_fixture = f"aos/{aos_api_version}/design/get_configlet_id.json"
+    conf_role = ["spine", "leaf"]
+    conf_ids = ["foo", "bar", "monkey"]
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/design/configlets/{conf_id}",
+        status=200,
+        resp=read_fixture(conf_fixture),
+    )
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/configlets",
+        status=202,
+        resp=json.dumps({"id": conf_id}),
+    )
+
+    resp_payload = {"id": conf_id}
+
+    assert (
+        aos_logged_in.blueprint.apply_configlet(
+            bp_id=bp_id, configlet_id=conf_id, role=conf_role, system_id=conf_ids
+        )
+        == resp_payload
+    )
+
+    conf_dict = deserialize_fixture(conf_fixture)
+
+    json_body = {
+        "configlet": conf_dict,
+        "label": conf_dict["display_name"],
+        "condition": f"role in {conf_role} and id in {conf_ids}",
+    }
+
+    aos_session.request.assert_called_with(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/configlets",
+        params=None,
+        json=json_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_apply_property_set(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    ps_id = "test-ps-id"
+    ps_fixture = f"aos/{aos_api_version}/design/get_property_set_id.json"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/property-sets/{ps_id}",
+        status=200,
+        resp=read_fixture(ps_fixture),
+    )
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/property-sets",
+        status=202,
+        resp=json.dumps({"id": ps_id}),
+    )
+
+    resp_payload = {"id": ps_id}
+
+    assert (
+        aos_logged_in.blueprint.apply_property_set(bp_id=bp_id, ps_id=ps_id)
+        == resp_payload
+    )
+
+    ps_dict = deserialize_fixture(ps_fixture)
+
+    ps_keys = []
+    for k in ps_dict["values"]:
+        ps_keys.append(k)
+
+    json_body = {"keys": ps_keys, "id": ps_dict["id"]}
+
+    aos_session.request.assert_called_with(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/property-sets",
+        params=None,
+        json=json_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_apply_property_set_keys(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    ps_id = "test-ps-id"
+    ps_fixture = f"aos/{aos_api_version}/design/get_property_set_id.json"
+    ps_keys = ["ntp_server"]
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/property-sets/{ps_id}",
+        status=200,
+        resp=read_fixture(ps_fixture),
+    )
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/property-sets",
+        status=202,
+        resp=json.dumps({"id": ps_id}),
+    )
+
+    resp_payload = {"id": ps_id}
+
+    assert (
+        aos_logged_in.blueprint.apply_property_set(
+            bp_id=bp_id, ps_id=ps_id, ps_keys=ps_keys
+        )
+        == resp_payload
+    )
+
+    ps_dict = deserialize_fixture(ps_fixture)
+
+    json_body = {"keys": ps_keys, "id": ps_dict["id"]}
+
+    aos_session.request.assert_called_with(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/property-sets",
+        params=None,
+        json=json_body,
         headers=expected_auth_headers,
     )
