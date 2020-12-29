@@ -6,7 +6,8 @@ import json
 import logging
 from collections import namedtuple
 from typing import Optional
-from .aos import AosSubsystem, AosAPIError
+from .aos import AosSubsystem, AosAPIError, AosInputError
+from .design import AosConfiglets, AosPropertySets
 
 
 logger = logging.getLogger(__name__)
@@ -209,22 +210,57 @@ class AosBlueprint(AosSubsystem):
 
         return resp["items"]
 
-    def apply_configlet(self, bp_id: str, configlet: dict):
+    def apply_configlet(
+        self,
+        bp_id: str,
+        configlet_id: str,
+        role: list = None,
+        system_id: list = None,
+    ):
         """
         Import and apply existing configlet to AOS Blueprint
+        One of 'role' or 'system_id' is required. If role
+        and system_id is provided both (AND) will be applied
         Parameters
         ----------
         bp_id
             (str) ID of blueprint
-        configlet
-            (Str) ID of AOS configlet to use
+        configlet_id
+            (str) ID of AOS configlet to use
+        role
+            (list) roles: ["spin", "leaf", "access"] (optional)
+
+        system_id
+            (list) blueprint system IDs (optional)
 
         Returns
         -------
 
         """
         c_path = f"/api/blueprints/{bp_id}/configlets"
-        self.rest.json_resp_post(uri=c_path, data=configlet)
+        aos_configlets = AosConfiglets(self.rest)
+        configlet = aos_configlets.get_configlet(conf_id=configlet_id)
+        role_in = f"role in {role}"
+        id_in = f"id in {system_id}"
+
+        if role and system_id:
+            condition = f"{role_in} and {id_in}"
+        elif role:
+            condition = role_in
+        elif system_id:
+            condition = id_in
+        else:
+            raise AosInputError(
+                "Expected one or both conditions ['role', 'system_id']"
+            )
+
+        data = {
+            "configlet": configlet,
+            "label": configlet["display_name"],
+            "condition": condition,
+        }
+
+        return self.rest.json_resp_post(uri=c_path, data=data)
 
     def get_property_set(self, bp_id: str):
         """
@@ -242,22 +278,40 @@ class AosBlueprint(AosSubsystem):
 
         return resp["items"]
 
-    def apply_property_set(self, bp_id: str, property_set: dict):
+    def apply_property_set(self, bp_id: str, ps_id: str, ps_keys: list = None):
         """
         Import and apply existing property-set to AOS Blueprint
         Parameters
         ----------
         bp_id
             (str) ID of blueprint
-        property_set
-            (Str) ID of AOS property-set to use
+        ps_id
+            (str) ID of AOS configlet to use
+        ps_keys
+            (list) configured keys to apply to blueprint. If None provided all
+            keys configured will be applied
 
         Returns
         -------
 
         """
         ps_path = f"/api/blueprints/{bp_id}/property-sets"
-        self.rest.json_resp_post(uri=ps_path, data=property_set)
+        aos_prop_set = AosPropertySets(self.rest)
+        prop_set = aos_prop_set.get_property_set(ps_id=ps_id)
+
+        prop_set_keys = []
+        if ps_keys:
+            prop_set_keys = ps_keys
+        else:
+            for k in prop_set["values"]:
+                prop_set_keys.append(k)
+
+        data = {
+            "id": prop_set["id"],
+            "keys": prop_set_keys,
+        }
+
+        return self.rest.json_resp_post(uri=ps_path, data=data)
 
     # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):
@@ -495,7 +549,8 @@ class AosBlueprint(AosSubsystem):
 
         """
         data = json.dumps({"pool_ids": [str(pool_id)]})
-        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/sz:{sz_id},leaf_loopback_ips"
+        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/" \
+                 f"sz:{sz_id},leaf_loopback_ips"
 
         return self.rest.json_resp_put(uri=p_path, data=data)
 
