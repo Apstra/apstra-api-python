@@ -236,7 +236,7 @@ def test_get_deployed_devices(
         f"http://aos:80/api/blueprints/{bp_id}/qe",
         status=200,
         resp=read_fixture(
-            f"aos/{aos_api_version}/blueprints/get_deployed_devices_MLAG.json"
+            f"aos/{aos_api_version}/blueprints/get_deployed_devices_mlag.json"
         ),
     )
 
