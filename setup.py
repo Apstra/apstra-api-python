@@ -1,3 +1,4 @@
+#!python3
 # Copyright 2019-present, Apstra, Inc. All rights reserved.
 #
 # This source code is licensed under End User License Agreement found in the
@@ -25,7 +26,7 @@ setup(
     author_email="support@apstra.com",
     packages=find_packages(include=['aos']),
     include_package_data=True,
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     install_requires=REQUIRES,
     license="Proprietary",
     keywords="aos apstra",
