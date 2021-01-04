@@ -36,7 +36,8 @@ class AosExternalRouters(AosSubsystem):
             (obj) json response
         """
         er_path = "/api/resources/external-routers"
-        return self.rest.json_resp_get(er_path)
+        resp = self.rest.json_resp_get(er_path)
+        return resp["items"]
 
     def get_external_router(self, ex_id: str = None, ex_name: str = None):
         """

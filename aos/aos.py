@@ -209,10 +209,9 @@ class AosRestAPI:
         -------
             (obj) - Rest Api Response object
         """
-        return self.raw_request_json("DELETE", uri,
-                                     params=None,
-                                     data=None,
-                                     headers=None)
+        return self.raw_request_json(
+            "DELETE", uri, params=None, data=None, headers=None
+        )
 
     def get_aos_version(self):
         """

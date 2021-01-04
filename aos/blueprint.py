@@ -7,7 +7,7 @@ import logging
 from collections import namedtuple
 from typing import Optional
 from .aos import AosSubsystem, AosAPIError, AosInputError
-from .design import AosConfiglets, AosPropertySets
+from .design import AosConfiglets, AosPropertySets, AosTemplates
 
 
 logger = logging.getLogger(__name__)
@@ -88,6 +88,39 @@ class AosBlueprint(AosSubsystem):
                 raise AosAPIError(f"Blueprint {bp_name} not found")
 
         return self.rest.json_resp_get(f"/api/blueprints/{bp_id}")
+
+    def add_blueprint(self, label, template_id=None, template_name=None):
+        """
+        Creates new blueprint based on template. Template ID or Name required
+        Parameters
+        ----------
+        label
+            (str) Name of Blueprint
+        template_id
+            (str) Template ID to build blueprint from (optional)
+        template_name
+            (str) Template name to build blueprint from (optional)
+
+        Returns
+        -------
+            (obj) json object
+        """
+
+        bp_path = "/api/blueprints/"
+
+        if template_name:
+            aos_temps = AosTemplates(self.rest)
+            template = aos_temps.get_template(temp_name=template_name)
+            template_id = template.get("id")
+
+        data = {
+            "design": "two_stage_l3clos",
+            "init_type": "template_reference",
+            "label": label,
+            "template_id": template_id,
+        }
+
+        return self.rest.json_resp_post(uri=bp_path, data=data)
 
     def delete_blueprint(self, bp_id: str):
         """
@@ -549,8 +582,10 @@ class AosBlueprint(AosSubsystem):
 
         """
         data = json.dumps({"pool_ids": [str(pool_id)]})
-        p_path = f"/api/blueprints/{bp_id}/resource_groups/ip/" \
-                 f"sz:{sz_id},leaf_loopback_ips"
+        p_path = (
+            f"/api/blueprints/{bp_id}/resource_groups/ip/"
+            f"sz:{sz_id},leaf_loopback_ips"
+        )
 
         return self.rest.json_resp_put(uri=p_path, data=data)
 

@@ -73,8 +73,8 @@ def make_session():
                 r
                 for r in responses
                 if not (
-                    r.status_code == status and
-                    (resp == RESP_IGNORED or r.data == resp)
+                    r.status_code == status
+                    and (resp == RESP_IGNORED or r.data == resp)
                 )
             ]
             m.response_store[k] = new_responses

@@ -69,7 +69,7 @@ def test_logical_devices_get_all(
 
     ld_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.design.logical_devices.get_all() == ld_dict
+    assert aos_logged_in.design.logical_devices.get_all() == ld_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -200,7 +200,7 @@ def test_rack_types_get_all(
 
     rt_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.design.rack_types.get_all() == rt_dict
+    assert aos_logged_in.design.rack_types.get_all() == rt_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -326,7 +326,7 @@ def test_templates_get_all(
 
     temp_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.design.templates.get_all() == temp_dict
+    assert aos_logged_in.design.templates.get_all() == temp_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -452,7 +452,7 @@ def test_configlets_get_all(
 
     conf_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.design.configlets.get_all() == conf_dict
+    assert aos_logged_in.design.configlets.get_all() == conf_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -580,7 +580,7 @@ def test_property_sets_get_all(
 
     ps_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.design.property_sets.get_all() == ps_dict
+    assert aos_logged_in.design.property_sets.get_all() == ps_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",

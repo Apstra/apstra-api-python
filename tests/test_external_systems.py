@@ -67,9 +67,9 @@ def test_ext_rtr_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    extr_dict = deserialize_fixture(fixture_path)
+    extr = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.external_systems.external_router.get_all() == extr_dict
+    assert aos_logged_in.external_systems.external_router.get_all() == extr["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
