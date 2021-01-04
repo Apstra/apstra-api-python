@@ -15,7 +15,7 @@ NAME = "aos-api-client"
 VERSION = 0.1
 
 
-REQUIRES = ["requests==2.24.0"],
+REQUIRES = (["requests==2.24.0"],)
 
 setup(
     name=NAME,
@@ -24,7 +24,7 @@ setup(
     url="https://github.com/Apstra/aos-api-python",
     author="Apstra Inc",
     author_email="support@apstra.com",
-    packages=find_packages(include=['aos']),
+    packages=find_packages(include=["aos"]),
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=REQUIRES,

@@ -45,7 +45,8 @@ class AosLogicalDevices(AosSubsystem):
             (obj) json response
         """
         ld_path = "/api/design/logical-devices"
-        return self.rest.json_resp_get(ld_path)
+        resp = self.rest.json_resp_get(ld_path)
+        return resp["items"]
 
     def get_logical_device(self, ld_id: str = None, ld_name: str = None):
         """
@@ -135,7 +136,8 @@ class AosInterfaceMaps(AosSubsystem):
             (obj) json response
         """
         im_path = "/api/design/interface-maps"
-        return self.rest.json_resp_get(im_path)
+        resp = self.rest.json_resp_get(im_path)
+        return resp["items"]
 
     def get_interface_map(self, im_id: str = None, im_name: str = None):
         """
@@ -225,7 +227,8 @@ class AosRackTypes(AosSubsystem):
             (obj) json response
         """
         r_path = "/api/design/rack-types"
-        return self.rest.json_resp_get(r_path)
+        resp = self.rest.json_resp_get(r_path)
+        return resp["items"]
 
     def get_rack_type(self, rt_id: str = None, rt_name: str = None):
         """
@@ -315,7 +318,8 @@ class AosTemplates(AosSubsystem):
             (obj) json response
         """
         t_path = "/api/design/templates"
-        return self.rest.json_resp_get(t_path)
+        resp = self.rest.json_resp_get(t_path)
+        return resp["items"]
 
     def get_template(self, temp_id: str = None, temp_name: str = None):
         """
@@ -405,7 +409,8 @@ class AosConfiglets(AosSubsystem):
             (obj) json response
         """
         t_path = "/api/design/configlets"
-        return self.rest.json_resp_get(t_path)
+        resp = self.rest.json_resp_get(t_path)
+        return resp["items"]
 
     def get_configlet(self, conf_id: str = None, conf_name: str = None):
         """
@@ -495,7 +500,8 @@ class AosPropertySets(AosSubsystem):
             (obj) json response
         """
         ps_path = "/api/property-sets"
-        return self.rest.json_resp_get(ps_path)
+        resp = self.rest.json_resp_get(ps_path)
+        return resp["items"]
 
     def get_property_set(self, ps_id: str = None, ps_name: str = None):
         """

@@ -69,7 +69,7 @@ def test_asn_get_all(
 
     asn_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.asn_pools.get_all() == asn_dict
+    assert aos_logged_in.resources.asn_pools.get_all() == asn_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -197,9 +197,9 @@ def test_vni_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    vni_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.vni_pools.get_all() == asn_dict
+    assert aos_logged_in.resources.vni_pools.get_all() == vni_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -223,9 +223,9 @@ def test_vni_get_pool(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    vni_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.vni_pools.get_pool(pool_id=pool_id) == asn_dict
+    assert aos_logged_in.resources.vni_pools.get_pool(pool_id=pool_id) == vni_dict
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -327,9 +327,9 @@ def test_ipv4_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    ipv4_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.ipv4_pools.get_all() == asn_dict
+    assert aos_logged_in.resources.ipv4_pools.get_all() == ipv4_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -353,9 +353,9 @@ def test_ipv4_get_pool(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    ipv4_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.ipv4_pools.get_pool(pool_id=pool_id) == asn_dict
+    assert aos_logged_in.resources.ipv4_pools.get_pool(pool_id=pool_id) == ipv4_dict
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -457,9 +457,9 @@ def test_ipv6_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    ipv6_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.ipv6_pools.get_all() == asn_dict
+    assert aos_logged_in.resources.ipv6_pools.get_all() == ipv6_dict["items"]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -483,9 +483,9 @@ def test_ipv6_get_pool(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
+    ipv6_dict = deserialize_fixture(fixture_path)
 
-    assert aos_logged_in.resources.ipv6_pools.get_pool(pool_id=pool_id) == asn_dict
+    assert aos_logged_in.resources.ipv6_pools.get_pool(pool_id=pool_id) == ipv6_dict
 
     aos_session.request.assert_called_once_with(
         "GET",

@@ -40,7 +40,8 @@ class AosAsnPools(AosSubsystem):
             (obj) json response
         """
         a_path = "/api/resources/asn-pools"
-        return self.rest.json_resp_get(a_path)
+        resp = self.rest.json_resp_get(a_path)
+        return resp["items"]
 
     def get_pool(self, pool_id: str = None, pool_name: str = None):
         """
@@ -131,7 +132,8 @@ class AosVniPools(AosSubsystem):
             (obj) json response
         """
         v_path = "/api/resources/vni-pools"
-        return self.rest.json_resp_get(v_path)
+        resp = self.rest.json_resp_get(v_path)
+        return resp["items"]
 
     def get_pool(self, pool_id: str = None, pool_name: str = None):
         """
@@ -222,7 +224,8 @@ class AosIpv4Pools(AosSubsystem):
             (obj) json response
         """
         ip_path = "/api/resources/ip-pools"
-        return self.rest.json_resp_get(ip_path)
+        resp = self.rest.json_resp_get(ip_path)
+        return resp["items"]
 
     def get_pool(self, pool_id: str = None, pool_name: str = None):
         """
@@ -313,7 +316,8 @@ class AosIpv6Pools(AosSubsystem):
             (obj) json response
         """
         ip_path = "/api/resources/ipv6-pools"
-        return self.rest.json_resp_get(ip_path)
+        resp = self.rest.json_resp_get(ip_path)
+        return resp["items"]
 
     def get_pool(self, pool_id: str = None, pool_name: str = None):
         """

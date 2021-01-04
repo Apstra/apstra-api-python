@@ -186,6 +186,137 @@ def test_get_bp_by_id_invalid(
         aos_logged_in.blueprint.get_bp(bp_id=bp_id)
 
 
+def test_add_bp_by_temp_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    template_name = "lab_evpn_mlag"
+    bp_body = {
+        "design": "two_stage_l3clos",
+        "init_type": "template_reference",
+        "label": "test-bp",
+        "template_id": template_name,
+    }
+    bp_resp = {"id": "test-bp", "task_id": "test-bp"}
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/design/templates",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/design/get_templates.json"),
+    )
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        status=201,
+        resp=json.dumps(bp_resp),
+    )
+
+    resp = aos_logged_in.blueprint.add_blueprint(
+        label="test-bp", template_name=template_name
+    )
+    assert resp == bp_resp
+
+    aos_session.request.assert_called_with(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        params=None,
+        json=bp_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_add_bp_by_temp_name_invalid(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    template_name = "test-name-bad"
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/design/templates",
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/design/get_templates.json"),
+    )
+
+    with pytest.raises(AosAPIError):
+        aos_logged_in.blueprint.add_blueprint(
+            label="test-bp", template_name=template_name
+        )
+
+    aos_session.request.assert_called_with(
+        "GET",
+        "http://aos:80/api/design/templates",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_add_bp_by_temp_id(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    template_id = "lab_evpn_mlag"
+    bp_body = {
+        "design": "two_stage_l3clos",
+        "init_type": "template_reference",
+        "label": "test-bp",
+        "template_id": template_id,
+    }
+    bp_resp = {"id": "test-bp", "task_id": "test-bp"}
+
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        status=201,
+        resp=json.dumps(bp_resp),
+    )
+
+    resp = aos_logged_in.blueprint.add_blueprint(
+        label="test-bp", template_id=template_id
+    )
+    assert resp == bp_resp
+
+    aos_session.request.assert_called_with(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        params=None,
+        json=bp_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_add_bp_by_temp_id_invalid(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    template_id = "1111-bad-id"
+    bp_body = {
+        "design": "two_stage_l3clos",
+        "init_type": "template_reference",
+        "label": "test-bp",
+        "template_id": template_id,
+    }
+    bp_resp = {"errors": {"template_id": "Design template not found: template_id"}}
+
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        status=422,
+        resp=json.dumps(bp_resp),
+    )
+
+    with pytest.raises(AosAPIError):
+        aos_logged_in.blueprint.add_blueprint(
+            label="test-bp", template_id=template_id
+        )
+
+    aos_session.request.assert_called_with(
+        "POST",
+        "http://aos:80/api/blueprints/",
+        params=None,
+        json=bp_body,
+        headers=expected_auth_headers,
+    )
+
+
 def test_commit_staging(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):

@@ -245,7 +245,7 @@ class AosDeviceProfiles(AosSubsystem):
         while i < len(dp_list):
             resp = self.rest.json_resp_post(uri=p_path, data=dp_list[i])
             if resp:
-                ids.append(resp['id'])
+                ids.append(resp["id"])
             i += 1
             if i % 30 == 0:
                 time.sleep(3)
