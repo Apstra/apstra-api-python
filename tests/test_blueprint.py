@@ -317,6 +317,45 @@ def test_add_bp_by_temp_id_invalid(
     )
 
 
+# TODO (Ryan): Parameterize all resource_type and group_name options
+def test_assign_asn_pool_to_bp(
+        aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = "evpn-cvx-virtual"
+    resource_type = 'asn'
+    group_name = 'spine_asns'
+    asn_pool_id = "evpn-asn"
+
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+        f"{resource_type}/{group_name}",
+        status=202,
+        resp=json.dumps(""),
+    )
+
+    assert (
+            aos_logged_in.blueprint.apply_resource_groups(
+                bp_id=bp_id, resource_type=resource_type,
+                group_name=group_name, pool_ids=[asn_pool_id]
+            )
+            == ""
+    )
+
+    rg_body = {
+        "pool_ids": [asn_pool_id],
+    }
+
+    aos_session.request.assert_called_once_with(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+        f"{resource_type}/{group_name}",
+        params=None,
+        json=rg_body,
+        headers=expected_auth_headers,
+    )
+
+
 def test_commit_staging(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):

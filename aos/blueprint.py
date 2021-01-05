@@ -226,6 +226,46 @@ class AosBlueprint(AosSubsystem):
 
         return resp["items"]
 
+    # Resources
+    def apply_resource_groups(self, bp_id: str,
+                              resource_type: str,
+                              group_name: str,
+                              pool_ids: list):
+        """
+        Assign existing pools to a given resource group in an AOS Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        resource_type
+            (str) type of resource pool used
+            (ex: asn, vni, ip, etc)
+        group_name
+            (str) group to apply pool to
+            (options:
+                (asn): spine_asns, leaf_asns, spine_spine_asns,
+                (vni): evpn_l3_vni, vxlan_vn_ids
+                (ip): spine_loopback_ips, leaf_loopback_ips,
+                spine_superspine_link_ips,
+                spine_leaf_link_ips, to_external_router_link_ips,
+                mlag_domain_svi_subnets, vtep_ips,
+                virtual_network_svi_subnets)
+        pool_ids
+            (list) IDs of resource pools to apply
+
+        Returns
+        -------
+
+        """
+        rg_path = f"/api/blueprints/{bp_id}/resource_groups/" \
+                  f"{resource_type}/{group_name}"
+
+        data = {
+            "pool_ids": pool_ids,
+        }
+
+        return self.rest.json_resp_put(uri=rg_path, data=data)
+
     # configlets, property-sets
     def get_configlets(self, bp_id: str):
         """
