@@ -7,6 +7,7 @@
 import json
 
 import pytest
+from unittest import mock
 
 from aos.client import AosClient
 from aos.aos import AosAPIError, AosRestAPI
@@ -15,7 +16,7 @@ from aos.devices import Anomaly, SystemAgent, DevicePackage, DeviceOSImage
 from tests.util import make_session, read_fixture
 
 
-@pytest.fixture(params=["3.2.1"])
+@pytest.fixture(params=["3.3.0"])
 def aos_api_version(request):
     return request.param
 
@@ -122,30 +123,35 @@ def test_system_agent_get_all(
             fqdn="leaf2",
             operation_mode="full_control",
             vendor="Cumulus",
+            user_config=mock.ANY,
         ),
         SystemAgent(
             id="5254008E9D94",
             fqdn="leaf1",
             operation_mode="full_control",
             vendor="Cumulus",
+            user_config=mock.ANY,
         ),
         SystemAgent(
             id="5254005162A2",
             fqdn="spine2",
             operation_mode="full_control",
             vendor="Cumulus",
+            user_config=mock.ANY,
         ),
         SystemAgent(
             id="505400B45628",
             fqdn="leaf3",
             operation_mode="full_control",
             vendor="Arista",
+            user_config=mock.ANY,
         ),
         SystemAgent(
             id="52540006FE33",
             fqdn="spine1",
             operation_mode="full_control",
             vendor="Cumulus",
+            user_config=mock.ANY,
         ),
     ]
     aos_session.request.assert_called_once_with(
