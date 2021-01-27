@@ -520,7 +520,6 @@ class AosBlueprint(AosSubsystem):
         print(node_assignment)
         return self.assign_devices_from_json(bp_id, node_assignment)
 
-
     # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):
         """
