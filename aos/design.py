@@ -272,8 +272,8 @@ class AosRackTypes(AosSubsystem):
         p_path = "/api/design/rack-types"
 
         ids = []
-        for im in rt_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=im)
+        for rt in rt_list:
+            item_id = self.rest.json_resp_post(uri=p_path, data=rt)
             if item_id:
                 ids.append(item_id)
 

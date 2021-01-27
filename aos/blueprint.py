@@ -8,6 +8,7 @@ from collections import namedtuple
 from typing import Optional
 from .aos import AosSubsystem, AosAPIError, AosInputError
 from .design import AosConfiglets, AosPropertySets, AosTemplates
+from .devices import AosDevices
 
 
 logger = logging.getLogger(__name__)
@@ -226,6 +227,27 @@ class AosBlueprint(AosSubsystem):
 
         return resp["items"]
 
+    def ql_query(self, bp_id: str, query: str):
+        """
+        QL query aginst a Blueprint graphDB
+
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint (optional)
+        query
+            (str) qe query string
+
+        Returns
+        -------
+            (obj) - json object
+        """
+        ql_path = f"/api/blueprints/{bp_id}/ql"
+        data = {"query": query}
+        resp = self.rest.json_resp_post(uri=ql_path, data=data)
+
+        return resp["items"]
+
     # Resources
     def apply_resource_groups(self, bp_id: str,
                               resource_type: str,
@@ -385,6 +407,119 @@ class AosBlueprint(AosSubsystem):
         }
 
         return self.rest.json_resp_post(uri=ps_path, data=data)
+
+    # Devices
+    def get_bp_nodes(self, bp_id: str, node_type: str = None):
+        if node_type:
+            n_path = f"/api/blueprints/{bp_id}/nodes?node_type={node_type}"
+        else:
+            n_path = f"/api/blueprints/{bp_id}/nodes"
+
+        return self.rest.json_resp_get(n_path)["nodes"]
+
+    def get_bp_system_nodes(self, bp_id: str):
+
+        return self.get_bp_nodes(bp_id, "system")
+
+    def assign_devices_from_json(self, bp_id: str, node_assignment: list):
+        """
+        Bulk assignment of AOS managed devices to a Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        node_assignment
+            (list) [{"id": "system_id", "location": "device_name"}]
+            example: [
+                        {
+                          "system_id": "525400F9B231",
+                          "id": "3fdd7c9e-73a2-4509-8514-991b79b95fbc",
+                          "deploy_mode": "deploy"
+                        }
+                     ]
+
+        Returns
+        -------
+
+        """
+        n_path = f"/api/blueprints/{bp_id}/nodes"
+        return self.rest.json_resp_patch(n_path, data=node_assignment)
+
+    def assign_device(self, bp_id: str, system_id: str,
+                      node_id: str, deploy_mode: str):
+        """
+        Assign AOS managed devices to a Blueprint and update deployment mode
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        system_id
+            (str) ID of AOS managed device
+        node_id
+            (str) ID of Blueprint node
+        deploy_mode
+            (str) Device deploy mode [deploy, Ready, Drain, Undeploy]
+        Returns
+        -------
+
+        """
+        node_assignment = [
+            {
+                "system_id": system_id,
+                "id": node_id,
+                "deploy_mode": deploy_mode
+            }
+        ]
+
+        return self.assign_devices_from_json(bp_id, node_assignment)
+
+    def assign_all_devices_from_location(self, bp_id: str, deploy_mode: str):
+        """
+        Assign ALL AOS managed devices to a Blueprint based on the location field
+        of the system.
+        NOTE: Location field must match Blueprint node name
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        deploy_mode
+            (str) Device deploy mode [deploy, Ready, Drain, Undeploy]
+        Returns
+        -------
+
+        """
+        aos_devices = AosDevices(self.rest)
+        bp_nodes = self.get_bp_system_nodes(bp_id)
+        systems = aos_devices.managed_devices.get_all()
+
+        system_list = []
+        node_assignment = []
+
+        def _get_system_location(system):
+            return system.user_config["location"]
+
+        for s in systems:
+            location = _get_system_location(s)
+            if location:
+                system_list.append({"system_id": s.id, "location": location})
+
+            else:
+                raise AosInputError(f"location not configured for {s}")
+
+        for s in system_list:
+            for k, v in bp_nodes.items():
+                if v["hostname"] == s["location"]:
+                    node_assignment.append(
+                        {
+                            "system_id": s["system_id"],
+                            "id": v["id"],
+                            "deploy_mode": deploy_mode
+                        }
+                    )
+
+        print(node_assignment)
+        return self.assign_devices_from_json(bp_id, node_assignment)
+
 
     # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):
