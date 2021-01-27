@@ -10,7 +10,8 @@ from .aos import AosSubsystem, AosAPIError
 
 logger = logging.getLogger(__name__)
 
-SystemAgent = namedtuple("SystemAgent", ["id", "fqdn", "operation_mode", "vendor"])
+SystemAgent = namedtuple("SystemAgent", ["id", "fqdn", "operation_mode",
+                                         "vendor", "user_config"])
 Anomaly = namedtuple("Anomaly", ["type", "id", "agent_id", "severity"])
 DevicePackage = namedtuple("Package", ["name", "version"])
 DeviceOSImage = namedtuple(
@@ -55,6 +56,7 @@ class AosManagedDevices(AosSubsystem):
                 fqdn=s.get("status", {}).get("fqdn"),
                 operation_mode=s.get("status", {}).get("operation_mode"),
                 vendor=s.get("facts", {}).get("vendor"),
+                user_config=s.get("user_config", None)
             )
             for s in systems["items"]
         ]
