@@ -249,10 +249,9 @@ class AosBlueprint(AosSubsystem):
         return resp["items"]
 
     # Resources
-    def apply_resource_groups(self, bp_id: str,
-                              resource_type: str,
-                              group_name: str,
-                              pool_ids: list):
+    def apply_resource_groups(
+        self, bp_id: str, resource_type: str, group_name: str, pool_ids: list
+    ):
         """
         Assign existing pools to a given resource group in an AOS Blueprint
         Parameters
@@ -279,8 +278,10 @@ class AosBlueprint(AosSubsystem):
         -------
 
         """
-        rg_path = f"/api/blueprints/{bp_id}/resource_groups/" \
-                  f"{resource_type}/{group_name}"
+        rg_path = (
+            f"/api/blueprints/{bp_id}/resource_groups/"
+            f"{resource_type}/{group_name}"
+        )
 
         data = {
             "pool_ids": pool_ids,
@@ -445,8 +446,9 @@ class AosBlueprint(AosSubsystem):
         n_path = f"/api/blueprints/{bp_id}/nodes"
         return self.rest.json_resp_patch(n_path, data=node_assignment)
 
-    def assign_device(self, bp_id: str, system_id: str,
-                      node_id: str, deploy_mode: str):
+    def assign_device(
+        self, bp_id: str, system_id: str, node_id: str, deploy_mode: str
+    ):
         """
         Assign AOS managed devices to a Blueprint and update deployment mode
         Parameters
@@ -464,11 +466,7 @@ class AosBlueprint(AosSubsystem):
 
         """
         node_assignment = [
-            {
-                "system_id": system_id,
-                "id": node_id,
-                "deploy_mode": deploy_mode
-            }
+            {"system_id": system_id, "id": node_id, "deploy_mode": deploy_mode}
         ]
 
         return self.assign_devices_from_json(bp_id, node_assignment)
@@ -513,11 +511,63 @@ class AosBlueprint(AosSubsystem):
                         {
                             "system_id": s["system_id"],
                             "id": v["id"],
-                            "deploy_mode": deploy_mode
+                            "deploy_mode": deploy_mode,
                         }
                     )
 
         return self.assign_devices_from_json(bp_id, node_assignment)
+
+    def assign_interface_maps_raw(self, bp_id: str, assignments: dict):
+        """
+        Assign interface maps to blueprint system nodes.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        assignments
+            (dict) mapping of blueprint system nodes and global interface
+            maps.
+            {
+              "assignments": {'bp-node-id': 'Cumulus_VX__AOS-7x10-Spine',
+                              'bp-node-id': 'Arista_vEOS__AOS-7x10-Leaf'}
+        Returns
+        -------
+
+        """
+        im_path = f"/api/blueprints/{bp_id}/interface-map-assignments"
+
+        return self.rest.json_resp_patch(uri=im_path, data=assignments)
+
+    def assign_interface_map_by_name(
+        self, bp_id: str, node_names: list, im_name: str
+    ):
+        """
+        Assign interface map to one or more blueprint system nodes
+        based on system node name.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        node_names
+            (list) Blueprint system node names. Must match
+            eg ['spine1', 'spine2']
+        im_name
+            (str) interface map name to assign to system node
+        Returns
+        -------
+
+        """
+        bp_nodes = self.get_bp_system_nodes(bp_id)
+        assignment = dict()
+        for node in node_names:
+            for value in bp_nodes.values():
+                if value["label"] == node:
+                    assignment[value["id"]] = im_name
+
+        data = {"assignments": assignment}
+        self.assign_interface_maps_raw(bp_id=bp_id, assignments=data)
+
+        return data
 
     # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):

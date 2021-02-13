@@ -180,7 +180,7 @@ class AosRestAPI:
         -------
             (obj) - Rest Api Response object
         """
-        return self.raw_request_json("PATCH", uri, params, data, headers)
+        return self.raw_request("PATCH", uri, params, data, headers)
 
     def json_resp_get(self, uri: str, params=None, data=None, headers=None):
         """

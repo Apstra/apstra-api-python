@@ -319,11 +319,11 @@ def test_add_bp_by_temp_id_invalid(
 
 # TODO (Ryan): Parameterize all resource_type and group_name options
 def test_assign_asn_pool_to_bp(
-        aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     bp_id = "evpn-cvx-virtual"
-    resource_type = 'asn'
-    group_name = 'spine_asns'
+    resource_type = "asn"
+    group_name = "spine_asns"
     asn_pool_id = "evpn-asn"
 
     aos_session.add_response(
@@ -335,11 +335,13 @@ def test_assign_asn_pool_to_bp(
     )
 
     assert (
-            aos_logged_in.blueprint.apply_resource_groups(
-                bp_id=bp_id, resource_type=resource_type,
-                group_name=group_name, pool_ids=[asn_pool_id]
-            )
-            == ""
+        aos_logged_in.blueprint.apply_resource_groups(
+            bp_id=bp_id,
+            resource_type=resource_type,
+            group_name=group_name,
+            pool_ids=[asn_pool_id],
+        )
+        == ""
     )
 
     rg_body = {
@@ -697,5 +699,51 @@ def test_apply_property_set_keys(
         f"http://aos:80/api/blueprints/{bp_id}/property-sets",
         params=None,
         json=json_body,
+        headers=expected_auth_headers,
+    )
+
+
+def test_assign_interface_map_by_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+    node_name = ["spine1", "spine2"]
+    im_name = "Cumulus_VX__slicer-7x10-1"
+    node_fixture = f"aos/{aos_api_version}/blueprints/get_bp_nodes.json"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/nodes?node_type=system",
+        status=200,
+        resp=read_fixture(node_fixture),
+    )
+
+    aos_session.add_response(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/interface-map-assignments",
+        status=204,
+        resp=json.dumps({"id": im_name}),
+    )
+
+    test_json = {
+        "assignments": {
+            "83a3a17e-e2f1-4027-ae3c-ebf56dcfaaf5": im_name,
+            "1717ee47-f0be-4877-8341-18709048e237": im_name,
+        }
+    }
+
+    assert (
+        aos_logged_in.blueprint.assign_interface_map_by_name(
+            bp_id=bp_id, node_names=node_name, im_name=im_name
+        )
+        == test_json
+    )
+
+    aos_session.request.assert_called_with(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/interface-map-assignments",
+        params=None,
+        json=test_json,
         headers=expected_auth_headers,
     )
