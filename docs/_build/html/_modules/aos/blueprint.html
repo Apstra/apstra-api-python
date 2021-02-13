@@ -29,7 +29,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -152,15 +151,20 @@
 <span class="c1">#</span>
 <span class="c1"># This source code is licensed under End User License Agreement found in the</span>
 <span class="c1"># LICENSE file at http://www.apstra.com/eula</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span>
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span><span class="p">,</span> <span class="n">AosInputError</span>
+<span class="kn">from</span> <span class="nn">.design</span> <span class="kn">import</span> <span class="n">AosConfiglets</span><span class="p">,</span> <span class="n">AosPropertySets</span><span class="p">,</span> <span class="n">AosTemplates</span>
+<span class="kn">from</span> <span class="nn">.devices</span> <span class="kn">import</span> <span class="n">AosDevices</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">Blueprint</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Blueprint&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">])</span>
+<span class="n">Device</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;system_id&quot;</span><span class="p">])</span>
+<span class="n">StagingVersion</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Staging&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;deploy_error&quot;</span><span class="p">])</span>
 
 
 <div class="viewcode-block" id="AosBlueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint">[docs]</a><span class="k">class</span> <span class="nc">AosBlueprint</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
@@ -213,6 +217,7 @@
 <div class="viewcode-block" id="AosBlueprint.get_bp"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_bp">[docs]</a>    <span class="k">def</span> <span class="nf">get_bp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bp_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Blueprint</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns blueprint by id or name</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bp_id</span>
@@ -233,6 +238,39 @@
                 <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Blueprint </span><span class="si">{</span><span class="n">bp_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.add_blueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_blueprint">[docs]</a>    <span class="k">def</span> <span class="nf">add_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">template_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">template_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates new blueprint based on template. Template ID or Name required</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        label</span>
+<span class="sd">            (str) Name of Blueprint</span>
+<span class="sd">        template_id</span>
+<span class="sd">            (str) Template ID to build blueprint from (optional)</span>
+<span class="sd">        template_name</span>
+<span class="sd">            (str) Template name to build blueprint from (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bp_path</span> <span class="o">=</span> <span class="s2">&quot;/api/blueprints/&quot;</span>
+
+        <span class="k">if</span> <span class="n">template_name</span><span class="p">:</span>
+            <span class="n">aos_temps</span> <span class="o">=</span> <span class="n">AosTemplates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">aos_temps</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="n">temp_name</span><span class="o">=</span><span class="n">template_name</span><span class="p">)</span>
+            <span class="n">template_id</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;design&quot;</span><span class="p">:</span> <span class="s2">&quot;two_stage_l3clos&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;init_type&quot;</span><span class="p">:</span> <span class="s2">&quot;template_reference&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+            <span class="s2">&quot;template_id&quot;</span><span class="p">:</span> <span class="n">template_id</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">bp_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AosBlueprint.delete_blueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.delete_blueprint">[docs]</a>    <span class="k">def</span> <span class="nf">delete_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -266,72 +304,7 @@
 
         <span class="k">return</span> <span class="n">deleted_ids</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.get_configlets"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_configlets">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return all configlets currently imported into blueprint</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of blueprint</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">c_path</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="AosBlueprint.apply_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">apply_configlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configlet</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Import and apply existing configlet to AOS Blueprint</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of blueprint</span>
-<span class="sd">        configlet</span>
-<span class="sd">            (Str) ID of AOS configlet to use</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">c_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">configlet</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="AosBlueprint.get_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return all property-sets currently imported into blueprint</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of blueprint</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="AosBlueprint.apply_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">apply_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">property_set</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Import and apply existing property-set to AOS Blueprint</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of blueprint</span>
-<span class="sd">        property_set</span>
-<span class="sd">            (Str) ID of AOS property-set to use</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ps_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">ps_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">property_set</span><span class="p">)</span></div>
-
+    <span class="c1"># Commit, staging and rollback</span>
 <div class="viewcode-block" id="AosBlueprint.get_staging_version"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_staging_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_staging_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the latest version of staged changes for the given blueprint</span>
@@ -346,11 +319,11 @@
         <span class="n">commit_diff_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/diff-status&quot;</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">commit_diff_path</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;staging_version&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;deploy_error&quot;</span><span class="p">:</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;deploy_error&quot;</span><span class="p">],</span>
-        <span class="p">}</span></div>
+        <span class="k">return</span> <span class="n">StagingVersion</span><span class="p">(</span>
+            <span class="n">version</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;staging_version&quot;</span><span class="p">]),</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
+            <span class="n">deploy_error</span><span class="o">=</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;deploy_error&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AosBlueprint.commit_staging"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.commit_staging">[docs]</a>    <span class="k">def</span> <span class="nf">commit_staging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -376,10 +349,706 @@
             <span class="n">d</span> <span class="o">=</span> <span class="n">description</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">staging_version</span><span class="p">[</span><span class="s2">&quot;staging_version&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">staging_version</span><span class="o">.</span><span class="n">version</span><span class="p">),</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">d</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">commit_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">commit_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+    <span class="c1"># Graph Queries</span>
+<div class="viewcode-block" id="AosBlueprint.qe_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.qe_query">[docs]</a>    <span class="k">def</span> <span class="nf">qe_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        QE query aginst a Blueprint graphDB</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+<span class="sd">        query</span>
+<span class="sd">            (str) qe query string</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qe_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/qe&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">qe_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.ql_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.ql_query">[docs]</a>    <span class="k">def</span> <span class="nf">ql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        QL query aginst a Blueprint graphDB</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+<span class="sd">        query</span>
+<span class="sd">            (str) qe query string</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ql_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/ql&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">ql_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+    <span class="c1"># Resources</span>
+<div class="viewcode-block" id="AosBlueprint.apply_resource_groups"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_resource_groups">[docs]</a>    <span class="k">def</span> <span class="nf">apply_resource_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">pool_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign existing pools to a given resource group in an AOS Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        resource_type</span>
+<span class="sd">            (str) type of resource pool used</span>
+<span class="sd">            (ex: asn, vni, ip, etc)</span>
+<span class="sd">        group_name</span>
+<span class="sd">            (str) group to apply pool to</span>
+<span class="sd">            (options:</span>
+<span class="sd">                (asn): spine_asns, leaf_asns, spine_spine_asns,</span>
+<span class="sd">                (vni): evpn_l3_vni, vxlan_vn_ids</span>
+<span class="sd">                (ip): spine_loopback_ips, leaf_loopback_ips,</span>
+<span class="sd">                spine_superspine_link_ips,</span>
+<span class="sd">                spine_leaf_link_ips, to_external_router_link_ips,</span>
+<span class="sd">                mlag_domain_svi_subnets, vtep_ips,</span>
+<span class="sd">                virtual_network_svi_subnets)</span>
+<span class="sd">        pool_ids</span>
+<span class="sd">            (list) IDs of resource pools to apply</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rg_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/resource_groups/&quot;</span> \
+                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_type</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pool_ids&quot;</span><span class="p">:</span> <span class="n">pool_ids</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="c1"># configlets, property-sets</span>
+<div class="viewcode-block" id="AosBlueprint.get_configlets"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_configlets">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all configlets currently imported into blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">c_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.apply_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">apply_configlet</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">configlet_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">role</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">system_id</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import and apply existing configlet to AOS Blueprint</span>
+<span class="sd">        One of &#39;role&#39; or &#39;system_id&#39; is required. If role</span>
+<span class="sd">        and system_id is provided both (AND) will be applied</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        configlet_id</span>
+<span class="sd">            (str) ID of AOS configlet to use</span>
+<span class="sd">        role</span>
+<span class="sd">            (list) roles: [&quot;spin&quot;, &quot;leaf&quot;, &quot;access&quot;] (optional)</span>
+
+<span class="sd">        system_id</span>
+<span class="sd">            (list) blueprint system IDs (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/configlets&quot;</span>
+        <span class="n">aos_configlets</span> <span class="o">=</span> <span class="n">AosConfiglets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="n">configlet</span> <span class="o">=</span> <span class="n">aos_configlets</span><span class="o">.</span><span class="n">get_configlet</span><span class="p">(</span><span class="n">conf_id</span><span class="o">=</span><span class="n">configlet_id</span><span class="p">)</span>
+        <span class="n">role_in</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;role in </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">id_in</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;id in </span><span class="si">{</span><span class="n">system_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="ow">and</span> <span class="n">system_id</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">role_in</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">id_in</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">role</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">role_in</span>
+        <span class="k">elif</span> <span class="n">system_id</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">id_in</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AosInputError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected one or both conditions [&#39;role&#39;, &#39;system_id&#39;]&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;configlet&quot;</span><span class="p">:</span> <span class="n">configlet</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">configlet</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">c_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all property-sets currently imported into blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (dict) [{&quot;Configlet&quot;: {...}} ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.apply_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">apply_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ps_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ps_keys</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import and apply existing property-set to AOS Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        ps_id</span>
+<span class="sd">            (str) ID of AOS configlet to use</span>
+<span class="sd">        ps_keys</span>
+<span class="sd">            (list) configured keys to apply to blueprint. If None provided all</span>
+<span class="sd">            keys configured will be applied</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ps_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/property-sets&quot;</span>
+        <span class="n">aos_prop_set</span> <span class="o">=</span> <span class="n">AosPropertySets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="n">prop_set</span> <span class="o">=</span> <span class="n">aos_prop_set</span><span class="o">.</span><span class="n">get_property_set</span><span class="p">(</span><span class="n">ps_id</span><span class="o">=</span><span class="n">ps_id</span><span class="p">)</span>
+
+        <span class="n">prop_set_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">ps_keys</span><span class="p">:</span>
+            <span class="n">prop_set_keys</span> <span class="o">=</span> <span class="n">ps_keys</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">prop_set</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]:</span>
+                <span class="n">prop_set_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">prop_set</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;keys&quot;</span><span class="p">:</span> <span class="n">prop_set_keys</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">ps_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="c1"># Devices</span>
+    <span class="k">def</span> <span class="nf">get_bp_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node_type</span><span class="p">:</span>
+            <span class="n">n_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/nodes?node_type=</span><span class="si">{</span><span class="n">node_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/nodes&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">n_path</span><span class="p">)[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_bp_system_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bp_nodes</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AosBlueprint.assign_devices_from_json"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_devices_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">assign_devices_from_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bulk assignment of AOS managed devices to a Blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        node_assignment</span>
+<span class="sd">            (list) [{&quot;id&quot;: &quot;system_id&quot;, &quot;location&quot;: &quot;device_name&quot;}]</span>
+<span class="sd">            example: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                          &quot;system_id&quot;: &quot;525400F9B231&quot;,</span>
+<span class="sd">                          &quot;id&quot;: &quot;3fdd7c9e-73a2-4509-8514-991b79b95fbc&quot;,</span>
+<span class="sd">                          &quot;deploy_mode&quot;: &quot;deploy&quot;</span>
+<span class="sd">                        }</span>
+<span class="sd">                     ]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/nodes&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_patch</span><span class="p">(</span><span class="n">n_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">node_assignment</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.assign_device"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_device">[docs]</a>    <span class="k">def</span> <span class="nf">assign_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deploy_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign AOS managed devices to a Blueprint and update deployment mode</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        system_id</span>
+<span class="sd">            (str) ID of AOS managed device</span>
+<span class="sd">        node_id</span>
+<span class="sd">            (str) ID of Blueprint node</span>
+<span class="sd">        deploy_mode</span>
+<span class="sd">            (str) Device deploy mode [deploy, Ready, Drain, Undeploy]</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node_assignment</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">system_id</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">node_id</span><span class="p">,</span>
+                <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_devices_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.assign_all_devices_from_location"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_all_devices_from_location">[docs]</a>    <span class="k">def</span> <span class="nf">assign_all_devices_from_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deploy_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign ALL AOS managed devices to a Blueprint based on the location field</span>
+<span class="sd">        of the system.</span>
+<span class="sd">        NOTE: Location field must match Blueprint node name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        deploy_mode</span>
+<span class="sd">            (str) Device deploy mode [deploy, Ready, Drain, Undeploy]</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">aos_devices</span> <span class="o">=</span> <span class="n">AosDevices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="p">)</span>
+        <span class="n">bp_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bp_system_nodes</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+        <span class="n">systems</span> <span class="o">=</span> <span class="n">aos_devices</span><span class="o">.</span><span class="n">managed_devices</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+
+        <span class="n">system_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">node_assignment</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span> <span class="nf">_get_system_location</span><span class="p">(</span><span class="n">system</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">system</span><span class="o">.</span><span class="n">user_config</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">systems</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="n">_get_system_location</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">location</span><span class="p">:</span>
+                <span class="n">system_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">location</span><span class="p">})</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AosInputError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;location not configured for </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">system_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bp_nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;hostname&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]:</span>
+                    <span class="n">node_assignment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;system_id&quot;</span><span class="p">],</span>
+                            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                            <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_devices_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">)</span></div>
+
+    <span class="c1"># IBA probes and dashboards</span>
+<div class="viewcode-block" id="AosBlueprint.get_all_probes"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all_probes">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_probes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all IBA probes for a given blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/probes&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_predefined_probes"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_predefined_probes">[docs]</a>    <span class="k">def</span> <span class="nf">get_predefined_probes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all IBA predefined probes for a given blueprint</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/iba/predefined-probes&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_probe"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_probe">[docs]</a>    <span class="k">def</span> <span class="nf">get_probe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">probe_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probe_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return IBA probe for a given blueprint by ID or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        probe_id</span>
+<span class="sd">            (str) ID of IBA probe</span>
+<span class="sd">        probe_name</span>
+<span class="sd">            (str) name of IBA probe</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">probes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_probes</span><span class="p">(</span><span class="n">bp_id</span><span class="o">=</span><span class="n">bp_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">probes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">probe_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probes</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">probe_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">p</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IBA Probe </span><span class="si">{</span><span class="n">probe_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">probe_id</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probes</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">probe_id</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">p</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IBA Probe </span><span class="si">{</span><span class="n">probe_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_deployed_devices"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_deployed_devices">[docs]</a>    <span class="k">def</span> <span class="nf">get_deployed_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all AOS managed devices deployed in the given blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">d_query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;match(node(&#39;system&#39;, role=&#39;leaf&#39;, name=&#39;system&#39;)&quot;</span>
+            <span class="s2">&quot;.having(node(name=&#39;system&#39;)&quot;</span>
+            <span class="s2">&quot;.out(&#39;part_of_redundancy_group&#39;)&quot;</span>
+            <span class="s2">&quot;.node(&#39;redundancy_group&#39;),at_most=0,))&quot;</span>
+        <span class="p">)</span>
+        <span class="n">mlag_query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;match(node(&#39;redundancy_group&#39;, name=&#39;system&#39;, rg_type=&#39;mlag&#39;),)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">d_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qe_query</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">d_query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">d_items</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d_items</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
+                <span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">Device</span><span class="p">(</span>
+                        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;hostname&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="sa">f</span><span class="s1">&#39;-</span><span class="si">{</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;system_type&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="n">system_id</span><span class="o">=</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="n">m_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qe_query</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">mlag_query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m_items</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">m_items</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
+                <span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Device</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">system_id</span><span class="o">=</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">devices</span></div>
+
+    <span class="c1"># Security Zones</span>
+<div class="viewcode-block" id="AosBlueprint.get_security_zones_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_security_zones_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_security_zones_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all security-zones in a given blueprint.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sz_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones&quot;</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">sz_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">get_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sz_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return security-zone in a given blueprint based on name or ID.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+
+<span class="sd">        sz_id</span>
+<span class="sd">            (str) - ID of security-zone (optional)</span>
+
+<span class="sd">        sz_name</span>
+<span class="sd">            (str) - Name or label of security-zone (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sec_zones</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_security_zones_all</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sec_zones</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sz_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">sz</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sec_zones</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sz_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Security-zone </span><span class="si">{</span><span class="n">sz_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">sz_id</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">sz</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sec_zones</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sz_id</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Security-zone </span><span class="si">{</span><span class="n">sz_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.add_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">add_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a security-zone in the given blueprint using a</span>
+<span class="sd">        preformatted json object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        payload</span>
+<span class="sd">            (str) - json object for payload</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - security-zone ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sz_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">sz_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.update_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.update_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">update_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update a security-zone in the given blueprint using a</span>
+<span class="sd">        preformatted json object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        sz_id</span>
+<span class="sd">            (str) - ID of security-zone</span>
+<span class="sd">        payload</span>
+<span class="sd">            (str) - json object for payload</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - security-zone ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sz_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones/</span><span class="si">{</span><span class="n">sz_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_patch</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">sz_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.delete_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.delete_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">delete_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a given security-zone from a blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        sz_id</span>
+<span class="sd">            (str) - Id of security-zone</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) {}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sz_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">sz_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.apply_leaf_loopback_ip_to_sz"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_leaf_loopback_ip_to_sz">[docs]</a>    <span class="k">def</span> <span class="nf">apply_leaf_loopback_ip_to_sz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign IP Pool to a specified security-zone for use by leaf nodes for</span>
+<span class="sd">        loopback IPs.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        sz_id</span>
+<span class="sd">            (str) - ID of security-zone</span>
+<span class="sd">        pool_id</span>
+<span class="sd">            (str) - ID of AOS resource pool</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;pool_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)]})</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/resource_groups/ip/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;sz:</span><span class="si">{</span><span class="n">sz_id</span><span class="si">}</span><span class="s2">,leaf_loopback_ips&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">p_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="c1"># Virtual Networks</span>
+<div class="viewcode-block" id="AosBlueprint.get_virtual_networks_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_virtual_networks_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_virtual_networks_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all virtual networks in a given blueprint.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/virtual-networks&quot;</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">vn_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;virtual_networks&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.get_virtual_network"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_virtual_network">[docs]</a>    <span class="k">def</span> <span class="nf">get_virtual_network</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vn_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vn_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return virtual network in a given blueprint based on name or ID.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+
+<span class="sd">        vn_id</span>
+<span class="sd">            (str) - ID of virtual network (optional)</span>
+
+<span class="sd">        vn_name</span>
+<span class="sd">            (str) - Name or label of virtual networks (optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">virt_networks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_virtual_networks_all</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">virt_networks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">vn_name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">vn</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">virt_networks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">vn_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Virtual Network </span><span class="si">{</span><span class="n">vn_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">vn_id</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">vn</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">virt_networks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">vn_id</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">value</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Virtual Network </span><span class="si">{</span><span class="n">vn_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.add_virtual_network"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_virtual_network">[docs]</a>    <span class="k">def</span> <span class="nf">add_virtual_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a virtual network in the given blueprint using a</span>
+<span class="sd">        preformatted json object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        payload</span>
+<span class="sd">            (str) - json object for payload</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - virtual network ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/virtual-networks&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">vn_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.add_virtual_network_batch"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_virtual_network_batch">[docs]</a>    <span class="k">def</span> <span class="nf">add_virtual_network_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create multiple virtual networks in the given blueprint using a</span>
+<span class="sd">        preformatted json object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        payload</span>
+<span class="sd">            (str) - json object for payload</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - virtual network IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/virtual-networks-batch&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">vn_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.update_virtual_network"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.update_virtual_network">[docs]</a>    <span class="k">def</span> <span class="nf">update_virtual_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vn_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update a virtual network in the given blueprint using a</span>
+<span class="sd">        preformatted json object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        vn_id</span>
+<span class="sd">            (str) - ID of virtual network</span>
+<span class="sd">        payload</span>
+<span class="sd">            (str) - json object for payload</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - virtual network ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/virtual-networks/</span><span class="si">{</span><span class="n">vn_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_patch</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">vn_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.delete_virtual_network"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.delete_virtual_network">[docs]</a>    <span class="k">def</span> <span class="nf">delete_virtual_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vn_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a given virtual network from a blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        vn_id</span>
+<span class="sd">            (str) - Id of virtual network</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) {}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/virtual-networks/</span><span class="si">{</span><span class="n">vn_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_delete</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">vn_path</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -29,7 +29,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -169,6 +168,10 @@
 
 
 <div class="viewcode-block" id="AosAuthenticationError"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosAuthenticationError">[docs]</a><span class="k">class</span> <span class="nc">AosAuthenticationError</span><span class="p">(</span><span class="n">AosAPIError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AosInputError"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosInputError">[docs]</a><span class="k">class</span> <span class="nc">AosInputError</span><span class="p">(</span><span class="n">AosAPIError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -312,6 +315,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="AosRestAPI.json_resp_patch"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI.json_resp_patch">[docs]</a>    <span class="k">def</span> <span class="nf">json_resp_patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        AOS rest API PATCH using json formatted payload.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        uri - (str) API endpoint ex: /api/blueprints</span>
+<span class="sd">        params - Optional rest api parameters</span>
+<span class="sd">        data - (json) Optional data payload</span>
+<span class="sd">        headers - Optional rest api headers</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - Rest Api Response object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;PATCH&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="AosRestAPI.json_resp_get"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI.json_resp_get">[docs]</a>    <span class="k">def</span> <span class="nf">json_resp_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        AOS rest API GET using json formatted payload.</span>
@@ -339,7 +358,9 @@
 <span class="sd">        -------</span>
 <span class="sd">            (obj) - Rest Api Response object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span><span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_request_json</span><span class="p">(</span>
+            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AosRestAPI.get_aos_version"><a class="viewcode-back" href="../../source/aos.html#aos.aos.AosRestAPI.get_aos_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_aos_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
