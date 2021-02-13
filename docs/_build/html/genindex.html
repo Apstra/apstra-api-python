@@ -29,7 +29,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -163,6 +162,7 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
@@ -173,6 +173,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.devices.AosManagedDevices.accept_running_config_as_golden">accept_running_config_as_golden() (aos.devices.AosManagedDevices method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.add_blueprint">add_blueprint() (aos.blueprint.AosBlueprint method)</a>
 </li>
       <li><a href="source/aos.html#aos.design.AosConfiglets.add_configlet">add_configlet() (aos.design.AosConfiglets method)</a>
 </li>
@@ -198,7 +200,13 @@
 </li>
       <li><a href="source/aos.html#aos.design.AosRackTypes.add_rack_type">add_rack_type() (aos.design.AosRackTypes method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.add_security_zone">add_security_zone() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.design.AosTemplates.add_template">add_template() (aos.design.AosTemplates method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.add_virtual_network">add_virtual_network() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.add_virtual_network_batch">add_virtual_network_batch() (aos.blueprint.AosBlueprint method)</a>
 </li>
       <li><a href="source/aos.html#aos.devices.Anomaly.agent_id">agent_id (aos.devices.Anomaly attribute)</a>
 </li>
@@ -295,6 +303,8 @@
 </li>
       <li><a href="source/aos.html#aos.external_systems.AosExternalSystems">AosExternalSystems (class in aos.external_systems)</a>
 </li>
+      <li><a href="source/aos.html#aos.aos.AosInputError">AosInputError</a>
+</li>
       <li><a href="source/aos.html#aos.design.AosInterfaceMaps">AosInterfaceMaps (class in aos.design)</a>
 </li>
       <li><a href="source/aos.html#aos.resources.AosIpv4Pools">AosIpv4Pools (class in aos.resources)</a>
@@ -323,7 +333,17 @@
 </li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.apply_configlet">apply_configlet() (aos.blueprint.AosBlueprint method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.apply_leaf_loopback_ip_to_sz">apply_leaf_loopback_ip_to_sz() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.apply_property_set">apply_property_set() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.apply_resource_groups">apply_resource_groups() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.assign_all_devices_from_location">assign_all_devices_from_location() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.assign_device">assign_device() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.assign_devices_from_json">assign_devices_from_json() (aos.blueprint.AosBlueprint method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -385,7 +405,13 @@
 </li>
       <li><a href="source/aos.html#aos.design.AosRackTypes.delete_rack_type">delete_rack_type() (aos.design.AosRackTypes method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.delete_security_zone">delete_security_zone() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.design.AosTemplates.delete_templates">delete_templates() (aos.design.AosTemplates method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.delete_virtual_network">delete_virtual_network() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.Device">Device (class in aos.blueprint)</a>
 </li>
       <li><a href="source/aos.html#aos.devices.DeviceOSImage">DeviceOSImage (in module aos.devices)</a>
 </li>
@@ -441,18 +467,22 @@
       </ul></li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_all_ids">get_all_ids() (aos.blueprint.AosBlueprint method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_all_probes">get_all_probes() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.devices.AosManagedDevices.get_anomalies">get_anomalies() (aos.devices.AosManagedDevices method)</a>
 </li>
       <li><a href="source/aos.html#aos.aos.AosRestAPI.get_aos_version">get_aos_version() (aos.aos.AosRestAPI method)</a>
 </li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_bp">get_bp() (aos.blueprint.AosBlueprint method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.design.AosConfiglets.get_configlet">get_configlet() (aos.design.AosConfiglets method)</a>
 </li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_configlets">get_configlets() (aos.blueprint.AosBlueprint method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_deployed_devices">get_deployed_devices() (aos.blueprint.AosBlueprint method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.devices.AosDeviceProfiles.get_device_profile">get_device_profile() (aos.devices.AosDeviceProfiles method)</a>
 </li>
       <li><a href="source/aos.html#aos.external_systems.AosExternalRouters.get_external_router">get_external_router() (aos.external_systems.AosExternalRouters method)</a>
@@ -477,6 +507,10 @@
         <li><a href="source/aos.html#aos.resources.AosVniPools.get_pool">(aos.resources.AosVniPools method)</a>
 </li>
       </ul></li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_predefined_probes">get_predefined_probes() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_probe">get_probe() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_property_set">get_property_set() (aos.blueprint.AosBlueprint method)</a>
 
       <ul>
@@ -485,9 +519,17 @@
       </ul></li>
       <li><a href="source/aos.html#aos.design.AosRackTypes.get_rack_type">get_rack_type() (aos.design.AosRackTypes method)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_security_zone">get_security_zone() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_security_zones_all">get_security_zones_all() (aos.blueprint.AosBlueprint method)</a>
+</li>
       <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_staging_version">get_staging_version() (aos.blueprint.AosBlueprint method)</a>
 </li>
       <li><a href="source/aos.html#aos.design.AosTemplates.get_template">get_template() (aos.design.AosTemplates method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_virtual_network">get_virtual_network() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.get_virtual_networks_all">get_virtual_networks_all() (aos.blueprint.AosBlueprint method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -527,6 +569,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.aos.AosRestAPI.json_resp_patch">json_resp_patch() (aos.aos.AosRestAPI method)</a>
+</li>
       <li><a href="source/aos.html#aos.aos.AosRestAPI.json_resp_post">json_resp_post() (aos.aos.AosRestAPI method)</a>
 </li>
       <li><a href="source/aos.html#aos.aos.AosRestAPI.json_resp_put">json_resp_put() (aos.aos.AosRestAPI method)</a>
@@ -538,7 +582,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.blueprint.Blueprint.label">label (aos.blueprint.Blueprint attribute)</a>
+
+      <ul>
+        <li><a href="source/aos.html#aos.blueprint.Device.label">(aos.blueprint.Device attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.aos.AosAuth.login">login() (aos.aos.AosAuth method)</a>
@@ -589,13 +637,29 @@
   </ul></td>
 </tr></table>
 
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.qe_query">qe_query() (aos.blueprint.AosBlueprint method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.ql_query">ql_query() (aos.blueprint.AosBlueprint method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/aos.html#aos.devices.Anomaly.severity">severity (aos.devices.Anomaly attribute)</a>
 </li>
+      <li><a href="source/aos.html#aos.blueprint.StagingVersion">StagingVersion (in module aos.blueprint)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.blueprint.Device.system_id">system_id (aos.blueprint.Device attribute)</a>
+</li>
       <li><a href="source/aos.html#aos.devices.SystemAgent">SystemAgent (class in aos.devices)</a>
 </li>
   </ul></td>
@@ -616,6 +680,14 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.update_security_zone">update_security_zone() (aos.blueprint.AosBlueprint method)</a>
+</li>
+      <li><a href="source/aos.html#aos.blueprint.AosBlueprint.update_virtual_network">update_virtual_network() (aos.blueprint.AosBlueprint method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/aos.html#aos.devices.SystemAgent.user_config">user_config (aos.devices.SystemAgent attribute)</a>
+</li>
       <li><a href="source/aos.html#aos.aos.LoginResp.user_uuid">user_uuid (aos.aos.LoginResp attribute)</a>
 </li>
   </ul></td>
