@@ -761,6 +761,41 @@ class AosBlueprint(AosSubsystem):
                              leaf_loopback_ip_pools: list = None,
                              dhcp_servers: list = None
                              ):
+        """
+        Create a security-zone in the given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        name
+            (str) - name given to the security-zone AND vrf_name. Must
+                    be unique to all other security-zones
+        routing_policy
+            (dict) - specific routing policy to apply. Overrides defaults:
+                    {
+                        "export_policy": {
+                            "spine_leaf_links": False,
+                            "loopbacks": True,
+                            "l2edge_subnets": True,
+                            "l3edge_server_links": True
+                        },
+                        "import_policy": "default_only"
+                    }
+        import_policy
+            (str) - change the route import policy. Default is
+                    "default_only
+                    ["default_only", "all", "extra_only"]
+        leaf_loopback_ip_pools
+            (list) - list of IP pool IDs to assign to leaf_loopback resources
+        dhcp_servers
+            (list) - list of DHCP server (relay) IP addresses
+
+        Returns
+        -------
+            (obj) - security-zone
+        """
+
         r_policy = {
             "export_policy": {
                 "spine_leaf_links": False,
