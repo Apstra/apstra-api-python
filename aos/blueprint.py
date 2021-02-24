@@ -758,6 +758,7 @@ class AosBlueprint(AosSubsystem):
     def create_security_zone(self, bp_id: str, name: str,
                              routing_policy: dict = None,
                              import_policy: str = None,
+                             vlan_id: int = None,
                              leaf_loopback_ip_pools: list = None,
                              dhcp_servers: list = None
                              ):
@@ -786,6 +787,12 @@ class AosBlueprint(AosSubsystem):
             (str) - change the route import policy. Default is
                     "default_only
                     ["default_only", "all", "extra_only"]
+        vlan_id
+            (int) - VLAN ID use for sub-interface tagging with external system
+                    connections. Must be unique across all security zones
+                    and VRFs
+                    Default (None) wll request vlan from pool.
+                    range 1 - 4094
         leaf_loopback_ip_pools
             (list) - list of IP pool IDs to assign to leaf_loopback resources
         dhcp_servers
@@ -801,7 +808,7 @@ class AosBlueprint(AosSubsystem):
                 "spine_leaf_links": False,
                 "loopbacks": True,
                 "l2edge_subnets": True,
-                "l3edge_server_links": True
+                "l3edge_server_links": False
             },
             "import_policy": "default_only"
         }
@@ -816,6 +823,7 @@ class AosBlueprint(AosSubsystem):
             "sz_type": "evpn",
             "label": name,
             "vrf_name": name,
+            "vlan_id": vlan_id
         }
 
         try:
