@@ -265,7 +265,7 @@ class AosBlueprint(AosSubsystem):
             (str) group to apply pool to
             (options:
                 (asn): spine_asns, leaf_asns, spine_spine_asns,
-                (vni): evpn_l3_vni, vxlan_vn_ids
+                (vni): evpn_l3_vnis, vxlan_vn_ids
                 (ip): spine_loopback_ips, leaf_loopback_ips,
                 spine_superspine_link_ips,
                 spine_leaf_link_ips, to_external_router_link_ips,
@@ -725,7 +725,7 @@ class AosBlueprint(AosSubsystem):
                         return value
                 raise AosAPIError(f"Security-zone {sz_name} not found")
 
-    def add_security_zone(self, bp_id: str, payload: str):
+    def add_security_zone_from_json(self, bp_id: str, payload: dict):
         """
         Create a security-zone in the given blueprint using a
         preformatted json object.
@@ -744,6 +744,67 @@ class AosBlueprint(AosSubsystem):
         sz_path = f"/api/blueprints/{bp_id}/security-zones"
 
         return self.rest.json_resp_post(uri=sz_path, data=payload)
+
+    def apply_security_zone_dhcp(self, bp_id: str, sz_id: str,
+                                 dhcp_servers: dict):
+
+        self.rest.json_resp_put(
+            uri=f"/api/blueprints/{bp_id}/security-zones/{sz_id}/dhcp-servers",
+            data=dhcp_servers
+        )
+
+        return self.get_security_zone(bp_id, sz_id)
+
+    def create_security_zone(self, bp_id: str, name: str,
+                             routing_policy: dict = None,
+                             import_policy: str = None,
+                             leaf_loopback_ip_pools: list = None,
+                             dhcp_servers: list = None
+                             ):
+        r_policy = {
+            "export_policy": {
+                "spine_leaf_links": False,
+                "loopbacks": True,
+                "l2edge_subnets": True,
+                "l3edge_server_links": True
+            },
+            "import_policy": "default_only"
+        }
+
+        if routing_policy:
+            r_policy = routing_policy
+        if import_policy:
+            r_policy["import_policy"] = import_policy
+
+        sec_zone = {
+            "routing_policy": r_policy,
+            "sz_type": "evpn",
+            "label": name,
+            "vrf_name": name,
+        }
+
+        try:
+            resp = self.add_security_zone_from_json(bp_id, sec_zone)
+            sz = self.get_security_zone(bp_id, resp["id"])
+        except AosAPIError as e:
+            return f"Unable to create security-zone {name} Error: {e}"
+
+        # SZ leaf loopback pool
+        if leaf_loopback_ip_pools:
+            group_name = "leaf_loopback_ips"
+            group_path = f"sz%3A{sz['id']}%2C{group_name}"
+
+            self.apply_resource_groups(bp_id=bp_id, resource_type="ip",
+                                       group_name=group_path,
+                                       pool_ids=leaf_loopback_ip_pools)
+
+        # DHCP servers (relay)
+        if dhcp_servers:
+            dhcp = {"items": dhcp_servers}
+            sz = self.apply_security_zone_dhcp(bp_id=bp_id, sz_id=sz["id"],
+                                               dhcp_servers=dhcp)
+
+        return sz
 
     def update_security_zone(self, bp_id: str, sz_id: str, payload: str):
         """
