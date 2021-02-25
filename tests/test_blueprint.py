@@ -455,6 +455,60 @@ def test_get_security_zone(
     )
 
 
+def test_create_security_zone(aos_logged_in, aos_session,
+                              expected_auth_headers,
+                              aos_api_version):
+    sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
+    all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
+    bp_id = "evpn-cvx-virtual"
+    sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
+    resource_type = "ip"
+    group_name = "leaf_loopback_ips"
+    group_path = f"sz%3A{sz_id}%2C{group_name}"
+    pool_id = "leaf-loopback-pool-id"
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        status=200,
+        resp=json.dumps({"id": sz_id}),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        status=200,
+        resp=read_fixture(all_fixture),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones/{sz_id}",
+        status=200,
+        resp=read_fixture(sz_fixture),
+    )
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+        f"{resource_type}/{group_path}",
+        status=202,
+        resp=json.dumps(""),
+    )
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones/{sz_id}/dhcp-servers",
+        status=204,
+        resp=json.dumps(""),
+    )
+
+    resp = aos_logged_in.blueprint.create_security_zone(
+        bp_id=bp_id, name="blue",
+        import_policy="all",
+        leaf_loopback_ip_pools=[pool_id],
+        dhcp_servers=["1.1.1.1"]
+    )
+
+    assert resp == json.loads(read_fixture(sz_fixture))
+
+
 def test_get_virtual_network(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):

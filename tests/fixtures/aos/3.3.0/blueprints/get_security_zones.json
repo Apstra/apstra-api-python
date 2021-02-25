@@ -10,7 +10,7 @@
         },
         "extra_export_routes": [],
         "extra_import_routes": [],
-        "import_policy": "default_only",
+        "import_policy": "all",
         "aggregate_prefixes": []
       },
       "vni_id": 20002,
