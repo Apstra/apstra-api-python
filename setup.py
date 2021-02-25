@@ -4,15 +4,13 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 
-from os.path import dirname, abspath
+import os
 from setuptools import setup, find_packages
 
 NAME = "aos-api-client"
 
-# VERSION_FILE_PATH = dirname(abspath(__file__)) + "/VERSION"
-# with open(VERSION_FILE_PATH, "r", encoding="utf-8") as f:
-#    VERSION = f.readline().strip()
-VERSION = 0.1
+with open(os.path.join(os.getcwd(), 'VERSION')) as version_file:
+    VERSION = version_file.read().strip()
 
 
 REQUIRES = (["requests==2.24.0"],)
