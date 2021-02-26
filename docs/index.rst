@@ -5,10 +5,11 @@ Welcome to aos-api's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   source/getstarted
 
 Indices and tables
-==================
+******************
 
-* :ref:`genindex`
 * :ref:`modindex`
+* :ref:`genindex`
 * :ref:`search`

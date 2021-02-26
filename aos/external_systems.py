@@ -107,7 +107,7 @@ class AosExternalRouters(AosSubsystem):
 
         ids = []
         for ext_id in ext_list:
-            self.rest.json_resp_delete(f"{p_path}/{ext_id}")
+            self.rest.delete(f"{p_path}/{ext_id}")
             ids.append(ext_id)
 
         return ids

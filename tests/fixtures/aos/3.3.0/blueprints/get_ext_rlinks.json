@@ -1,0 +1,30 @@
+{
+  "links": {
+    "evpn_mlag_001_leaf_pair1<->apstra-rtr": {
+      "router_id": "92797c82-ff36-4575-9fe2-9e84d998c7b7",
+      "connectivity_type": "bond",
+      "composed_of": {
+        "evpn_mlag_001_leaf2<->router0002": {
+          "system_id": "340f90c6-3b74-41aa-a2f3-9e2864b85ed7",
+          "system_label": "evpn_mlag_001_leaf2",
+          "system_role": "leaf",
+          "speed": "10G",
+          "system_if_name": "swp7"
+        },
+        "evpn_mlag_001_leaf1<->router0001": {
+          "system_id": "03a2645c-7087-4592-95e4-0321a0a58509",
+          "system_label": "evpn_mlag_001_leaf1",
+          "system_role": "leaf",
+          "speed": "10G",
+          "system_if_name": "swp7"
+        }
+      },
+      "router_label": "apstra-rtr",
+      "system_label": "evpn_mlag_001_leaf_pair1",
+      "system_id": "366f9c17-a7a6-4e8c-9323-86701b0562cf",
+      "system_role": "redundancy_group",
+      "system_if_name": null,
+      "speed": null
+    }
+  }
+}

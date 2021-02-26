@@ -114,7 +114,7 @@ class AosLogicalDevices(AosSubsystem):
 
         ids = []
         for ld_id in ld_list:
-            self.rest.json_resp_delete(f"{p_path}/{ld_id}")
+            self.rest.delete(f"{p_path}/{ld_id}")
             ids.append(ld_id)
 
         return ids
@@ -205,7 +205,7 @@ class AosInterfaceMaps(AosSubsystem):
 
         ids = []
         for im_id in im_list:
-            self.rest.json_resp_delete(f"{p_path}/{im_id}")
+            self.rest.delete(f"{p_path}/{im_id}")
             ids.append(im_id)
 
         return ids
@@ -296,7 +296,7 @@ class AosRackTypes(AosSubsystem):
 
         ids = []
         for rt_id in rt_list:
-            self.rest.json_resp_delete(f"{p_path}/{rt_id}")
+            self.rest.delete(f"{p_path}/{rt_id}")
             ids.append(rt_id)
 
         return ids
@@ -387,7 +387,7 @@ class AosTemplates(AosSubsystem):
 
         ids = []
         for temp_id in temp_list:
-            self.rest.json_resp_delete(f"{p_path}/{temp_id}")
+            self.rest.delete(f"{p_path}/{temp_id}")
             ids.append(temp_id)
 
         return ids
@@ -478,7 +478,7 @@ class AosConfiglets(AosSubsystem):
 
         ids = []
         for conf_id in conf_list:
-            self.rest.json_resp_delete(f"{p_path}/{conf_id}")
+            self.rest.delete(f"{p_path}/{conf_id}")
             ids.append(conf_id)
 
         return ids
@@ -569,7 +569,7 @@ class AosPropertySets(AosSubsystem):
 
         ids = []
         for ps_id in ps_list:
-            self.rest.json_resp_delete(f"{p_path}/{ps_id}")
+            self.rest.delete(f"{p_path}/{ps_id}")
             ids.append(ps_id)
 
         return ids

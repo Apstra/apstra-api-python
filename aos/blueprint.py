@@ -6,9 +6,10 @@ import json
 import logging
 from collections import namedtuple
 from typing import Optional
-from .aos import AosSubsystem, AosAPIError, AosInputError
+from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
 from .design import AosConfiglets, AosPropertySets, AosTemplates
 from .devices import AosDevices
+from .external_systems import AosExternalRouters
 
 
 logger = logging.getLogger(__name__)
@@ -136,7 +137,7 @@ class AosBlueprint(AosSubsystem):
             (obj) json object
         """
 
-        return self.rest.json_resp_delete(f"/api/blueprints/{bp_id}")
+        return self.rest.delete(f"/api/blueprints/{bp_id}")
 
     def delete_all(self):
         """
@@ -444,7 +445,7 @@ class AosBlueprint(AosSubsystem):
 
         """
         n_path = f"/api/blueprints/{bp_id}/nodes"
-        return self.rest.json_resp_patch(n_path, data=node_assignment)
+        self.rest.patch(n_path, data=node_assignment)
 
     def assign_device(
         self, bp_id: str, system_id: str, node_id: str, deploy_mode: str
@@ -517,6 +518,26 @@ class AosBlueprint(AosSubsystem):
 
         return self.assign_devices_from_json(bp_id, node_assignment)
 
+    def unassign_devices(self, bp_id: str, node_ids: list) -> None:
+        """
+        Un-assign given AOS managed devices from a Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        node_ids
+            (list) Blueprint node IDs of the devices to un-assign
+        Returns
+        -------
+
+        """
+        data = [
+            {"system_id": "", "id": node_id, "deploy_mode": None}
+            for node_id in node_ids
+        ]
+        self.rest.patch(f"/api/blueprints/{bp_id}/nodes", data=data)
+
+    # Interface maps
     def assign_interface_maps_raw(self, bp_id: str, assignments: dict):
         """
         Assign interface maps to blueprint system nodes.
@@ -536,7 +557,7 @@ class AosBlueprint(AosSubsystem):
         """
         im_path = f"/api/blueprints/{bp_id}/interface-map-assignments"
 
-        return self.rest.json_resp_patch(uri=im_path, data=assignments)
+        self.rest.patch(uri=im_path, data=assignments)
 
     def assign_interface_map_by_name(
         self, bp_id: str, node_names: list, im_name: str
@@ -568,6 +589,143 @@ class AosBlueprint(AosSubsystem):
         self.assign_interface_maps_raw(bp_id=bp_id, assignments=data)
 
         return data
+
+    # External Routers
+
+    def get_external_routers_all(self, bp_id: str):
+        """
+        Returns all external routers imported into a given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+
+        Returns
+        -------
+
+        """
+        r_path = f"/api/blueprints/{bp_id}/external-routers"
+
+        return self.rest.json_resp_get(r_path)["items"]
+
+    def get_external_router(self, bp_id: str, bp_rtr_id: str):
+        """
+        Returns given external router node based on external router id
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        bp_rtr_id
+            (str) Blueprint node ID of external router
+        Returns
+        -------
+
+        """
+        r_path = f"/api/blueprints/{bp_id}/external-routers/{bp_rtr_id}"
+
+        return self.rest.json_resp_get(r_path)
+
+    def find_external_router_by_name(self, bp_id: str, rtr_name: str):
+        """
+        Returns all external routers imported into a blueprint matching the
+        given name (label).
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        rtr_name
+            (str) ID of blueprint
+
+        Returns
+        -------
+            (list)
+        """
+        return [
+            i
+            for i in self.get_external_routers_all(bp_id)
+            if i["display_name"] == rtr_name
+        ]
+
+    def get_external_router_links(self, bp_id: str):
+        """
+        Returns all links available for a given external router for fabric
+        connectivity
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        Returns
+        -------
+
+        """
+        rl_path = f"/api/blueprints/{bp_id}/external-router-links"
+
+        links = self.rest.json_resp_get(rl_path)
+        return links["links"]
+
+    def apply_external_router(
+        self,
+        bp_id: str,
+        ext_rtr_id: str = None,
+        ext_rtr_name: str = None,
+        connectivity_type: str = "l3",
+        links: list = None,
+    ):
+        """
+        Assigns a given external router to a blueprint and configures
+        the fabric connectivity type required for peering with the external
+        router.
+        ext_rtr_id or ex_rtr_name required
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        ext_rtr_id
+            (str) Optional - Blueprint node ID of external router
+        ext_rtr_name
+            (str) Optional - Name of external router
+        connectivity_type
+            (str) connectivity type for fabric connections to external router
+            ['l3', 'l2', 'bond']
+        links
+            (list) Optional - List of links to apply to external router connectivity
+
+        Returns
+        -------
+
+        """
+
+        rtr_path = f"/api/blueprints/{bp_id}/external-routers"
+
+        if ext_rtr_name:
+            external_router = AosExternalRouters(self.rest)
+            ext_rtr = external_router.get_external_router(ex_name=ext_rtr_name)
+
+            if not ext_rtr:
+                raise AosAPIResourceNotFound(
+                    f"Unable to find external router " f"with name {ext_rtr_name}"
+                )
+
+            ext_rtr_id = ext_rtr["id"]
+
+        rtr_data = {"router_id": ext_rtr_id}
+        bp_rtr_id = self.rest.json_resp_post(rtr_path, data=rtr_data)["id"]
+
+        if not links:
+            links = list(self.get_external_router_links(bp_id))
+
+        r_link_body = {"connectivity_type": connectivity_type, "links": list(links)}
+
+        r_link_path = f"/api/blueprints/{bp_id}/external-router-links/{bp_rtr_id}"
+
+        self.rest.put(r_link_path, data=r_link_body)
+
+        return bp_rtr_id
+
+    def delete_external_router(self, bp_id: str, bp_rtr_id: str):
+        r_path = f"/api/blueprints/{bp_id}/external-routers/{bp_rtr_id}"
+
+        self.rest.delete(r_path)
 
     # IBA probes and dashboards
     def get_all_probes(self, bp_id: str):
@@ -745,23 +903,25 @@ class AosBlueprint(AosSubsystem):
 
         return self.rest.json_resp_post(uri=sz_path, data=payload)
 
-    def apply_security_zone_dhcp(self, bp_id: str, sz_id: str,
-                                 dhcp_servers: dict):
+    def apply_security_zone_dhcp(self, bp_id: str, sz_id: str, dhcp_servers: dict):
 
         self.rest.json_resp_put(
             uri=f"/api/blueprints/{bp_id}/security-zones/{sz_id}/dhcp-servers",
-            data=dhcp_servers
+            data=dhcp_servers,
         )
 
         return self.get_security_zone(bp_id, sz_id)
 
-    def create_security_zone(self, bp_id: str, name: str,
-                             routing_policy: dict = None,
-                             import_policy: str = None,
-                             vlan_id: int = None,
-                             leaf_loopback_ip_pools: list = None,
-                             dhcp_servers: list = None
-                             ):
+    def create_security_zone(
+        self,
+        bp_id: str,
+        name: str,
+        routing_policy: dict = None,
+        import_policy: str = None,
+        vlan_id: int = None,
+        leaf_loopback_ip_pools: list = None,
+        dhcp_servers: list = None,
+    ):
         """
         Create a security-zone in the given blueprint
 
@@ -808,9 +968,9 @@ class AosBlueprint(AosSubsystem):
                 "spine_leaf_links": False,
                 "loopbacks": True,
                 "l2edge_subnets": True,
-                "l3edge_server_links": False
+                "l3edge_server_links": False,
             },
-            "import_policy": "default_only"
+            "import_policy": "default_only",
         }
 
         if routing_policy:
@@ -823,7 +983,7 @@ class AosBlueprint(AosSubsystem):
             "sz_type": "evpn",
             "label": name,
             "vrf_name": name,
-            "vlan_id": vlan_id
+            "vlan_id": vlan_id,
         }
 
         try:
@@ -837,15 +997,19 @@ class AosBlueprint(AosSubsystem):
             group_name = "leaf_loopback_ips"
             group_path = f"sz%3A{sz['id']}%2C{group_name}"
 
-            self.apply_resource_groups(bp_id=bp_id, resource_type="ip",
-                                       group_name=group_path,
-                                       pool_ids=leaf_loopback_ip_pools)
+            self.apply_resource_groups(
+                bp_id=bp_id,
+                resource_type="ip",
+                group_name=group_path,
+                pool_ids=leaf_loopback_ip_pools,
+            )
 
         # DHCP servers (relay)
         if dhcp_servers:
             dhcp = {"items": dhcp_servers}
-            sz = self.apply_security_zone_dhcp(bp_id=bp_id, sz_id=sz["id"],
-                                               dhcp_servers=dhcp)
+            sz = self.apply_security_zone_dhcp(
+                bp_id=bp_id, sz_id=sz["id"], dhcp_servers=dhcp
+            )
 
         return sz
 
@@ -865,11 +1029,11 @@ class AosBlueprint(AosSubsystem):
 
         Returns
         -------
-            (obj) - security-zone ID
+
         """
         sz_path = f"/api/blueprints/{bp_id}/security-zones/{sz_id}"
 
-        return self.rest.json_resp_patch(uri=sz_path, data=payload)
+        self.rest.patch(uri=sz_path, data=payload)
 
     def delete_security_zone(self, bp_id: str, sz_id: str):
         """
@@ -889,7 +1053,7 @@ class AosBlueprint(AosSubsystem):
         """
         sz_path = f"/api/blueprints/{bp_id}/security-zones"
 
-        return self.rest.json_resp_delete(uri=sz_path)
+        return self.rest.delete(uri=sz_path)
 
     def apply_leaf_loopback_ip_to_sz(self, bp_id: str, sz_id: str, pool_id: str):
         """
@@ -1029,11 +1193,11 @@ class AosBlueprint(AosSubsystem):
 
         Returns
         -------
-            (obj) - virtual network ID
+
         """
         vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
 
-        return self.rest.json_resp_patch(uri=vn_path, data=payload)
+        self.rest.patch(uri=vn_path, data=payload)
 
     def delete_virtual_network(self, bp_id: str, vn_id: str):
         """
@@ -1053,4 +1217,4 @@ class AosBlueprint(AosSubsystem):
         """
         vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
 
-        return self.rest.json_resp_delete(uri=vn_path)
+        return self.rest.delete(uri=vn_path)

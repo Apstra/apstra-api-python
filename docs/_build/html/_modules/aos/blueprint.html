@@ -83,8 +83,11 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/getstarted.html">Getting Started</a></li>
+</ul>
+
             
           
         </div>
@@ -398,10 +401,9 @@
         <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
 
     <span class="c1"># Resources</span>
-<div class="viewcode-block" id="AosBlueprint.apply_resource_groups"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_resource_groups">[docs]</a>    <span class="k">def</span> <span class="nf">apply_resource_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">pool_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.apply_resource_groups"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_resource_groups">[docs]</a>    <span class="k">def</span> <span class="nf">apply_resource_groups</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pool_ids</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign existing pools to a given resource group in an AOS Blueprint</span>
 <span class="sd">        Parameters</span>
@@ -415,7 +417,7 @@
 <span class="sd">            (str) group to apply pool to</span>
 <span class="sd">            (options:</span>
 <span class="sd">                (asn): spine_asns, leaf_asns, spine_spine_asns,</span>
-<span class="sd">                (vni): evpn_l3_vni, vxlan_vn_ids</span>
+<span class="sd">                (vni): evpn_l3_vnis, vxlan_vn_ids</span>
 <span class="sd">                (ip): spine_loopback_ips, leaf_loopback_ips,</span>
 <span class="sd">                spine_superspine_link_ips,</span>
 <span class="sd">                spine_leaf_link_ips, to_external_router_link_ips,</span>
@@ -428,8 +430,10 @@
 <span class="sd">        -------</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">rg_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/resource_groups/&quot;</span> \
-                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_type</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">rg_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/resource_groups/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_type</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;pool_ids&quot;</span><span class="p">:</span> <span class="n">pool_ids</span><span class="p">,</span>
@@ -594,8 +598,9 @@
         <span class="n">n_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/nodes&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_patch</span><span class="p">(</span><span class="n">n_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">node_assignment</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.assign_device"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_device">[docs]</a>    <span class="k">def</span> <span class="nf">assign_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                      <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deploy_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.assign_device"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_device">[docs]</a>    <span class="k">def</span> <span class="nf">assign_device</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deploy_mode</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign AOS managed devices to a Blueprint and update deployment mode</span>
 <span class="sd">        Parameters</span>
@@ -613,11 +618,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">node_assignment</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">system_id</span><span class="p">,</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">node_id</span><span class="p">,</span>
-                <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span>
-            <span class="p">}</span>
+            <span class="p">{</span><span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">system_id</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">node_id</span><span class="p">,</span> <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span><span class="p">}</span>
         <span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_devices_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">)</span></div>
@@ -662,11 +663,63 @@
                         <span class="p">{</span>
                             <span class="s2">&quot;system_id&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;system_id&quot;</span><span class="p">],</span>
                             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                            <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span>
+                            <span class="s2">&quot;deploy_mode&quot;</span><span class="p">:</span> <span class="n">deploy_mode</span><span class="p">,</span>
                         <span class="p">}</span>
                     <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_devices_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.assign_interface_maps_raw"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_interface_maps_raw">[docs]</a>    <span class="k">def</span> <span class="nf">assign_interface_maps_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">assignments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign interface maps to blueprint system nodes.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        assignments</span>
+<span class="sd">            (dict) mapping of blueprint system nodes and global interface</span>
+<span class="sd">            maps.</span>
+<span class="sd">            {</span>
+<span class="sd">              &quot;assignments&quot;: {&#39;bp-node-id&#39;: &#39;Cumulus_VX__AOS-7x10-Spine&#39;,</span>
+<span class="sd">                              &#39;bp-node-id&#39;: &#39;Arista_vEOS__AOS-7x10-Leaf&#39;}</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">im_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/interface-map-assignments&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_patch</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">im_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">assignments</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosBlueprint.assign_interface_map_by_name"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_interface_map_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">assign_interface_map_by_name</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">im_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign interface map to one or more blueprint system nodes</span>
+<span class="sd">        based on system node name.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        node_names</span>
+<span class="sd">            (list) Blueprint system node names. Must match</span>
+<span class="sd">            eg [&#39;spine1&#39;, &#39;spine2&#39;]</span>
+<span class="sd">        im_name</span>
+<span class="sd">            (str) interface map name to assign to system node</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bp_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bp_system_nodes</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+        <span class="n">assignment</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">bp_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">node</span><span class="p">:</span>
+                    <span class="n">assignment</span><span class="p">[</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">im_name</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;assignments&quot;</span><span class="p">:</span> <span class="n">assignment</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assign_interface_maps_raw</span><span class="p">(</span><span class="n">bp_id</span><span class="o">=</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">assignments</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
 
     <span class="c1"># IBA probes and dashboards</span>
 <div class="viewcode-block" id="AosBlueprint.get_all_probes"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all_probes">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_probes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -824,7 +877,7 @@
                         <span class="k">return</span> <span class="n">value</span>
                 <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Security-zone </span><span class="si">{</span><span class="n">sz_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.add_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">add_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.add_security_zone_from_json"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.add_security_zone_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">add_security_zone_from_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a security-zone in the given blueprint using a</span>
 <span class="sd">        preformatted json object.</span>
@@ -843,6 +896,110 @@
         <span class="n">sz_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">sz_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">apply_security_zone_dhcp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">dhcp_servers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span>
+            <span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones/</span><span class="si">{</span><span class="n">sz_id</span><span class="si">}</span><span class="s2">/dhcp-servers&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">dhcp_servers</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_security_zone</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AosBlueprint.create_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.create_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">create_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">routing_policy</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">import_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">vlan_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">leaf_loopback_ip_pools</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                             <span class="n">dhcp_servers</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
+                             <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a security-zone in the given blueprint</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) - ID of AOS blueprint</span>
+<span class="sd">        name</span>
+<span class="sd">            (str) - name given to the security-zone AND vrf_name. Must</span>
+<span class="sd">                    be unique to all other security-zones</span>
+<span class="sd">        routing_policy</span>
+<span class="sd">            (dict) - specific routing policy to apply. Overrides defaults:</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;export_policy&quot;: {</span>
+<span class="sd">                            &quot;spine_leaf_links&quot;: False,</span>
+<span class="sd">                            &quot;loopbacks&quot;: True,</span>
+<span class="sd">                            &quot;l2edge_subnets&quot;: True,</span>
+<span class="sd">                            &quot;l3edge_server_links&quot;: True</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;import_policy&quot;: &quot;default_only&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">        import_policy</span>
+<span class="sd">            (str) - change the route import policy. Default is</span>
+<span class="sd">                    &quot;default_only</span>
+<span class="sd">                    [&quot;default_only&quot;, &quot;all&quot;, &quot;extra_only&quot;]</span>
+<span class="sd">        vlan_id</span>
+<span class="sd">            (int) - VLAN ID use for sub-interface tagging with external system</span>
+<span class="sd">                    connections. Must be unique across all security zones</span>
+<span class="sd">                    and VRFs</span>
+<span class="sd">                    Default (None) wll request vlan from pool.</span>
+<span class="sd">                    range 1 - 4094</span>
+<span class="sd">        leaf_loopback_ip_pools</span>
+<span class="sd">            (list) - list of IP pool IDs to assign to leaf_loopback resources</span>
+<span class="sd">        dhcp_servers</span>
+<span class="sd">            (list) - list of DHCP server (relay) IP addresses</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) - security-zone</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">r_policy</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;export_policy&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;spine_leaf_links&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;loopbacks&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;l2edge_subnets&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;l3edge_server_links&quot;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;import_policy&quot;</span><span class="p">:</span> <span class="s2">&quot;default_only&quot;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">routing_policy</span><span class="p">:</span>
+            <span class="n">r_policy</span> <span class="o">=</span> <span class="n">routing_policy</span>
+        <span class="k">if</span> <span class="n">import_policy</span><span class="p">:</span>
+            <span class="n">r_policy</span><span class="p">[</span><span class="s2">&quot;import_policy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">import_policy</span>
+
+        <span class="n">sec_zone</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;routing_policy&quot;</span><span class="p">:</span> <span class="n">r_policy</span><span class="p">,</span>
+            <span class="s2">&quot;sz_type&quot;</span><span class="p">:</span> <span class="s2">&quot;evpn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;vrf_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;vlan_id&quot;</span><span class="p">:</span> <span class="n">vlan_id</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_security_zone_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">sec_zone</span><span class="p">)</span>
+            <span class="n">sz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_security_zone</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="n">AosAPIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Unable to create security-zone </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># SZ leaf loopback pool</span>
+        <span class="k">if</span> <span class="n">leaf_loopback_ip_pools</span><span class="p">:</span>
+            <span class="n">group_name</span> <span class="o">=</span> <span class="s2">&quot;leaf_loopback_ips&quot;</span>
+            <span class="n">group_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sz%3A</span><span class="si">{</span><span class="n">sz</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">%2C</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">apply_resource_groups</span><span class="p">(</span><span class="n">bp_id</span><span class="o">=</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">resource_type</span><span class="o">=</span><span class="s2">&quot;ip&quot;</span><span class="p">,</span>
+                                       <span class="n">group_name</span><span class="o">=</span><span class="n">group_path</span><span class="p">,</span>
+                                       <span class="n">pool_ids</span><span class="o">=</span><span class="n">leaf_loopback_ip_pools</span><span class="p">)</span>
+
+        <span class="c1"># DHCP servers (relay)</span>
+        <span class="k">if</span> <span class="n">dhcp_servers</span><span class="p">:</span>
+            <span class="n">dhcp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">dhcp_servers</span><span class="p">}</span>
+            <span class="n">sz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_security_zone_dhcp</span><span class="p">(</span><span class="n">bp_id</span><span class="o">=</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">sz_id</span><span class="o">=</span><span class="n">sz</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                                               <span class="n">dhcp_servers</span><span class="o">=</span><span class="n">dhcp</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sz</span></div>
 
 <div class="viewcode-block" id="AosBlueprint.update_security_zone"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.update_security_zone">[docs]</a>    <span class="k">def</span> <span class="nf">update_security_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
