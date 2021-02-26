@@ -455,9 +455,9 @@ def test_get_security_zone(
     )
 
 
-def test_create_security_zone(aos_logged_in, aos_session,
-                              expected_auth_headers,
-                              aos_api_version):
+def test_create_security_zone(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
     sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
     all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
     bp_id = "evpn-cvx-virtual"
@@ -500,10 +500,11 @@ def test_create_security_zone(aos_logged_in, aos_session,
     )
 
     resp = aos_logged_in.blueprint.create_security_zone(
-        bp_id=bp_id, name="blue",
+        bp_id=bp_id,
+        name="blue",
         import_policy="all",
         leaf_loopback_ip_pools=[pool_id],
-        dhcp_servers=["1.1.1.1"]
+        dhcp_servers=["1.1.1.1"],
     )
 
     assert resp == json.loads(read_fixture(sz_fixture))
@@ -801,3 +802,63 @@ def test_assign_interface_map_by_name(
         json=test_json,
         headers=expected_auth_headers,
     )
+
+
+def test_apply_external_router_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = "evpn-cvx-virtual"
+    bp_rtr_name = "example_router1"
+    bp_rtr_id = "92797c82-ff36-4575-9fe2-9e84d998c7b7"
+    ext_rtr_fixture = f"aos/{aos_api_version}/external_systems/get_ext_rtrs.json"
+    ext_rlinks = f"aos/{aos_api_version}/blueprints/get_ext_rlinks.json"
+    ext_rlinks_id = f"aos/{aos_api_version}/blueprints/get_ext_rlinks_id.json"
+    bp_ext_rtr_fixture = f"aos/{aos_api_version}/blueprints/get_bp_ext_rtr.json"
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/resources/external-routers",
+        status=200,
+        resp=read_fixture(ext_rtr_fixture),
+    )
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/external-routers",
+        status=200,
+        resp=json.dumps({"id": bp_rtr_id}),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/external-router-links",
+        status=200,
+        resp=read_fixture(ext_rlinks),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/external-router-links/{bp_rtr_id}",
+        status=200,
+        resp=read_fixture(ext_rlinks_id),
+    )
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/external-routers/{bp_rtr_id}",
+        status=204,
+        resp=json.dumps({"id": bp_rtr_id}),
+    )
+    aos_session.add_response(
+        "PUT",
+        f"http://aos:80/api/blueprints/{bp_id}/external-router-links/{bp_rtr_id}",
+        status=204,
+        resp=json.dumps({"id": bp_rtr_id}),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/external-routers/{bp_rtr_id}",
+        status=200,
+        resp=read_fixture(bp_ext_rtr_fixture),
+    )
+
+    resp = aos_logged_in.blueprint.apply_external_router(
+        bp_id=bp_id, ext_rtr_name=bp_rtr_name
+    )
+    assert resp == bp_rtr_id

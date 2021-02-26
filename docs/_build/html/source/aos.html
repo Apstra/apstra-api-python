@@ -460,8 +460,8 @@ server_version”)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.add_security_zone">
-<code class="sig-name descname">add_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.add_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.add_security_zone" title="Permalink to this definition">¶</a></dt>
+<dt id="aos.blueprint.AosBlueprint.add_security_zone_from_json">
+<code class="sig-name descname">add_security_zone_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.add_security_zone_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.add_security_zone_from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a security-zone in the given blueprint using a
 preformatted json object.</p>
 <dl class="field-list simple">
@@ -572,7 +572,7 @@ loopback IPs.
 (options:</p>
 <blockquote>
 <div><p>(asn): spine_asns, leaf_asns, spine_spine_asns,
-(vni): evpn_l3_vni, vxlan_vn_ids
+(vni): evpn_l3_vnis, vxlan_vn_ids
 (ip): spine_loopback_ips, leaf_loopback_ips,
 spine_superspine_link_ips,
 spine_leaf_link_ips, to_external_router_link_ips,
@@ -630,12 +630,104 @@ NOTE: Location field must match Blueprint node name
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.assign_interface_map_by_name">
+<code class="sig-name descname">assign_interface_map_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">node_names</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">im_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.assign_interface_map_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.assign_interface_map_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign interface map to one or more blueprint system nodes
+based on system node name.
+:param bp_id: (str) ID of blueprint
+:param node_names: (list) Blueprint system node names. Must match</p>
+<blockquote>
+<div><p>eg [‘spine1’, ‘spine2’]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>im_name</strong> – (str) interface map name to assign to system node</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.assign_interface_maps_raw">
+<code class="sig-name descname">assign_interface_maps_raw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">assignments</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.assign_interface_maps_raw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.assign_interface_maps_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign interface maps to blueprint system nodes.
+:param bp_id: (str) ID of blueprint
+:param assignments: (dict) mapping of blueprint system nodes and global interface</p>
+<blockquote>
+<div><p>maps.
+{</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“assignments”: {‘bp-node-id’: ‘Cumulus_VX__AOS-7x10-Spine’,</dt><dd><p>‘bp-node-id’: ‘Arista_vEOS__AOS-7x10-Leaf’}</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.commit_staging">
 <code class="sig-name descname">commit_staging</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.commit_staging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.commit_staging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Commit all changes in staging to Blueprint.
 Uses latest staging version number available on a Blueprint
 :param bp_id: (str) ID of blueprint
 :param description: (str) description to use during commit</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.create_security_zone">
+<code class="sig-name descname">create_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">import_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">leaf_loopback_ip_pools</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dhcp_servers</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_security_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a security-zone in the given blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
+<li><p><strong>name</strong> – <dl class="simple">
+<dt>(str) - name given to the security-zone AND vrf_name. Must</dt><dd><p>be unique to all other security-zones</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>routing_policy</strong> – <dl>
+<dt>(dict) - specific routing policy to apply. Overrides defaults:</dt><dd><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“export_policy”: {</dt><dd><p>“spine_leaf_links”: False,
+“loopbacks”: True,
+“l2edge_subnets”: True,
+“l3edge_server_links”: True</p>
+</dd>
+</dl>
+<p>},
+“import_policy”: “default_only”</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>import_policy</strong> – <dl class="simple">
+<dt>(str) - change the route import policy. Default is</dt><dd><p>”default_only
+[“default_only”, “all”, “extra_only”]</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>vlan_id</strong> – <dl class="simple">
+<dt>(int) - VLAN ID use for sub-interface tagging with external system</dt><dd><p>connections. Must be unique across all security zones
+and VRFs
+Default (None) wll request vlan from pool.
+range 1 - 4094</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>leaf_loopback_ip_pools</strong> – (list) - list of IP pool IDs to assign to leaf_loopback resources</p></li>
+<li><p><strong>dhcp_servers</strong> – (list) - list of DHCP server (relay) IP addresses</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(obj) - security-zone</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

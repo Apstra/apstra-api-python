@@ -110,7 +110,7 @@ class AosAsnPools(AosSubsystem):
 
         ids = []
         for pool_id in pool_list:
-            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            self.rest.delete(f"{p_path}/{pool_id}")
             ids.append(pool_id)
 
         return ids
@@ -202,7 +202,7 @@ class AosVniPools(AosSubsystem):
 
         ids = []
         for pool_id in pool_list:
-            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            self.rest.delete(f"{p_path}/{pool_id}")
             ids.append(pool_id)
 
         return ids
@@ -294,7 +294,7 @@ class AosIpv4Pools(AosSubsystem):
 
         ids = []
         for pool_id in pool_list:
-            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            self.rest.delete(f"{p_path}/{pool_id}")
             ids.append(pool_id)
 
         return ids
@@ -386,7 +386,7 @@ class AosIpv6Pools(AosSubsystem):
 
         ids = []
         for pool_id in pool_list:
-            self.rest.json_resp_delete(f"{p_path}/{pool_id}")
+            self.rest.delete(f"{p_path}/{pool_id}")
             ids.append(pool_id)
 
         return ids

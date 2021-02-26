@@ -26,6 +26,10 @@ class AosInputError(AosAPIError):
     pass
 
 
+class AosAPIResourceNotFound(AosAPIError):
+    pass
+
+
 def err_message(resp: requests.Response) -> str:
     try:
         return resp.json().get("errors", "Unknown error")
@@ -150,6 +154,22 @@ class AosRestAPI:
         """
         return self.raw_request_json("POST", uri, params, data, headers)
 
+    def put(self, uri: str, params=None, data=None, headers=None):
+        """
+        AOS rest API PUT.
+        Parameters
+        ----------
+        uri - (str) API endpoint ex: /api/blueprints
+        params - Optional rest api parameters
+        data - (json) Optional data payload
+        headers - Optional rest api headers
+
+        Returns
+        -------
+            (obj) - Rest Api Response object
+        """
+        return self.raw_request("PUT", uri, params, data, headers)
+
     def json_resp_put(self, uri: str, params=None, data=None, headers=None):
         """
         AOS rest API PUT using json formatted payload.
@@ -166,7 +186,7 @@ class AosRestAPI:
         """
         return self.raw_request_json("PUT", uri, params, data, headers)
 
-    def json_resp_patch(self, uri: str, params=None, data=None, headers=None):
+    def patch(self, uri: str, params=None, data=None, headers=None):
         """
         AOS rest API PATCH using json formatted payload.
         Parameters
@@ -181,6 +201,22 @@ class AosRestAPI:
             (obj) - Rest Api Response object
         """
         return self.raw_request("PATCH", uri, params, data, headers)
+
+    def json_resp_patch(self, uri: str, params=None, data=None, headers=None):
+        """
+        AOS rest API PATCH using json formatted payload.
+        Parameters
+        ----------
+        uri - (str) API endpoint ex: /api/blueprints
+        params - Optional rest api parameters
+        data - (json) Optional data payload
+        headers - Optional rest api headers
+
+        Returns
+        -------
+            (obj) - Rest Api Response object
+        """
+        return self.raw_request_json("PATCH", uri, params, data, headers)
 
     def json_resp_get(self, uri: str, params=None, data=None, headers=None):
         """
@@ -198,7 +234,7 @@ class AosRestAPI:
         """
         return self.raw_request_json("GET", uri, params, data, headers)
 
-    def json_resp_delete(self, uri: str):
+    def delete(self, uri: str):
         """
         AOS rest API DELETE.
         Parameters
@@ -209,9 +245,7 @@ class AosRestAPI:
         -------
             (obj) - Rest Api Response object
         """
-        return self.raw_request_json(
-            "DELETE", uri, params=None, data=None, headers=None
-        )
+        return self.raw_request("DELETE", uri, params=None, data=None, headers=None)
 
     def get_aos_version(self):
         """

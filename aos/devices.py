@@ -271,7 +271,7 @@ class AosDeviceProfiles(AosSubsystem):
 
         ids = []
         for dp_id in dp_list:
-            self.rest.json_resp_delete(f"{p_path}/{dp_id}")
+            self.rest.delete(f"{p_path}/{dp_id}")
             ids.append(dp_id)
 
         return ids
