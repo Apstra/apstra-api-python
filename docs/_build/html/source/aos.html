@@ -83,23 +83,11 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">aos package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-aos.client">aos.client module</a></li>
-<li><a class="reference internal" href="#module-aos.aos">aos.aos module</a></li>
-<li><a class="reference internal" href="#module-aos.blueprint">aos.blueprint module</a></li>
-<li><a class="reference internal" href="#module-aos.devices">aos.devices module</a></li>
-<li><a class="reference internal" href="#module-aos.design">aos.design module</a></li>
-<li><a class="reference internal" href="#module-aos.resources">aos.resources module</a></li>
-<li><a class="reference internal" href="#module-aos.external_systems">aos.external_systems module</a></li>
-<li><a class="reference internal" href="#module-aos.utils">aos.utils module</a></li>
-<li><a class="reference internal" href="#module-aos">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -203,6 +191,12 @@
 </dd></dl>
 
 <dl class="py exception">
+<dt id="aos.aos.AosAPIResourceNotFound">
+<em class="property">exception </em><code class="sig-prename descclassname">aos.aos.</code><code class="sig-name descname">AosAPIResourceNotFound</code><a class="reference internal" href="../_modules/aos/aos.html#AosAPIResourceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosAPIResourceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.aos.AosAPIError" title="aos.aos.AosAPIError"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosAPIError</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
 <dt id="aos.aos.AosAPIUnprocessableResponse">
 <em class="property">exception </em><code class="sig-prename descclassname">aos.aos.</code><code class="sig-name descname">AosAPIUnprocessableResponse</code><a class="reference internal" href="../_modules/aos/aos.html#AosAPIUnprocessableResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosAPIUnprocessableResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#aos.aos.AosAPIError" title="aos.aos.AosAPIError"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosAPIError</span></code></a></p>
@@ -272,6 +266,22 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The core class for rest api integration with AOS</p>
 <dl class="py method">
+<dt id="aos.aos.AosRestAPI.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>AOS rest API DELETE.
+:param uri - (str) API endpoint ex:
+:type uri - (str) API endpoint ex: /api/blueprints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(obj) - Rest Api Response object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.aos.AosRestAPI.get_aos_version">
 <code class="sig-name descname">get_aos_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.get_aos_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.get_aos_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get AOS server version installed</p>
@@ -282,22 +292,6 @@ server_version”)</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>(“major”, “version”,</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.aos.AosRestAPI.json_resp_delete">
-<code class="sig-name descname">json_resp_delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.json_resp_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.json_resp_delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>AOS rest API DELETE.
-:param uri - (str) API endpoint ex:
-:type uri - (str) API endpoint ex: /api/blueprints</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) - Rest Api Response object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -378,6 +372,44 @@ server_version”)</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="aos.aos.AosRestAPI.patch">
+<code class="sig-name descname">patch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">headers</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>AOS rest API PATCH using json formatted payload.
+:param uri - (str) API endpoint ex:
+:type uri - (str) API endpoint ex: /api/blueprints
+:param params - Optional rest api parameters:
+:param data - (json) Optional data payload:
+:param headers - Optional rest api headers:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(obj) - Rest Api Response object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.aos.AosRestAPI.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">headers</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>AOS rest API PUT.
+:param uri - (str) API endpoint ex:
+:type uri - (str) API endpoint ex: /api/blueprints
+:param params - Optional rest api parameters:
+:param data - (json) Optional data payload:
+:param headers - Optional rest api headers:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(obj) - Rest Api Response object</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -437,6 +469,18 @@ server_version”)</p>
 </div>
 <div class="section" id="module-aos.blueprint">
 <span id="aos-blueprint-module"></span><h2>aos.blueprint module<a class="headerlink" href="#module-aos.blueprint" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="aos.blueprint.Anomaly">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">Anomaly</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">system_id</span></em>, <em class="sig-param"><span class="n">severity</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#Anomaly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.Anomaly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.blueprint.Anomaly" title="aos.blueprint.Anomaly"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.blueprint.Anomaly</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="aos.blueprint.AosBPCommitError">
+<em class="property">exception </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">AosBPCommitError</code><a class="reference internal" href="../_modules/aos/blueprint.html#AosBPCommitError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBPCommitError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.aos.AosAPIError" title="aos.aos.AosAPIError"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosAPIError</span></code></a></p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="aos.blueprint.AosBlueprint">
 <em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">AosBlueprint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint" title="Permalink to this definition">¶</a></dt>
@@ -523,6 +567,22 @@ preformatted json object.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.anomalies_list">
+<code class="sig-name descname">anomalies_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">exclude_anomaly_type</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.blueprint.Anomaly" title="aos.blueprint.Anomaly">aos.blueprint.Anomaly</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.anomalies_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.anomalies_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of all active anomalies in a given blueprint.
+:param bp_id: (str) ID of AOS blueprint
+:param exclude_anomaly_type: (list) - anomaly type to exclude from returned list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#aos.blueprint.Anomaly" title="aos.blueprint.Anomaly">Anomaly</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.apply_configlet">
 <code class="sig-name descname">apply_configlet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">configlet_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">role</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">system_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.apply_configlet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.apply_configlet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import and apply existing configlet to AOS Blueprint
@@ -532,6 +592,27 @@ and system_id is provided both (AND) will be applied
 :param configlet_id: (str) ID of AOS configlet to use
 :param role: (list) roles: [“spin”, “leaf”, “access”] (optional)
 :param system_id: (list) blueprint system IDs (optional)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.apply_external_router">
+<code class="sig-name descname">apply_external_router</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ext_rtr_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ext_rtr_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">connectivity_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'l3'</span></em>, <em class="sig-param"><span class="n">links</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.apply_external_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.apply_external_router" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns a given external router to a blueprint and configures
+the fabric connectivity type required for peering with the external
+router.
+ext_rtr_id or ex_rtr_name required
+:param bp_id: (str) ID of blueprint
+:param ext_rtr_id: (str) Optional - Blueprint node ID of external router
+:param ext_rtr_name: (str) Optional - Name of external router
+:param connectivity_type: (str) connectivity type for fabric connections to external router</p>
+<blockquote>
+<div><p>[‘l3’, ‘l2’, ‘bond’]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>links</strong> – (list) Optional - List of links to apply to external router connectivity</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -666,11 +747,10 @@ based on system node name.
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.commit_staging">
-<code class="sig-name descname">commit_staging</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.commit_staging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.commit_staging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Commit all changes in staging to Blueprint.
-Uses latest staging version number available on a Blueprint
-:param bp_id: (str) ID of blueprint
-:param description: (str) description to use during commit</p>
+<code class="sig-name descname">commit_staging</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.commit_staging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.commit_staging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy latest staging version of the blueprint.
+:param bp_id: (<a href="#id1"><span class="problematic" id="id2">srt_</span></a> ID of AOS Blueprint
+:param description: (str) User description of changes being made or notes (Optional)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -748,7 +828,7 @@ range 1 - 4094</p>
 <dt id="aos.blueprint.AosBlueprint.delete_blueprint">
 <code class="sig-name descname">delete_blueprint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_blueprint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes blueprint by id
-:param bp_id: (str) ID of AOS blueprint (optional)</p>
+:param bp_id: (str) ID of AOS blueprint</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>
@@ -795,6 +875,23 @@ range 1 - 4094</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(obj) {}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.find_external_router_by_name">
+<code class="sig-name descname">find_external_router_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rtr_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.find_external_router_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.find_external_router_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all external routers imported into a blueprint matching the
+given name (label).
+:param bp_id: (str) ID of blueprint
+:param rtr_name: (str) ID of blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(list)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -851,6 +948,21 @@ range 1 - 4094</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_build_errors">
+<code class="sig-name descname">get_build_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_build_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_build_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all active build errors for a given blueprint
+:param bp_id: (str) ID of AOS blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_configlets">
 <code class="sig-name descname">get_configlets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_configlets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_configlets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all configlets currently imported into blueprint
@@ -880,6 +992,29 @@ range 1 - 4094</p>
 <dd class="field-odd"><p>(obj) - json object</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_external_router">
+<code class="sig-name descname">get_external_router</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">bp_rtr_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_external_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_external_router" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns given external router node based on external router id
+:param bp_id: (str) ID of blueprint
+:param bp_rtr_id: (str) Blueprint node ID of external router</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_external_router_links">
+<code class="sig-name descname">get_external_router_links</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_external_router_links"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_external_router_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all links available for a given external router for fabric
+connectivity
+:param bp_id: (str) ID of blueprint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_external_routers_all">
+<code class="sig-name descname">get_external_routers_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_external_routers_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_external_routers_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all external routers imported into a given blueprint
+:param bp_id: (str) ID of blueprint</p>
 </dd></dl>
 
 <dl class="py method">
@@ -983,21 +1118,6 @@ range 1 - 4094</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.get_staging_version">
-<code class="sig-name descname">get_staging_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_staging_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_staging_version" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the latest version of staged changes for the given blueprint
-:param bp_id: (str) ID of blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_virtual_network">
 <code class="sig-name descname">get_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vn_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_virtual_network" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return virtual network in a given blueprint based on name or ID.</p>
@@ -1033,6 +1153,44 @@ range 1 - 4094</p>
 <dd class="field-odd"><p>(obj) - json object</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.has_anomalies">
+<code class="sig-name descname">has_anomalies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.has_anomalies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.has_anomalies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if blueprint has active anomalies and False if none.
+:param bp_id: (str) ID of AOS blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.has_build_errors">
+<code class="sig-name descname">has_build_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.has_build_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.has_build_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if blueprint has active build errors and False if none.
+:param bp_id: (str) ID of AOS blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.is_committed">
+<code class="sig-name descname">is_committed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">version</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.is_committed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.is_committed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if blueprint staging version has been successfully committed.
+:param bp_id: (str) ID of AOS blueprint
+:param version: (int) version of the staging blueprint</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1076,6 +1234,14 @@ range 1 - 4094</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.unassign_devices">
+<code class="sig-name descname">unassign_devices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">node_ids</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.unassign_devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.unassign_devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Un-assign given AOS managed devices from a Blueprint
+:param bp_id: (str) ID of blueprint
+:param node_ids: (list) Blueprint node IDs of the devices to un-assign</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.update_security_zone">
 <code class="sig-name descname">update_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.update_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.update_security_zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a security-zone in the given blueprint using a
@@ -1087,12 +1253,6 @@ preformatted json object.</p>
 <li><p><strong>sz_id</strong> – (str) - ID of security-zone</p></li>
 <li><p><strong>payload</strong> – (str) - json object for payload</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - security-zone ID</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1109,12 +1269,6 @@ preformatted json object.</p>
 <li><p><strong>vn_id</strong> – (str) - ID of virtual network</p></li>
 <li><p><strong>payload</strong> – (str) - json object for payload</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - virtual network ID</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1140,6 +1294,13 @@ preformatted json object.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="aos.blueprint.CommitStatus">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">CommitStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#CommitStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.CommitStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt id="aos.blueprint.Device">
 <em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">Device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span></em>, <em class="sig-param"><span class="n">system_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#aos.blueprint.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -1161,6 +1322,20 @@ preformatted json object.</p>
 <dt id="aos.blueprint.StagingVersion">
 <code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">StagingVersion</code><a class="headerlink" href="#aos.blueprint.StagingVersion" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.blueprint.Staging</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="aos.blueprint.VNTagType">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VNTagType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VNTagType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VNTagType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="aos.blueprint.VNType">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VNType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VNType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VNType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
 </dd></dl>
 
 </div>
