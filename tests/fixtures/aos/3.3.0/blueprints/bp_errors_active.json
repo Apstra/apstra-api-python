@@ -1,0 +1,17 @@
+{
+  "relationships": {},
+  "nodes": {
+    "spine1_as": [
+      {
+        "message": "Domain ID for autonomous system required",
+        "severity": "error"
+      }
+    ],
+    "spine2_as": [
+      {
+        "message": "Domain ID for autonomous system required",
+        "severity": "error"
+      }
+    ]
+  }
+}

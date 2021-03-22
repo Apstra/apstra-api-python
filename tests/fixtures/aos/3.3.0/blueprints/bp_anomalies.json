@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "actual": {
+        "config": "mock config diff bad"
+      },
+      "anomaly_type": "config",
+      "expected": {
+        "config": "mock config diff good"
+      },
+      "id": "c43fcab1-0c74-4b2c-85de-c0cda9c32bd7",
+      "identity": {
+        "anomaly_type": "config",
+        "system_id": "525400CFDEB3"
+      },
+      "last_modified_at": "2021-03-22T16:22:06.469930Z",
+      "severity": "critical"
+    }
+  ],
+  "count": 1
+}

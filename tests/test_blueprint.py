@@ -10,7 +10,7 @@ import pytest
 
 from aos.client import AosClient
 from aos.aos import AosRestAPI, AosAPIError, AosInputError
-from aos.blueprint import Blueprint, Device
+from aos.blueprint import Blueprint, Device, AosBPCommitError, Anomaly
 
 
 from tests.util import make_session, read_fixture, deserialize_fixture
@@ -358,6 +358,38 @@ def test_assign_asn_pool_to_bp(
     )
 
 
+def test_commit_staging_errors(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "evpn-cvx-virtual"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/diff-status",
+        status=202,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/bp_staging_version.json"
+        ),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/errors",
+        status=202,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/bp_errors_active.json"),
+    )
+
+    with pytest.raises(AosBPCommitError):
+        aos_logged_in.blueprint.commit_staging(bp_id, "test_test")
+        aos_session.request.assert_called_with(
+            "PUT",
+            f"http://aos:80/api/blueprints/{bp_id}/deploy",
+            params=None,
+            json={"version": 3, "description": "test_test"},
+            headers=expected_auth_headers,
+        )
+
+
 def test_commit_staging(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
@@ -373,13 +405,19 @@ def test_commit_staging(
         ),
     )
     aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/errors",
+        status=202,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/bp_errors_clear.json"),
+    )
+    aos_session.add_response(
         "PUT",
         f"http://aos:80/api/blueprints/{bp_id}/deploy",
         status=202,
         resp=json.dumps(""),
     )
 
-    assert aos_logged_in.blueprint.commit_staging(bp_id, "test_test") == ""
+    aos_logged_in.blueprint.commit_staging(bp_id, "test_test")
 
     aos_session.request.assert_called_with(
         "PUT",
@@ -862,3 +900,61 @@ def test_apply_external_router_name(
         bp_id=bp_id, ext_rtr_name=bp_rtr_name
     )
     assert resp == bp_rtr_id
+
+
+def test_get_anomalies_list_clear(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = "evpn-cvx-virtual"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/anomalies",
+        status=200,
+        params={"exclude_anomaly_type": []},
+        resp=json.dumps({"items": [], "count": 0}),
+    )
+
+    assert aos_logged_in.blueprint.anomalies_list(bp_id=bp_id) == []
+
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/anomalies",
+        params={"exclude_anomaly_type": []},
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_anomalies_list(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    a_fixture = f"aos/{aos_api_version}/blueprints/bp_anomalies.json"
+    bp_id = "evpn-cvx-virtual"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/anomalies",
+        status=200,
+        params={"exclude_anomaly_type": []},
+        resp=read_fixture(a_fixture),
+    )
+
+    expected = [
+        Anomaly(
+            type="config",
+            id="c43fcab1-0c74-4b2c-85de-c0cda9c32bd7",
+            system_id="525400CFDEB3",
+            severity="critical",
+        )
+    ]
+
+    assert aos_logged_in.blueprint.anomalies_list(bp_id=bp_id) == expected
+
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/anomalies",
+        params={"exclude_anomaly_type": []},
+        json=None,
+        headers=expected_auth_headers,
+    )

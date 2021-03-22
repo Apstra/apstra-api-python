@@ -7,13 +7,8 @@ Welcome to aos-api's documentation!
 
    source/getstarted
 
-
-Getting Started
-===============
-
-
 Indices and tables
-==================
+******************
 
 * :ref:`modindex`
 * :ref:`genindex`

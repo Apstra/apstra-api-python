@@ -2,10 +2,11 @@
 #
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
+from enum import Enum
 import json
 import logging
 from collections import namedtuple
-from typing import Optional
+from typing import Optional, List, Generator
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
 from .design import AosConfiglets, AosPropertySets, AosTemplates
 from .devices import AosDevices
@@ -14,9 +15,44 @@ from .external_systems import AosExternalRouters
 
 logger = logging.getLogger(__name__)
 
+
+class AosBPCommitError(AosAPIError):
+    pass
+
+
 Blueprint = namedtuple("Blueprint", ["label", "id"])
 Device = namedtuple("Device", ["label", "system_id"])
 StagingVersion = namedtuple("Staging", ["version", "status", "deploy_error"])
+
+
+class Anomaly(namedtuple("Anomaly", ["type", "id", "system_id", "severity"])):
+    @classmethod
+    def from_json(cls, anomaly: dict):
+        return cls(
+            type=anomaly["anomaly_type"],
+            id=anomaly["id"],
+            system_id=anomaly.get("identity", {}).get("system_id"),
+            severity=anomaly["severity"],
+        )
+
+
+class CommitStatus(Enum):
+    undeployed = "undeployed"
+    in_progress = "in_progress"
+    completed = "completed"
+    deploying = "deploying"
+    initializing = "initializing"
+
+
+class VNType(Enum):
+    vlan = "vlan"
+    vxlan = "vxlan"
+
+
+class VNTagType(Enum):
+    vlan_tagged = "vlan_tagged"
+    untagged = "untagged"
+    unassigned = "unassigned"
 
 
 class AosBlueprint(AosSubsystem):
@@ -130,7 +166,7 @@ class AosBlueprint(AosSubsystem):
         Parameters
         ----------
         bp_id
-            (str) ID of AOS blueprint (optional)
+            (str) ID of AOS blueprint
 
         Returns
         -------
@@ -156,55 +192,140 @@ class AosBlueprint(AosSubsystem):
 
         return deleted_ids
 
-    # Commit, staging and rollback
-    def get_staging_version(self, bp_id: str):
+    def anomalies(
+        self, bp_id: str, exclude_anomaly_type: Optional[List[str]] = None
+    ) -> Generator[Anomaly, None, None]:
+        if exclude_anomaly_type is None:
+            exclude_anomaly_type = []
+
+        anomalies = self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/anomalies",
+            params={"exclude_anomaly_type": exclude_anomaly_type},
+        )
+        for a in anomalies["items"]:
+            yield Anomaly.from_json(a)
+
+    def anomalies_list(
+        self, bp_id: str, exclude_anomaly_type: Optional[List[str]] = None
+    ) -> List[Anomaly]:
         """
-        Get the latest version of staged changes for the given blueprint
+        Return list of all active anomalies in a given blueprint.
         Parameters
         ----------
         bp_id
-            (str) ID of blueprint
+            (str) ID of AOS blueprint
+        exclude_anomaly_type
+            (list) - anomaly type to exclude from returned list
+
         Returns
         -------
-            int
+            List[Anomaly]
+        """
+        return list(self.anomalies(bp_id, exclude_anomaly_type))
+
+    def has_anomalies(self, bp_id: str) -> bool:
+        """
+        Returns True if blueprint has active anomalies and False if none.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint
+        Returns
+        -------
+            bool
+        """
+        return len(self.anomalies_list(bp_id)) > 0
+
+    # Commit, staging and rollback
+    def get_build_errors(self, bp_id: str):
+        """
+        Returns all active build errors for a given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint
+        Returns
+        -------
+            dict
+        """
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/errors")
+
+    def has_build_errors(self, bp_id: str) -> bool:
+        """
+        Returns True if blueprint has active build errors and False if none.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint
+        Returns
+        -------
+            bool
+        """
+        bp_errs = self.get_build_errors(bp_id)
+
+        for v in bp_errs.values():
+            if v:
+                return True
+        return False
+
+    def is_committed(self, bp_id: str, version: int) -> bool:
+        """
+        Returns True if blueprint staging version has been successfully committed.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of AOS blueprint
+        version
+            (int) version of the staging blueprint
+        Returns
+        -------
+
+        """
+        cpath = f"/api/blueprints/{bp_id}/diff-status"
+        commit = self.rest.json_resp_get(cpath)
+
+        if (
+            commit["deployed_version"] == version
+            and commit["status"] == CommitStatus.completed.value
+        ):
+            return True
+        return False
+
+    def commit_staging(self, bp_id: str, description: str = ""):
+        """
+        Deploy latest staging version of the blueprint.
+        Parameters
+        ----------
+        bp_id
+            (srt_ ID of AOS Blueprint
+        description
+            (str) User description of changes being made or notes (Optional)
+
+        Returns
+        -------
+
         """
         commit_diff_path = f"/api/blueprints/{bp_id}/diff-status"
-        resp = self.rest.json_resp_get(commit_diff_path)
-
-        return StagingVersion(
-            version=int(resp["staging_version"]),
-            status=resp["status"],
-            deploy_error=resp["deploy_error"],
-        )
-
-    def commit_staging(self, bp_id: str, description=None):
-        """
-        Commit all changes in staging to Blueprint.
-        Uses latest staging version number available on a Blueprint
-        Parameters
-        ----------
-        bp_id
-            (str) ID of blueprint
-        description
-            (str) description to use during commit
-
-        Returns
-        -------
-
-        """
         commit_path = f"/api/blueprints/{bp_id}/deploy"
 
-        staging_version = self.get_staging_version(bp_id)
+        staging_ver = self.rest.json_resp_get(commit_diff_path)
 
-        d = ""
-        if description:
-            d = description
+        if staging_ver["deployed_version"] == staging_ver["staging_version"]:
+            logging.info(f"No changes to commit in Blueprint {bp_id}")
+            return
+
+        if self.has_build_errors(bp_id):
+            bp_errs = self.get_build_errors(bp_id)
+            raise AosBPCommitError(
+                f"Unable to commit Blueprint {bp_id} "
+                f"due to build errors: {bp_errs}"
+            )
 
         payload = {
-            "version": int(staging_version.version),
-            "description": d,
+            "version": int(staging_ver["staging_version"]),
+            "description": description,
         }
-        return self.rest.json_resp_put(commit_path, data=payload)
+        self.rest.put(commit_path, data=payload)
 
     # Graph Queries
     def qe_query(self, bp_id: str, query: str):
