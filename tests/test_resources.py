@@ -8,9 +8,10 @@ import json
 import pytest
 
 from aos.client import AosClient
-from aos.aos import AosRestAPI, AosAPIError
+from aos.aos import AosRestAPI
+from aos.resources import Range, PoolSubnet, AsnPool, IPPool, VniPool
 
-from tests.util import make_session, read_fixture, deserialize_fixture
+from tests.util import make_session, read_fixture
 
 
 @pytest.fixture(params=["3.3.0"])
@@ -55,7 +56,7 @@ def aos_logged_in(aos, aos_session):
 
 
 # ASN Pools
-def test_asn_get_all(
+def test_asn_pool_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/resources/get_asn_pools.json"
@@ -67,9 +68,23 @@ def test_asn_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.asn_pools.get_all() == asn_dict["items"]
+    assert list(aos_logged_in.resources.asn_pools.iter_all()) == [
+        AsnPool(
+            display_name="Private-4200000000-4294967294",
+            id="Private-4200000000-4294967294",
+            ranges=[Range(first=4200000000, last=4294967294)],
+        ),
+        AsnPool(
+            display_name="Private-64512-65534",
+            id="Private-64512-65534",
+            ranges=[Range(first=64512, last=65534)],
+        ),
+        AsnPool(
+            display_name="test",
+            id="1358b68b-9505-4641-82a1-8e350dc49576",
+            ranges=[Range(first=100, last=1000), Range(first=5000, last=10000)],
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -80,112 +95,67 @@ def test_asn_get_all(
     )
 
 
-def test_asn_get_pool(
+def test_find_asn_pool_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_asn_pool_id.json"
-    pool_id = "test-id"
+    fixture_path = f"aos/{aos_api_version}/resources/get_asn_pools.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/resources/asn-pools/{pool_id}",
+        "http://aos:80/api/resources/asn-pools",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    asn_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.asn_pools.get_pool(pool_id=pool_id) == asn_dict
+    assert aos_logged_in.resources.asn_pools.find_by_name("test") == [
+        AsnPool(
+            display_name="test",
+            id="1358b68b-9505-4641-82a1-8e350dc49576",
+            ranges=[Range(first=100, last=1000), Range(first=5000, last=10000)],
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/resources/asn-pools/{pool_id}",
+        "http://aos:80/api/resources/asn-pools",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_asn_get_pool_invalid(
+def test_asn_pool_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_resource_id_invalid.json"
-    pool_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/resources/get_asn_pool_id.json"
+    pool_id = "asn_pool_uuid"
 
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/resources/asn-pools",
+        status=202,
+        resp=json.dumps({"id": pool_id}),
+    )
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/resources/asn-pools/{pool_id}",
-        status=404,
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.resources.asn_pools.get_pool(pool_id=pool_id)
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/resources/asn-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    created = aos_logged_in.resources.asn_pools.create(
+        "test",
+        [Range(1000, 2000), Range(5000, 6000)]
     )
 
-
-def test_asn_add_pool(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    new_pool = {
-        "display_name": "test-pool1",
-        "tags": [],
-        "ranges": [{"last": 2232, "first": 2222}],
-        "id": "test-pool1",
-    }
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/resources/asn-pools",
-        status=202,
-        resp=json.dumps({"id": "test-pool1"}),
-    )
-
-    resp = aos_logged_in.resources.asn_pools.add_pool([new_pool])
-    assert resp == [{"id": new_pool["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/resources/asn-pools",
-        params=None,
-        json=new_pool,
-        headers=expected_auth_headers,
-    )
-
-
-def test_asn_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    pool_id = "test-pool1"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/resources/asn-pools/{pool_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.resources.asn_pools.delete_pool([pool_id]) == [pool_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/resources/asn-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    assert created == AsnPool(
+        display_name="test",
+        ranges=[Range(1000, 2000), Range(5000, 6000)],
+        id=pool_id,
     )
 
 
 # VNI Pools
-def test_vni_get_all(
+def test_vni_pool_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/resources/get_vni_pools.json"
@@ -197,9 +167,16 @@ def test_vni_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    vni_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.vni_pools.get_all() == vni_dict["items"]
+    assert list(aos_logged_in.resources.vni_pools.iter_all()) == [
+        VniPool(
+            display_name='Default-10000-20000',
+            id='Default-10000-20000',
+            ranges=[Range(first=10000, last=20000)]),
+        VniPool(
+            display_name='evpn-vni',
+            id='evpn-vni',
+            ranges=[Range(first=5000, last=5500)])
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -210,112 +187,66 @@ def test_vni_get_all(
     )
 
 
-def test_vni_get_pool(
+def test_find_vni_pool_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_vni_pool_id.json"
-    pool_id = "test-id"
+    fixture_path = f"aos/{aos_api_version}/resources/get_vni_pools.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/resources/vni-pools/{pool_id}",
+        "http://aos:80/api/resources/vni-pools",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    vni_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.vni_pools.get_pool(pool_id=pool_id) == vni_dict
+    assert aos_logged_in.resources.vni_pools.find_by_name("evpn-vni") == [
+        VniPool(
+            display_name='evpn-vni',
+            id="evpn-vni",
+            ranges=[Range(first=5000, last=5500)])
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/resources/vni-pools/{pool_id}",
+        "http://aos:80/api/resources/vni-pools",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_vni_get_pool_invalid(
+def test_vni_pool_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_resource_id_invalid.json"
-    pool_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/resources/get_vni_pool_id.json"
+    pool_id = "test-pool"
 
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/resources/vni-pools",
+        status=202,
+        resp=json.dumps({"id": pool_id}),
+    )
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/resources/vni-pools/{pool_id}",
-        status=404,
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.resources.vni_pools.get_pool(pool_id=pool_id)
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/resources/vni-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    created = aos_logged_in.resources.vni_pools.create(
+        "test-pool",
+        [Range(10000, 20000)]
     )
 
-
-def test_vni_add_pool(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    new_pool = {
-        "display_name": "test-pool1",
-        "tags": [],
-        "ranges": [{"last": 22000, "first": 23000}],
-        "id": "test-pool1",
-    }
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/resources/vni-pools",
-        status=202,
-        resp=json.dumps({"id": "test-pool1"}),
-    )
-
-    resp = aos_logged_in.resources.vni_pools.add_pool([new_pool])
-    assert resp == [{"id": new_pool["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/resources/vni-pools",
-        params=None,
-        json=new_pool,
-        headers=expected_auth_headers,
-    )
-
-
-def test_vni_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    pool_id = "test-pool1"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/resources/vni-pools/{pool_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.resources.vni_pools.delete_pool([pool_id]) == [pool_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/resources/vni-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    assert created == VniPool(
+        display_name="test-pool",
+        ranges=[Range(10000, 20000)],
+        id=pool_id,
     )
 
 
 # IPv4 Pools
-def test_ipv4_get_all(
+def test_ipv4_pool_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/resources/get_ip_pools.json"
@@ -327,9 +258,20 @@ def test_ipv4_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    ipv4_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.ipv4_pools.get_all() == ipv4_dict["items"]
+    assert list(aos_logged_in.resources.ipv4_pools.iter_all()) == [
+        IPPool(
+            display_name='spine-leaf',
+            id='adb5641b-3182-4092-bcc4-85c49befe122',
+            subnets=[PoolSubnet(network='10.10.0.0/22')]),
+        IPPool(
+            display_name='virtual-networks',
+            id='e772e121-594c-48dc-a801-5a17f643c237',
+            subnets=[PoolSubnet(network='10.30.40.0/21')]),
+        IPPool(
+            display_name='leaf-loopback',
+            id='2f278c1b-78bd-4b6f-8aef-052e984a9fa7',
+            subnets=[PoolSubnet(network='10.20.30.0/24')]),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -340,112 +282,65 @@ def test_ipv4_get_all(
     )
 
 
-def test_ipv4_get_pool(
+def test_find_ipv4_pool_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_ip_pool_id.json"
-    pool_id = "test-id"
+    fixture_path = f"aos/{aos_api_version}/resources/get_ip_pools.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/resources/ip-pools/{pool_id}",
+        "http://aos:80/api/resources/ip-pools",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    ipv4_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.ipv4_pools.get_pool(pool_id=pool_id) == ipv4_dict
+    assert aos_logged_in.resources.ipv4_pools.find_by_name("spine-leaf") == [
+        IPPool(
+            display_name='spine-leaf',
+            id='adb5641b-3182-4092-bcc4-85c49befe122',
+            subnets=[PoolSubnet(network='10.10.0.0/22')])
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/resources/ip-pools/{pool_id}",
+        "http://aos:80/api/resources/ip-pools",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_ipv4_get_pool_invalid(
+def test_ipv4_pool_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_resource_id_invalid.json"
-    pool_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/resources/get_ip_pool_id.json"
+    pool_id = "spine-leaf"
 
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/resources/ip-pools",
+        status=202,
+        resp=json.dumps({"id": pool_id}),
+    )
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/resources/ip-pools/{pool_id}",
-        status=404,
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.resources.ipv4_pools.get_pool(pool_id=pool_id)
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/resources/ip-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    created = aos_logged_in.resources.ipv4_pools.create(
+        "spine-leaf",
+        ["10.10.0.0/22"]
     )
 
-
-def test_ipv4_add_pool(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    new_pool = {
-        "display_name": "test-pool1",
-        "tags": [],
-        "subnets": [{"network": "192.168.59.0/24"}],
-        "id": "test-pool1",
-    }
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/resources/ip-pools",
-        status=202,
-        resp=json.dumps({"id": "test-pool1"}),
-    )
-
-    resp = aos_logged_in.resources.ipv4_pools.add_pool([new_pool])
-    assert resp == [{"id": new_pool["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/resources/ip-pools",
-        params=None,
-        json=new_pool,
-        headers=expected_auth_headers,
-    )
-
-
-def test_ipv4_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    pool_id = "test-pool1"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/resources/ip-pools/{pool_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.resources.ipv4_pools.delete_pool([pool_id]) == [pool_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/resources/ip-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
+    assert created == IPPool(
+        display_name='spine-leaf',
+        id=pool_id,
+        subnets=[PoolSubnet(network='10.10.0.0/22')])
 
 
 # IPv6 Pools
-def test_ipv6_get_all(
+def test_ipv6_pool_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/resources/get_ipv6_pools.json"
@@ -457,9 +352,16 @@ def test_ipv6_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    ipv6_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.ipv6_pools.get_all() == ipv6_dict["items"]
+    assert list(aos_logged_in.resources.ipv6_pools.iter_all()) == [
+        IPPool(
+            display_name='Private-fc01:a05:fab::/48',
+            id='Private-fc01-a05-fab-48',
+            subnets=[PoolSubnet(network='fc01:a05:fab::/48')]),
+        IPPool(
+            display_name='evpn-ipv6-pool',
+            id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
+            subnets=[PoolSubnet(network='fc01:a11:abc::/48')]),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -470,105 +372,58 @@ def test_ipv6_get_all(
     )
 
 
-def test_ipv6_get_pool(
+def test_find_ipv6_pool_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_ipv6_pool_id.json"
-    pool_id = "test-id"
+    fixture_path = f"aos/{aos_api_version}/resources/get_ipv6_pools.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
+        "http://aos:80/api/resources/ipv6-pools",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    ipv6_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.resources.ipv6_pools.get_pool(pool_id=pool_id) == ipv6_dict
+    assert aos_logged_in.resources.ipv6_pools.find_by_name("evpn-ipv6-pool") == [
+        IPPool(
+            display_name='evpn-ipv6-pool',
+            id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
+            subnets=[PoolSubnet(network='fc01:a11:abc::/48')])
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
+        "http://aos:80/api/resources/ipv6-pools",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_ipv6_get_pool_invalid(
+def test_ipv6_pool_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/resources/get_resource_id_invalid.json"
-    pool_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/resources/get_ipv6_pool_id.json"
+    pool_id = "evpn-ipv6-pool"
 
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/resources/ipv6-pools",
+        status=202,
+        resp=json.dumps({"id": pool_id}),
+    )
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
-        status=404,
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.resources.ipv6_pools.get_pool(pool_id=pool_id)
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    created = aos_logged_in.resources.ipv6_pools.create(
+        "evpn-ipv6-pool",
+        ["fc01:a11:abc::/48"]
     )
 
-
-def test_ipv6_add_pool(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    new_pool = {
-        "display_name": "test-pool1",
-        "tags": [],
-        "subnets": [{"network": "fc01:a05:beef::/48"}],
-        "id": "test-pool1",
-    }
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/resources/ipv6-pools",
-        status=202,
-        resp=json.dumps({"id": "test-pool1"}),
-    )
-
-    resp = aos_logged_in.resources.ipv6_pools.add_pool([new_pool])
-    assert resp == [{"id": new_pool["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/resources/ipv6-pools",
-        params=None,
-        json=new_pool,
-        headers=expected_auth_headers,
-    )
-
-
-def test_ipv6_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    pool_id = "test-pool1"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.resources.ipv6_pools.delete_pool([pool_id]) == [pool_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/resources/ipv6-pools/{pool_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
+    assert created == IPPool(
+        display_name='evpn-ipv6-pool',
+        id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
+        subnets=[PoolSubnet(network='fc01:a11:abc::/48')])

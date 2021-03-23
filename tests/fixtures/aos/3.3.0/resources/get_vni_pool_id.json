@@ -1,7 +1,7 @@
 {
   "status": "not_in_use",
   "used": "0",
-  "display_name": "Default-10000-20000",
+  "display_name": "test-pool",
   "tags": [
     "default"
   ],
@@ -19,5 +19,5 @@
   ],
   "used_percentage": 0,
   "total": "10001",
-  "id": "Default-10000-20000"
+  "id": "test-pool"
 }

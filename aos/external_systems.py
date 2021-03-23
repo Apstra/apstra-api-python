@@ -3,7 +3,9 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 import logging
-from .aos import AosSubsystem, AosAPIError
+from dataclasses import dataclass
+from .aos import AosSubsystem
+from typing import Optional, List, Generator
 
 logger = logging.getLogger(__name__)
 
@@ -17,97 +19,61 @@ class AosExternalSystems(AosSubsystem):
     """
 
     def __init__(self, rest):
-        self.external_router = AosExternalRouters(rest)
+        super().__init__(rest)
+        self.external_router = AosExternalRouter(rest)
 
 
-class AosExternalRouters(AosSubsystem):
-    """
-    Manage AOS external routers.
-    This does not apply the resource to a blueprint
-    See `aos.blueprint` to apply to blueprint
-    """
-
-    def get_all(self):
-        """
-        Return all external routers configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        er_path = "/api/resources/external-routers"
-        resp = self.rest.json_resp_get(er_path)
-        return resp["items"]
-
-    def get_external_router(self, ex_id: str = None, ex_name: str = None):
-        """
-        Return an existing external router by id or name
-        Parameters
-        ----------
-        ex_id
-            (str) ID of AOS external router (optional)
-        ex_name
-            (str) Name or label of AOS external router (optional)
+# Resources
+@dataclass
+class AosResource:
+    display_name: str
+    id: str
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+@dataclass
+class ExternalRouter(AosResource):
+    asn: int
+    address: str
 
-        if ex_name:
-            ext_routers = self.get_all()
-            if ext_routers:
-                for rtr in ext_routers:
-                    if rtr.get("display_name") == ex_name:
-                        return rtr
-                raise AosAPIError(f"External Router {ex_name} not found")
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return ExternalRouter(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            asn=d.get("asn"),
+            address=d.get("address")
+        )
 
-        return self.rest.json_resp_get(f"/api/resources/external-routers/{ex_id}")
 
-    def add_external_router(self, router_list):
-        """
-        Add one or more external routers to AOS
+class AosExternalRouter(AosSubsystem):
+    def create(self, name: str, asn: int, address: str) -> ExternalRouter:
+        ext_rtr = {
+            "display_name": name,
+            "id": name,
+            "asn": asn,
+            "address": address,
 
-        Parameters
-        ----------
-        router_list
-            (list) - list of json payloads
+        }
 
-        Returns
-        -------
-            (list) external router IDs
-        """
-        p_path = "/api/resources/external-routers"
+        created = self.rest.json_resp_post("/api/resources/external-routers",
+                                           data=ext_rtr)
+        return self.get(created["id"])
 
-        ids = []
-        for rtr in router_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=rtr)
-            if item_id:
-                ids.append(item_id)
+    def delete(self, ext_rtr_id: str) -> None:
+        self.rest.delete(f"/api/resources/external-routers/{ext_rtr_id}")
 
-        return ids
+    def get(self, rtr_id: str) -> Optional[ExternalRouter]:
+        return ExternalRouter.from_json(
+            self.rest.json_resp_get(f"/api/resources/external-routers/{rtr_id}")
+        )
 
-    def delete_external_router(self, ext_list: str):
-        """
-        Delete one or more device profiles from AOS
-        External routers can not be deleted if they are associated with
-        a blueprint.
+    def iter_all(self) -> Generator[ExternalRouter, None, None]:
+        rtrs = self.rest.json_resp_get("/api/resources/external-routers")
+        if rtrs:
+            for r in rtrs["items"]:
+                yield ExternalRouter.from_json(r)
 
-        Parameters
-        ----------
-        ext_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/resources/external-routers"
-
-        ids = []
-        for ext_id in ext_list:
-            self.rest.delete(f"{p_path}/{ext_id}")
-            ids.append(ext_id)
-
-        return ids
+    def find_by_name(self, rtr_name: str) -> List[ExternalRouter]:
+        return [r for r in self.iter_all() if r.display_name == rtr_name]
