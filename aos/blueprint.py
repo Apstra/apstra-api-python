@@ -511,29 +511,29 @@ class AosBlueprint(AosSubsystem):
                               resource_type: str,
                               group_name: str):
         """
-                Return existing pools to a given resource group in an AOS Blueprint
-                Parameters
-                ----------
-                bp_id
-                    (str) ID of blueprint
-                resource_type
-                    (str) type of resource pool used
-                    (ex: asn, vni, ip, etc)
-                group_name
-                    (str) group to apply pool to
-                    (options:
-                        (asn): spine_asns, leaf_asns, spine_spine_asns,
-                        (vni): evpn_l3_vnis, vxlan_vn_ids
-                        (ip): spine_loopback_ips, leaf_loopback_ips,
-                        spine_superspine_link_ips,
-                        spine_leaf_link_ips, to_external_router_link_ips,
-                        mlag_domain_svi_subnets, vtep_ips,
-                        virtual_network_svi_subnets)
+        Return existing pools to a given resource group in an AOS Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        resource_type
+            (str) type of resource pool used
+            (ex: asn, vni, ip, etc)
+        group_name
+            (str) group to apply pool to
+            (options:
+                (asn): spine_asns, leaf_asns, spine_spine_asns,
+                (vni): evpn_l3_vnis, vxlan_vn_ids
+                (ip): spine_loopback_ips, leaf_loopback_ips,
+                spine_superspine_link_ips,
+                spine_leaf_link_ips, to_external_router_link_ips,
+                mlag_domain_svi_subnets, vtep_ips,
+                virtual_network_svi_subnets)
 
-                Returns
-                -------
+        Returns
+        -------
 
-                """
+        """
         rg_path = f"/api/blueprints/{bp_id}/resource_groups/" \
                   f"{resource_type}/{group_name}"
 
@@ -541,7 +541,6 @@ class AosBlueprint(AosSubsystem):
 
     # configlets, property-sets
     def get_configlets(self, bp_id: str):
-
         """
         Return all configlets currently imported into blueprint
         Parameters
@@ -1474,20 +1473,20 @@ class AosBlueprint(AosSubsystem):
     def delete_sz_connectivity_point(self, bp_id: str, sz_id: str,
                                      cp_id: str) -> None:
         """
-                Remove connectivity-points from  a given security-zone.
-                Parameters
-                ----------
-                bp_id
-                    (str) - ID of AOS blueprint
-                sz_id
-                    (str) - ID of security-zone
-                cp_id
-                    (str) - ID of connectivity-point
+        Remove connectivity-points from a given security-zone.
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+        cp_id
+            (str) - ID of connectivity-point
 
-                Returns
-                -------
+        Returns
+        -------
 
-                """
+        """
         self.rest.delete(f"/api/blueprints/{bp_id}/security-zones/{sz_id}/"
                          f"connectivity-points/{cp_id}")
 
