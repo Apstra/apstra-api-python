@@ -7,42 +7,21 @@
       "tags": [
         "default"
       ],
-      "created_at": "2020-08-15T09:05:36.071183Z",
-      "last_modified_at": "2020-08-15T09:05:36.071183Z",
+      "created_at": "2020-12-08T06:27:16.794153Z",
+      "last_modified_at": "2020-12-08T06:27:16.794153Z",
       "ranges": [
         {
           "status": "pool_element_available",
           "used": "0",
           "last": 4294967294,
-          "used_percentage": 0,
+          "used_percentage": 0.0,
           "total": "94967295",
           "first": 4200000000
         }
       ],
-      "used_percentage": 0,
+      "used_percentage": 0.0,
       "total": "94967295",
       "id": "Private-4200000000-4294967294"
-    },
-    {
-      "status": "not_in_use",
-      "used": "0",
-      "display_name": "evpn-asn-pool",
-      "tags": [],
-      "created_at": "2020-10-28T16:24:07.601470Z",
-      "last_modified_at": "2020-10-28T16:24:07.601470Z",
-      "ranges": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "last": 10000,
-          "used_percentage": 0,
-          "total": "9901",
-          "first": 100
-        }
-      ],
-      "used_percentage": 0,
-      "total": "9901",
-      "id": "98c4f48e-f563-4125-b8ea-28fcdfcefb2b"
     },
     {
       "status": "not_in_use",
@@ -51,21 +30,52 @@
       "tags": [
         "default"
       ],
-      "created_at": "2020-08-15T09:05:36.071608Z",
-      "last_modified_at": "2020-08-15T09:05:36.071608Z",
+      "created_at": "2020-12-08T06:27:16.793901Z",
+      "last_modified_at": "2020-12-08T06:27:16.793901Z",
       "ranges": [
         {
           "status": "pool_element_available",
           "used": "0",
           "last": 65534,
-          "used_percentage": 0,
+          "used_percentage": 0.0,
           "total": "1023",
           "first": 64512
         }
       ],
-      "used_percentage": 0,
+      "used_percentage": 0.0,
       "total": "1023",
       "id": "Private-64512-65534"
+    },
+    {
+      "status": "not_in_use",
+      "used": "0",
+      "display_name": "test",
+      "tags": [
+        "default"
+      ],
+      "created_at": "2020-12-23T01:01:37.426363Z",
+      "last_modified_at": "2020-12-23T01:01:37.426363Z",
+      "ranges": [
+        {
+          "status": "pool_element_available",
+          "used": "0",
+          "last": 1000,
+          "used_percentage": 0.0,
+          "total": "901",
+          "first": 100
+        },
+        {
+          "status": "pool_element_available",
+          "used": "0",
+          "last": 10000,
+          "used_percentage": 0.0,
+          "total": "5001",
+          "first": 5000
+        }
+      ],
+      "used_percentage": 0.0,
+      "total": "5902",
+      "id": "1358b68b-9505-4641-82a1-8e350dc49576"
     }
   ]
 }

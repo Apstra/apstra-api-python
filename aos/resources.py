@@ -3,7 +3,9 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 import logging
+from dataclasses import dataclass
 from .aos import AosSubsystem, AosAPIError
+from typing import Optional, List, Generator
 
 logger = logging.getLogger(__name__)
 
@@ -18,286 +20,216 @@ class AosResources(AosSubsystem):
     """
 
     def __init__(self, rest):
-        self.asn_pools = AosAsnPools(rest)
-        self.vni_pools = AosVniPools(rest)
-        self.ipv4_pools = AosIpv4Pools(rest)
-        self.ipv6_pools = AosIpv6Pools(rest)
+        super().__init__(rest)
+        self.asn_pools = AosAsnPool(rest)
+        self.vni_pools = AosVniPool(rest)
+        self.ipv4_pools = AosIPPool(rest)
+        self.ipv6_pools = AosIPv6Pool(rest)
 
 
-class AosAsnPools(AosSubsystem):
-    """
-    Manage AOS ASN Pools.
-    This does not apply the resource to a blueprint
-    See `aos.blueprint` to apply to blueprint
-    """
-
-    def get_all(self):
-        """
-        Return all asn pools configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        a_path = "/api/resources/asn-pools"
-        resp = self.rest.json_resp_get(a_path)
-        return resp["items"]
-
-    def get_pool(self, pool_id: str = None, pool_name: str = None):
-        """
-        Return an existing ASN pool by id or name
-        Parameters
-        ----------
-        pool_id
-            (str) ID of AOS asn pool (optional)
-        pool_name
-            (str) Name or label of AOS asn pool (optional)
+@dataclass
+class AosResource:
+    display_name: str
+    id: str
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+@dataclass
+class PoolSubnet:
+    network: str
 
-        if pool_name:
-            pools = self.get_all()
-            if pools:
-                for pool in pools:
-                    if pool.get("display_name") == pool_name:
-                        return pool
-                raise AosAPIError(f"ASN Pool {pool_name} not found")
-
-        return self.rest.json_resp_get(f"/api/resources/asn-pools/{pool_id}")
-
-    def add_pool(self, pool_list: list):
-        """
-        Add one or more ASN pools to AOS
-
-        Parameters
-        ----------
-        pool_list
-            (list) - list of json payloads
-
-        Returns
-        -------
-            (list) ASN pool IDs
-        """
-        p_path = "/api/resources/asn-pools"
-
-        ids = []
-        for pool in pool_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
-            if item_id:
-                ids.append(item_id)
-
-        return ids
-
-    def delete_pool(self, pool_list: str):
-        """
-        Delete one or more asn pools from AOS.
-        ASN Pools can not be deleted if they are "in_us" by a Blueprint
-
-        Parameters
-        ----------
-        pool_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/resources/asn-pools"
-
-        ids = []
-        for pool_id in pool_list:
-            self.rest.delete(f"{p_path}/{pool_id}")
-            ids.append(pool_id)
-
-        return ids
+    @classmethod
+    def from_json(cls, d: dict):
+        return PoolSubnet(
+            network=d["network"],
+        )
 
 
-class AosVniPools(AosSubsystem):
-    """
-    Manage AOS VNI Pools.
-    This does not apply the resource to a blueprint
-    See `aos.blueprint` to apply to blueprint
-    """
+@dataclass
+class IPPool(AosResource):
+    subnets: List[PoolSubnet]
 
-    def get_all(self):
-        """
-        Return all vni pools configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        v_path = "/api/resources/vni-pools"
-        resp = self.rest.json_resp_get(v_path)
-        return resp["items"]
-
-    def get_pool(self, pool_id: str = None, pool_name: str = None):
-        """
-        Return an existing VNI pool by id or name
-        Parameters
-        ----------
-        pool_id
-            (str) ID of AOS vni pool (optional)
-        pool_name
-            (str) Name or label of AOS vni pool (optional)
+    @classmethod
+    def from_json(cls, d: dict):
+        return IPPool(
+            display_name=d["display_name"],
+            subnets=[PoolSubnet.from_json(s) for s in d["subnets"]],
+            id=d["id"],
+        )
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+class AosIPPool(AosSubsystem):
+    def create(
+            self,
+            name: str,
+            subnets: List[str],
+            tags: Optional[List[str]] = None,
+    ) -> IPPool:
+        if tags is None:
+            tags = []
 
-        if pool_name:
-            pools = self.get_all()
-            if pools:
-                for pool in pools:
-                    if pool.get("display_name") == pool_name:
-                        return pool
-                raise AosAPIError(f"VNI Pool {pool_name} not found")
+        ip_pool = {
+            "subnets": [{"network": net} for net in subnets],
+            "tags": tags,
+            "display_name": name,
+            "id": name,
+        }
 
-        return self.rest.json_resp_get(f"/api/resources/vni-pools/{pool_id}")
+        created = self.rest.json_resp_post("/api/resources/ip-pools", data=ip_pool)
+        return self.get(created["id"])
 
-    def add_pool(self, pool_list: list):
-        """
-        Add one or more vni pools to AOS
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/ip-pools/{pool_id}")
 
-        Parameters
-        ----------
-        pool_list
-            (list) - list of json payloads
+    def get(self, pool_id: str) -> IPPool:
+        return IPPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/ip-pools/{pool_id}")
+        )
 
-        Returns
-        -------
-            (list) VNI pool IDs
-        """
-        p_path = "/api/resources/vni-pools"
+    def iter_all(self) -> Generator[IPPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/ip-pools")
+        if pools:
+            for p in pools["items"]:
+                yield IPPool.from_json(p)
 
-        ids = []
-        for pool in pool_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
-            if item_id:
-                ids.append(item_id)
-
-        return ids
-
-    def delete_pool(self, pool_list: str):
-        """
-        Delete one or more vni pools from AOS.
-        VNI Pools can not be deleted if they are "in_us" by a Blueprint
-
-        Parameters
-        ----------
-        pool_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/resources/vni-pools"
-
-        ids = []
-        for pool_id in pool_list:
-            self.rest.delete(f"{p_path}/{pool_id}")
-            ids.append(pool_id)
-
-        return ids
+    def find_by_name(self, name: str) -> List[IPPool]:
+        return [p for p in self.iter_all() if p.display_name == name]
 
 
-class AosIpv4Pools(AosSubsystem):
-    """
-    Manage AOS IPv4 address Pools.
-    This does not apply the resource to a blueprint
-    See `aos.blueprint` to apply to blueprint
-    """
+class AosIPv6Pool(AosSubsystem):
+    def create(
+            self,
+            name: str,
+            subnets: List[str],
+            tags: Optional[List[str]] = None,
+    ) -> IPPool:
+        if tags is None:
+            tags = []
 
-    def get_all(self):
-        """
-        Return all ip pools from AOS
+        ip_pool = {
+            "subnets": [{"network": net} for net in subnets],
+            "tags": tags,
+            "display_name": name,
+            "id": name,
+        }
 
-        Returns
-        -------
-            (obj) json response
-        """
-        ip_path = "/api/resources/ip-pools"
-        resp = self.rest.json_resp_get(ip_path)
-        return resp["items"]
+        created = self.rest.json_resp_post("/api/resources/ipv6-pools", data=ip_pool)
+        return self.get(created["id"])
 
-    def get_pool(self, pool_id: str = None, pool_name: str = None):
-        """
-        Return an existing IPv4 pool by id or name
-        Parameters
-        ----------
-        pool_id
-            (str) ID of AOS ipv4 pool (optional)
-        pool_name
-            (str) Name or label of AOS ipv4 pool (optional)
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/ipv6-pools/{pool_id}")
+
+    def get(self, pool_id: str) -> IPPool:
+        return IPPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/ipv6-pools/{pool_id}")
+        )
+
+    def iter_all(self) -> Generator[IPPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/ipv6-pools")
+        if pools:
+            for p in pools["items"]:
+                yield IPPool.from_json(p)
+
+    def find_by_name(self, name: str) -> List[IPPool]:
+        return [p for p in self.iter_all() if p.display_name == name]
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+@dataclass
+class Range:
+    first: int
+    last: int
 
-        if pool_name:
-            pools = self.get_all()
-            if pools:
-                for pool in pools:
-                    if pool.get("display_name") == pool_name:
-                        return pool
-                raise AosAPIError(f"IPv4 Pool {pool_name} not found")
+    @classmethod
+    def from_json(cls, d: dict):
+        return Range(first=d["first"], last=d["last"])
 
-        return self.rest.json_resp_get(f"/api/resources/ip-pools/{pool_id}")
 
-    def add_pool(self, pool_list: list):
-        """
-        Add one or more ip pools to AOS
+@dataclass
+class AsnPool(AosResource):
+    ranges: List[Range]
 
-        Parameters
-        ----------
-        pool_list
-            (list) - list of json payloads
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return AsnPool(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            ranges=[Range.from_json(r) for r in d["ranges"]],
+        )
 
-        Returns
-        -------
-            (list) ip pool IDs
-        """
-        p_path = "/api/resources/ip-pools"
 
-        ids = []
-        for pool in pool_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=pool)
-            if item_id:
-                ids.append(item_id)
+class AosAsnPool(AosSubsystem):
+    def create(self, name: str, ranges: List[Range]) -> AsnPool:
+        asn_pool = {
+            "display_name": name,
+            "id": name,
+            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
+        }
 
-        return ids
+        created = self.rest.json_resp_post("/api/resources/asn-pools", data=asn_pool)
+        return self.get(created["id"])
 
-    def delete_pool(self, pool_list: str):
-        """
-        Delete one or more asn pools from AOS.
-        ASN Pools can not be deleted if they are "in_us" by a Blueprint
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/asn-pools/{pool_id}")
 
-        Parameters
-        ----------
-        pool_list
-            (list) - list of ids
+    def get(self, pool_id: str) -> Optional[AsnPool]:
+        return AsnPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/asn-pools/{pool_id}")
+        )
 
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/resources/ip-pools"
+    def iter_all(self) -> Generator[AsnPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/asn-pools")
+        if pools:
+            for p in pools["items"]:
+                yield AsnPool.from_json(p)
 
-        ids = []
-        for pool_id in pool_list:
-            self.rest.delete(f"{p_path}/{pool_id}")
-            ids.append(pool_id)
+    def find_by_name(self, pool_name: str) -> List[AsnPool]:
+        return [p for p in self.iter_all() if p.display_name == pool_name]
 
-        return ids
+
+@dataclass
+class VniPool(AosResource):
+    ranges: List[Range]
+
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return VniPool(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            ranges=[Range.from_json(r) for r in d["ranges"]],
+        )
+
+
+class AosVniPool(AosSubsystem):
+    def create(self, name: str, ranges: List[Range]) -> VniPool:
+        vni_pool = {
+            "display_name": name,
+            "id": name,
+            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
+        }
+
+        created = self.rest.json_resp_post("/api/resources/vni-pools",
+                                           data=vni_pool)
+        return self.get(created["id"])
+
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/vni-pools/{pool_id}")
+
+    def get(self, pool_id: str) -> Optional[VniPool]:
+        return VniPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/vni-pools/{pool_id}")
+        )
+
+    def iter_all(self) -> Generator[VniPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/vni-pools")
+        if pools:
+            for p in pools["items"]:
+                yield VniPool.from_json(p)
+
+    def find_by_name(self, pool_name: str) -> List[VniPool]:
+        return [p for p in self.iter_all() if p.display_name == pool_name]
 
 
 class AosIpv6Pools(AosSubsystem):

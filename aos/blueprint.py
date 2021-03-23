@@ -12,7 +12,7 @@ from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
 from .design import AosConfiglets, AosPropertySets, AosTemplates
 from .devices import AosDevices
-from .external_systems import AosExternalRouters
+from .external_systems import AosExternalRouter
 from .repeat import repeat_until
 
 
@@ -1050,15 +1050,15 @@ class AosBlueprint(AosSubsystem):
         rtr_path = f"/api/blueprints/{bp_id}/external-routers"
 
         if ext_rtr_name:
-            external_router = AosExternalRouters(self.rest)
-            ext_rtr = external_router.get_external_router(ex_name=ext_rtr_name)
+            external_router = AosExternalRouter(self.rest)
+            ext_rtr = external_router.find_by_name(rtr_name=ext_rtr_name)
 
             if not ext_rtr:
                 raise AosAPIResourceNotFound(
                     f"Unable to find external router " f"with name {ext_rtr_name}"
                 )
 
-            ext_rtr_id = ext_rtr["id"]
+            ext_rtr_id = ext_rtr[0].id
 
         rtr_data = {"router_id": ext_rtr_id}
         bp_rtr_id = self.rest.json_resp_post(rtr_path, data=rtr_data)["id"]

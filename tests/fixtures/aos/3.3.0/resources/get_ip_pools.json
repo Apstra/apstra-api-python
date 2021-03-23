@@ -12,26 +12,6 @@
         }
       ],
       "used": "0",
-      "display_name": "external-router",
-      "tags": [],
-      "created_at": "2020-10-26T18:22:49.704429Z",
-      "last_modified_at": "2020-10-26T18:22:49.704429Z",
-      "used_percentage": 0,
-      "total": "1024",
-      "id": "291ee0f5-b4e5-4dc3-83d2-176c590247cc"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "10.10.0.0/22",
-          "total": "1024",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
       "display_name": "spine-leaf",
       "tags": [],
       "created_at": "2020-10-26T18:22:49.854241Z",
@@ -39,28 +19,6 @@
       "used_percentage": 0,
       "total": "1024",
       "id": "adb5641b-3182-4092-bcc4-85c49befe122"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "203.0.113.0/24",
-          "total": "256",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
-      "display_name": "TESTNET-203.0.113.0/24",
-      "tags": [
-        "default"
-      ],
-      "created_at": "2020-08-15T09:05:36.073574Z",
-      "last_modified_at": "2020-08-15T09:05:36.073574Z",
-      "used_percentage": 0,
-      "total": "256",
-      "id": "TESTNET-203_0_113_0-24"
     },
     {
       "status": "not_in_use",
@@ -101,92 +59,6 @@
       "used_percentage": 0,
       "total": "256",
       "id": "2f278c1b-78bd-4b6f-8aef-052e984a9fa7"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "10.20.31.0/24",
-          "total": "256",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
-      "display_name": "spine-loopback",
-      "tags": [],
-      "created_at": "2020-10-26T18:22:49.906406Z",
-      "last_modified_at": "2020-10-26T18:22:49.906406Z",
-      "used_percentage": 0,
-      "total": "256",
-      "id": "167f365e-d2d0-48fb-a820-72eda52ff862"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "172.16.0.0/12",
-          "total": "1048576",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
-      "display_name": "Private-172.16.0.0/12",
-      "tags": [
-        "default"
-      ],
-      "created_at": "2020-08-15T09:05:36.072658Z",
-      "last_modified_at": "2020-08-15T09:05:36.072658Z",
-      "used_percentage": 0,
-      "total": "1048576",
-      "id": "Private-172_16_0_0-12"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "10.0.0.0/8",
-          "total": "16777216",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
-      "display_name": "Private-10.0.0.0/8",
-      "tags": [
-        "default"
-      ],
-      "created_at": "2020-08-15T09:05:36.073279Z",
-      "last_modified_at": "2020-08-15T09:05:36.073279Z",
-      "used_percentage": 0,
-      "total": "16777216",
-      "id": "Private-10_0_0_0-8"
-    },
-    {
-      "status": "not_in_use",
-      "subnets": [
-        {
-          "status": "pool_element_available",
-          "used": "0",
-          "network": "192.168.0.0/16",
-          "total": "65536",
-          "used_percentage": 0
-        }
-      ],
-      "used": "0",
-      "display_name": "Private-192.168.0.0/16",
-      "tags": [
-        "default"
-      ],
-      "created_at": "2020-08-15T09:05:36.072985Z",
-      "last_modified_at": "2020-08-15T09:05:36.072985Z",
-      "used_percentage": 0,
-      "total": "65536",
-      "id": "Private-192_168_0_0-16"
     }
   ]
 }
