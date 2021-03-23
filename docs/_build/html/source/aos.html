@@ -504,48 +504,6 @@ server_version”)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.add_security_zone_from_json">
-<code class="sig-name descname">add_security_zone_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.add_security_zone_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.add_security_zone_from_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a security-zone in the given blueprint using a
-preformatted json object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>payload</strong> – (str) - json object for payload</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - security-zone ID</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.add_virtual_network">
-<code class="sig-name descname">add_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.add_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.add_virtual_network" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a virtual network in the given blueprint using a
-preformatted json object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>payload</strong> – (str) - json object for payload</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - virtual network ID</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.add_virtual_network_batch">
 <code class="sig-name descname">add_virtual_network_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.add_virtual_network_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.add_virtual_network_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create multiple virtual networks in the given blueprint using a
@@ -668,6 +626,39 @@ virtual_network_svi_subnets)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.apply_sz_connectivity_points">
+<code class="sig-name descname">apply_sz_connectivity_points</code><span class="sig-paren">(</span><em class="sig-param">bp_id: str</em>, <em class="sig-param">sz_id: str</em>, <em class="sig-param">links: dict</em>, <em class="sig-param">peering_type: str</em>, <em class="sig-param">routing_policy: Optional[dict] = None</em>, <em class="sig-param">resources: Optional[dict] = None</em>, <em class="sig-param">ipv4_subnet: dict = &lt;class 'str'&gt;</em>, <em class="sig-param">vlan_id: Optional[int] = None</em>, <em class="sig-param">ipv6_enabled: bool = False</em>, <em class="sig-param">ipv6_subnet: Optional[dict] = None</em>, <em class="sig-param">routing_protocol: str = 'bgp'</em>, <em class="sig-param">ospf_domain_id: Optional[str] = None</em>, <em class="sig-param">ospf_policy: Optional[dict] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.apply_sz_connectivity_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.apply_sz_connectivity_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add connectivity-points to a given security-zone for external-router
+connectivity
+:param bp_id: (str) - ID of AOS blueprint
+:param sz_id: (str) - ID of security-zone
+:param links: (dict) - Blueprint link nodes associated with the security-zone
+:param peering_type: (str) - [ interface, loopback ]
+:param routing_policy: (dict) - (optional) updated routing-policy to use with external router
+:param resources: (dict) - (optional) further defined resource assigment such as IPv4/IPv6</p>
+<blockquote>
+<div><p>address</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ipv4_subnet</strong> – (dict) - IPv4 subnet to assign to the peering links ex ‘10.1.2.0/24’</p></li>
+<li><p><strong>vlan_id</strong> – (int) - (optional) vlan id used for peering. If not specified the
+vlan_id will be assigned from the resource pool</p></li>
+<li><p><strong>ipv6_enabled</strong> – (bool) - enable or disable IPv6 on the peering links. Default: disabled</p></li>
+<li><p><strong>ipv6_subnet</strong> – (dict) - (Optional) IPv4 subnet to assign to the peering links</p></li>
+<li><p><strong>routing_protocol</strong> – (str) - Routing protol used for external router peering. Default BGP
+[‘bgp’, ospf]</p></li>
+<li><p><strong>ospf_domain_id</strong> – (str) - (Optional) ospf domain for external router peering if using OSPF
+routing_protocol</p></li>
+<li><p><strong>ospf_policy</strong> – (dict) - (Optional) ospf policy for external router peering if using
+OSPF routing_protocol</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.assign_all_devices_from_location">
 <code class="sig-name descname">assign_all_devices_from_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">deploy_mode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.assign_all_devices_from_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.assign_all_devices_from_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign ALL AOS managed devices to a Blueprint based on the location field
@@ -755,7 +746,7 @@ based on system node name.
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.create_security_zone">
-<code class="sig-name descname">create_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">import_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">leaf_loopback_ip_pools</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dhcp_servers</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_security_zone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">import_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">leaf_loopback_ip_pools</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dhcp_servers</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">60</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_security_zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a security-zone in the given blueprint</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -799,6 +790,7 @@ range 1 - 4094</p>
 </p></li>
 <li><p><strong>leaf_loopback_ip_pools</strong> – (list) - list of IP pool IDs to assign to leaf_loopback resources</p></li>
 <li><p><strong>dhcp_servers</strong> – (list) - list of DHCP server (relay) IP addresses</p></li>
+<li><p><strong>timeout</strong> – (int) - time (seconds) to wait for creation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -808,6 +800,73 @@ range 1 - 4094</p>
 <dd class="field-odd"><p>(obj) - security-zone</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.create_security_zone_from_json">
+<code class="sig-name descname">create_security_zone_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_security_zone_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_security_zone_from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a security-zone in the given blueprint using a
+preformatted json object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
+<li><p><strong>payload</strong> – (str) - json object for payload</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(obj) - security-zone ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.create_virtual_network">
+<code class="sig-name descname">create_virtual_network</code><span class="sig-paren">(</span><em class="sig-param">bp_id: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">bound_to: list</em>, <em class="sig-param">sz_id: Optional[str] = None</em>, <em class="sig-param">sz_name: Optional[str] = None</em>, <em class="sig-param">vn_type: aos.blueprint.VNType = &lt;VNType.vxlan: 'vxlan'&gt;</em>, <em class="sig-param">vn_id: Optional[str] = None</em>, <em class="sig-param">tag_type: aos.blueprint.VNTagType = &lt;VNTagType.vlan_tagged: 'vlan_tagged'&gt;</em>, <em class="sig-param">ipv4_subnet: Optional[str] = None</em>, <em class="sig-param">ipv4_gateway: Optional[str] = None</em>, <em class="sig-param">ipv6_enabled: bool = False</em>, <em class="sig-param">ipv6_subnet: Optional[str] = None</em>, <em class="sig-param">ipv6_gateway: Optional[str] = None</em>, <em class="sig-param">timeout: int = 60</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bp_id</strong> – (str) - ID of blueprint</p></li>
+<li><p><strong>name</strong> – (str) - VLAN name</p></li>
+<li><p><strong>bound_to</strong> – (list) - nodes to assign the given virtual network to</p></li>
+<li><p><strong>sz_id</strong> – (str) - (optional) Security-zone ID associated with the virtual-network.
+Default: default security zone</p></li>
+<li><p><strong>sz_name</strong> – (str) - (optional) Security-zone name associated with the
+virtual-network.
+Default: default security zone</p></li>
+<li><p><strong>vn_type</strong> – (VNType) - Type of virtual network [‘vxlan’, ‘vlan’]</p></li>
+<li><p><strong>vn_id</strong> – (str) - (Optional) ID of virtual network</p></li>
+<li><p><strong>tag_type</strong> – (VNTagType) - (Optional) Default tag type.
+[‘vlan_tagged’, ‘untagged’, ‘’unassigned]
+Default: ‘vlan_tagged’</p></li>
+<li><p><strong>ipv4_subnet</strong> – (str) - (optional) IPV4 subnet assigned to virtual-network. If none
+given the subnet will be assigned from resource pool
+default: None</p></li>
+<li><p><strong>ipv4_gateway</strong> – (str) - (optional) IPV4 gateway address assigned to virtual-network.
+If none given the subnet will be assigned from resource pool
+default: None</p></li>
+<li><p><strong>ipv6_enabled</strong> – (bool) - (Optional) Enable or disable IPv6 on the virtual-network</p></li>
+<li><p><strong>ipv6_subnet</strong> – (str) - (optional) IPV6 subnet assigned to virtual-network. If none
+given the subnet will be assigned from resource pool
+default: None</p></li>
+<li><p><strong>ipv6_gateway</strong> – (str) - (optional) IPV4 gatewau address assigned to virtual-network.
+If none given the subnet will be assigned from resource pool
+default: None</p></li>
+<li><p><strong>timeout</strong> – (int) - time (seconds) to wait for creation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.create_virtual_network_from_json">
+<code class="sig-name descname">create_virtual_network_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_network</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">aos.blueprint.VirtualNetwork</a><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network_from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new virtual-network (VLAN) in a given blueprint
+:param bp_id: (str) - ID of blueprint
+:param virtual_network: (dict) - VirtualNetwork object</p>
 </dd></dl>
 
 <dl class="py method">
@@ -841,42 +900,27 @@ range 1 - 4094</p>
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.delete_security_zone">
-<code class="sig-name descname">delete_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_security_zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a given security-zone from a blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>sz_id</strong> – (str) - Id of security-zone</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) {}</p>
-</dd>
-</dl>
+<code class="sig-name descname">delete_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_security_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove security-zone from a blueprint.
+:param bp_id: (str) - ID of AOS blueprint
+:param sz_id: (str) - ID of security-zone</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.delete_sz_connectivity_point">
+<code class="sig-name descname">delete_sz_connectivity_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">cp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_sz_connectivity_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_sz_connectivity_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove connectivity-points from a given security-zone.
+:param bp_id: (str) - ID of AOS blueprint
+:param sz_id: (str) - ID of security-zone
+:param cp_id: (str) - ID of connectivity-point</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.delete_virtual_network">
-<code class="sig-name descname">delete_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_virtual_network" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a given virtual network from a blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>vn_id</strong> – (str) - Id of virtual network</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) {}</p>
-</dd>
-</dl>
+<code class="sig-name descname">delete_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.delete_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.delete_virtual_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a given virtual network based
+:param bp_id: (str) - ID of AOS Blueprint
+:param vn_id: (str) - ID of virtual network</p>
 </dd></dl>
 
 <dl class="py method">
@@ -892,6 +936,46 @@ given name (label).
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.find_sz_by_name">
+<code class="sig-name descname">find_sz_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">aos.blueprint.SecurityZone</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.find_sz_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.find_sz_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns security-zones (VRF) in a given blueprint based on name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
+<li><p><strong>name</strong> – (str) - ID of security-zone</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">SecurityZone</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.find_vn_by_name">
+<code class="sig-name descname">find_vn_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">aos.blueprint.VirtualNetwork</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.find_vn_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.find_vn_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return virtual-networks (VLANS) in a given blueprint based on name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
+<li><p><strong>name</strong> – (str) - ID of virtual-network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(obj) - VirtualNetwork</p>
 </dd>
 </dl>
 </dd></dl>
@@ -928,6 +1012,44 @@ given name (label).
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_all_security_zones">
+<code class="sig-name descname">get_all_security_zones</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">aos.blueprint.SecurityZone</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_all_security_zones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_all_security_zones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all security-zones (VRFs) in a given blueprint
+:param bp_id: (str) - ID of AOS Blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[<a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">SecurityZone</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_all_tor_nodes">
+<code class="sig-name descname">get_all_tor_nodes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_all_tor_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_all_tor_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all nodes associated with Top of Rack. For redundancy-groups (MLAG)
+this will return the redundancy-group node.
+:param bp_id: (str) - ID of AOS blueprint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_all_virtual_networks">
+<code class="sig-name descname">get_all_virtual_networks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">aos.blueprint.VirtualNetwork</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_all_virtual_networks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_all_virtual_networks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all virtual networks in a given blueprint
+:param bp_id: (str) - ID of AOS Blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[<a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">VirtualNetwork</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_bp">
 <code class="sig-name descname">get_bp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bp_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#aos.blueprint.Blueprint" title="aos.blueprint.Blueprint">aos.blueprint.Blueprint</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns blueprint by id or name</p>
@@ -945,6 +1067,49 @@ given name (label).
 <dd class="field-odd"><p>(obj) json object</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_bp_resource_pools">
+<code class="sig-name descname">get_bp_resource_pools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">resource_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp_resource_pools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp_resource_pools" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return existing pools to a given resource group in an AOS Blueprint
+:param bp_id: (str) ID of blueprint
+:param resource_type: (str) type of resource pool used</p>
+<blockquote>
+<div><p>(ex: asn, vni, ip, etc)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group_name</strong> – <p>(str) group to apply pool to
+(options:</p>
+<blockquote>
+<div><p>(asn): spine_asns, leaf_asns, spine_spine_asns,
+(vni): evpn_l3_vnis, vxlan_vn_ids
+(ip): spine_loopback_ips, leaf_loopback_ips,
+spine_superspine_link_ips,
+spine_leaf_link_ips, to_external_router_link_ips,
+mlag_domain_svi_subnets, vtep_ips,
+virtual_network_svi_subnets)</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_bp_system_leaf_nodes">
+<code class="sig-name descname">get_bp_system_leaf_nodes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp_system_leaf_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp_system_leaf_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all nodes with role ‘leaf’
+:param bp_id: (str) - ID of AOS blueprint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_bp_system_redundancy_group">
+<code class="sig-name descname">get_bp_system_redundancy_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">system_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp_system_redundancy_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp_system_redundancy_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the redundancy-group (MLAG) the given sysytem is associated with in
+the given blueprint
+:param bp_id: (str) - ID of AOS blueprint
+:param system_id: (str) - ID of the blueprint system node</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1081,76 +1246,48 @@ connectivity
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_security_zone">
-<code class="sig-name descname">get_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sz_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_security_zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return security-zone in a given blueprint based on name or ID.</p>
+<code class="sig-name descname">get_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span></em>, <em class="sig-param"><span class="n">sz_id</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">aos.blueprint.SecurityZone</a><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_security_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return security-zone (VRF) in a given blueprint based on ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>sz_id</strong> – (str) - ID of security-zone (optional)</p></li>
-<li><p><strong>sz_name</strong> – (str) - Name or label of security-zone (optional)</p></li>
+<li><p><strong>sz_id</strong> – (str) - ID of security-zone</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - json object</p>
+<dd class="field-odd"><p><a class="reference internal" href="#aos.blueprint.SecurityZone" title="aos.blueprint.SecurityZone">SecurityZone</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.get_security_zones_all">
-<code class="sig-name descname">get_security_zones_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_security_zones_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_security_zones_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all security-zones in a given blueprint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - json object</p>
-</dd>
-</dl>
+<dt id="aos.blueprint.AosBlueprint.get_sz_connectivity_points">
+<code class="sig-name descname">get_sz_connectivity_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_sz_connectivity_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_sz_connectivity_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>return all connectivity-points associated with a security-zone.
+:param bp_id: (str) - ID of AOS blueprint
+:param sz_id: (str) - ID of security-zone</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_virtual_network">
-<code class="sig-name descname">get_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vn_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_virtual_network" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return virtual network in a given blueprint based on name or ID.</p>
+<code class="sig-name descname">get_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">aos.blueprint.VirtualNetwork</a><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_virtual_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return virtual-networks (VLANS) in a given blueprint based on ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>vn_id</strong> – (str) - ID of virtual network (optional)</p></li>
-<li><p><strong>vn_name</strong> – (str) - Name or label of virtual networks (optional)</p></li>
+<li><p><strong>vn_id</strong> – (str) - ID of virtual-network</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - json object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.get_virtual_networks_all">
-<code class="sig-name descname">get_virtual_networks_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_virtual_networks_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_virtual_networks_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all virtual networks in a given blueprint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(obj) - json object</p>
+<dd class="field-odd"><p><a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">VirtualNetwork</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1257,22 +1394,6 @@ preformatted json object.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.update_virtual_network">
-<code class="sig-name descname">update_virtual_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">payload</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.update_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.update_virtual_network" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update a virtual network in the given blueprint using a
-preformatted json object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) - ID of AOS blueprint</p></li>
-<li><p><strong>vn_id</strong> – (str) - ID of virtual network</p></li>
-<li><p><strong>payload</strong> – (str) - json object for payload</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -1318,6 +1439,12 @@ preformatted json object.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="aos.blueprint.SecurityZone">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">SecurityZone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">vni_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vrf_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">route_target</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#SecurityZone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.SecurityZone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="aos.blueprint.StagingVersion">
 <code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">StagingVersion</code><a class="headerlink" href="#aos.blueprint.StagingVersion" title="Permalink to this definition">¶</a></dt>
@@ -1336,6 +1463,12 @@ preformatted json object.</p>
 <em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VNType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VNType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VNType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
 <p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="aos.blueprint.VirtualNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VirtualNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv4_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv4_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv4</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv6_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv6_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv6</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">security_zone_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">svi_ips</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">virtual_mac</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">default_endpoint_tag_types</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">endpoints</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">bound_to</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">vn_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">dhcp_service</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VirtualNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VirtualNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 </div>

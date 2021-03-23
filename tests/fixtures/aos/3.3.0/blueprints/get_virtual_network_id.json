@@ -1,26 +1,71 @@
 {
-      "route_target": "25001:1",
-      "bound_to": [
-        {
-          "access_switch_node_ids": [],
-          "system_id": "84819c8a-a402-424e-94fd-90c459f046d9",
-          "vlan_id": 121
-        }
-      ],
-      "description": "blue_121_leaf3_v4",
-      "virtual_gateway_ipv4": "192.168.121.1",
-      "vn_id": "25001",
-      "virtual_gateway_ipv6": null,
-      "virtual_mac": null,
-      "label": "blue_121_leaf3_v4",
-      "l3_connectivity": "l3Enabled",
-      "ipv6_subnet": null,
-      "vn_type": "vxlan",
-      "rt_policy": null,
-      "ipv4_subnet": "192.168.121.0/24",
-      "ipv6_enabled": false,
-      "id": "678f0440-0eef-4e9a-9f59-3b69a913aef2",
-      "ipv4_enabled": true,
-      "security_zone_id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
-      "dhcp_service": "dhcpServiceEnabled"
+  "route_target": "10002:1",
+  "svi_ips": [
+    {
+      "ipv4_addr": null,
+      "ipv6_addr": null,
+      "system_id": "dc964479-a2a2-421d-8f07-1fbd8ed6ca87",
+      "ipv6_required": null,
+      "ipv4_required": null
+    },
+    {
+      "ipv4_addr": null,
+      "ipv6_addr": null,
+      "system_id": "a8c6d59b-d758-44d9-a31a-896d4debb4ad",
+      "ipv6_required": null,
+      "ipv4_required": null
+    },
+    {
+      "ipv4_addr": null,
+      "ipv6_addr": null,
+      "system_id": "445f8ad3-69bd-4db6-976c-7f3e2bbfef3f",
+      "ipv6_required": null,
+      "ipv4_required": null
+    }
+  ],
+  "endpoints": [
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "764f1a25-212c-4093-8d51-c2ce421fb81b"
+    },
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "57a2780f-8d27-4436-8670-5d67180ffadc"
+    },
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "b73f3040-e916-44f7-b193-378dba8ac269"
+    }
+  ],
+  "bound_to": [
+    {
+      "access_switch_node_ids": [],
+      "system_id": "0bbed646-2c30-4736-88d8-1f4443b86259",
+      "vlan_id": 2
+    },
+    {
+      "access_switch_node_ids": [],
+      "system_id": "445f8ad3-69bd-4db6-976c-7f3e2bbfef3f",
+      "vlan_id": 2
+    }
+  ],
+  "description": null,
+  "virtual_gateway_ipv4": "172.16.1.1",
+  "vn_id": "10002",
+  "virtual_gateway_ipv6": null,
+  "virtual_mac": null,
+  "label": "test-blue15",
+  "l3_connectivity": "l3Enabled",
+  "ipv6_subnet": null,
+  "vn_type": "vxlan",
+  "rt_policy": null,
+  "ipv4_subnet": "172.16.1.0/24",
+  "ipv6_enabled": false,
+  "id": "307944e0-8aa5-4108-9253-0c453a653bde",
+  "ipv4_enabled": true,
+  "security_zone_id": "e32cf3f8-4ed1-4afa-83b3-1d6ae6e9b965",
+  "dhcp_service": "dhcpServiceEnabled"
 }

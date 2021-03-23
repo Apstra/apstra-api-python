@@ -7,12 +7,15 @@
 import json
 
 import pytest
+from unittest import mock
+from unittest.mock import call
 
 from aos.client import AosClient
 from aos.aos import AosRestAPI, AosAPIError, AosInputError
-from aos.blueprint import Blueprint, Device, AosBPCommitError, Anomaly
+from aos.blueprint import Blueprint, Device, AosBPCommitError, Anomaly, \
+    SecurityZone, VirtualNetwork
 
-
+from requests.utils import requote_uri
 from tests.util import make_session, read_fixture, deserialize_fixture
 
 
@@ -462,26 +465,75 @@ def test_get_deployed_devices(
     ]
 
 
-def test_get_security_zone(
+def test_get_security_zone_id(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
     sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
     bp_id = "evpn-cvx-virtual"
     sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones/{sz_id}",
         status=200,
-        resp=read_fixture(all_fixture),
+        resp=read_fixture(sz_fixture),
     )
 
     sz_dict = deserialize_fixture(sz_fixture)
 
     assert (
         aos_logged_in.blueprint.get_security_zone(bp_id=bp_id, sz_id=sz_id)
-        == sz_dict
+        == SecurityZone(label=sz_dict["label"],
+                        id=sz_id,
+                        routing_policy=sz_dict["routing_policy"],
+                        vni_id=sz_dict["vni_id"],
+                        sz_type=sz_dict["sz_type"],
+                        vrf_name=sz_dict["vrf_name"],
+                        rt_policy=sz_dict["rt_policy"],
+                        route_target=sz_dict["route_target"],
+                        vlan_id=sz_dict["vlan_id"]
+                        )
+
+    )
+
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones/{sz_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_security_zone_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
+    sz_all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
+    bp_id = "evpn-cvx-virtual"
+    sz_name = "blue"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        status=200,
+        resp=read_fixture(sz_all_fixture),
+    )
+
+    sz_dict = deserialize_fixture(sz_fixture)
+
+    assert (
+        aos_logged_in.blueprint.find_sz_by_name(bp_id=bp_id, name=sz_name)
+        == SecurityZone(label=sz_name,
+                        id=sz_dict["id"],
+                        routing_policy=sz_dict["routing_policy"],
+                        vni_id=sz_dict["vni_id"],
+                        sz_type=sz_dict["sz_type"],
+                        vrf_name=sz_dict["vrf_name"],
+                        rt_policy=sz_dict["rt_policy"],
+                        route_target=sz_dict["route_target"],
+                        vlan_id=sz_dict["vlan_id"]
+                        )
     )
 
     aos_session.request.assert_called_once_with(
@@ -499,10 +551,11 @@ def test_create_security_zone(
     sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
     all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
     bp_id = "evpn-cvx-virtual"
+    sz_name = 'blue'
     sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
     resource_type = "ip"
     group_name = "leaf_loopback_ips"
-    group_path = f"sz%3A{sz_id}%2C{group_name}"
+    group_path = requote_uri(f"sz:{sz_id} {group_name}")
     pool_id = "leaf-loopback-pool-id"
 
     aos_session.add_response(
@@ -539,22 +592,82 @@ def test_create_security_zone(
 
     resp = aos_logged_in.blueprint.create_security_zone(
         bp_id=bp_id,
-        name="blue",
+        name=sz_name,
         import_policy="all",
         leaf_loopback_ip_pools=[pool_id],
         dhcp_servers=["1.1.1.1"],
     )
 
-    assert resp == json.loads(read_fixture(sz_fixture))
+    sz_dict = deserialize_fixture(sz_fixture)
+
+    assert resp == SecurityZone(label=sz_name,
+                                id=sz_dict["id"],
+                                routing_policy=sz_dict["routing_policy"],
+                                vni_id=sz_dict["vni_id"],
+                                sz_type=sz_dict["sz_type"],
+                                vrf_name=sz_dict["vrf_name"],
+                                rt_policy=sz_dict["rt_policy"],
+                                route_target=sz_dict["route_target"],
+                                vlan_id=sz_dict["vlan_id"])
 
 
-def test_get_virtual_network(
+def test_get_virtual_network_id(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    all_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_networks.json"
     vn_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_network_id.json"
     bp_id = "evpn-cvx-virtual"
-    vn_id = "678f0440-0eef-4e9a-9f59-3b69a913aef2"
+    vn_name = "test-blue15"
+    vn_id = "307944e0-8aa5-4108-9253-0c453a653bde"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+        status=200,
+        resp=read_fixture(vn_fixture),
+    )
+
+    vn_dict = deserialize_fixture(vn_fixture)
+
+    assert (
+        aos_logged_in.blueprint.get_virtual_network(bp_id=bp_id, vn_id=vn_id)
+        == VirtualNetwork(label=vn_name,
+                          id=vn_id,
+                          description=None,
+                          ipv4_enabled=vn_dict["ipv4_enabled"],
+                          ipv4_subnet=vn_dict["ipv4_subnet"],
+                          virtual_gateway_ipv4=vn_dict["virtual_gateway_ipv4"],
+                          ipv6_enabled=False,
+                          ipv6_subnet=None,
+                          virtual_gateway_ipv6=None,
+                          vn_id=vn_dict["vn_id"],
+                          security_zone_id=vn_dict["security_zone_id"],
+                          svi_ips=vn_dict["svi_ips"],
+                          virtual_mac=vn_dict["virtual_mac"],
+                          default_endpoint_tag_types={},
+                          endpoints=vn_dict["endpoints"],
+                          bound_to=vn_dict["bound_to"],
+                          vn_type=vn_dict["vn_type"],
+                          rt_policy=vn_dict["rt_policy"],
+                          dhcp_service=vn_dict["dhcp_service"]
+                          )
+    )
+    aos_session.request.assert_called_once_with(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+        params=None,
+        json=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_virtual_network_name(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    vn_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_network_id.json"
+    all_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_networks.json"
+    bp_id = "evpn-cvx-virtual"
+    vn_name = "test-blue15"
+    vn_id = "307944e0-8aa5-4108-9253-0c453a653bde"
 
     aos_session.add_response(
         "GET",
@@ -566,8 +679,27 @@ def test_get_virtual_network(
     vn_dict = deserialize_fixture(vn_fixture)
 
     assert (
-        aos_logged_in.blueprint.get_virtual_network(bp_id=bp_id, vn_id=vn_id)
-        == vn_dict
+        aos_logged_in.blueprint.find_vn_by_name(bp_id=bp_id, name=vn_name)
+        == VirtualNetwork(label=vn_name,
+                          id=vn_id,
+                          description=None,
+                          ipv4_enabled=vn_dict["ipv4_enabled"],
+                          ipv4_subnet=vn_dict["ipv4_subnet"],
+                          virtual_gateway_ipv4=vn_dict["virtual_gateway_ipv4"],
+                          ipv6_enabled=False,
+                          ipv6_subnet=None,
+                          virtual_gateway_ipv6=None,
+                          vn_id=vn_dict["vn_id"],
+                          security_zone_id=vn_dict["security_zone_id"],
+                          svi_ips=vn_dict["svi_ips"],
+                          virtual_mac=vn_dict["virtual_mac"],
+                          default_endpoint_tag_types={},
+                          endpoints=vn_dict["endpoints"],
+                          bound_to=vn_dict["bound_to"],
+                          vn_type=vn_dict["vn_type"],
+                          rt_policy=vn_dict["rt_policy"],
+                          dhcp_service=vn_dict["dhcp_service"]
+                          )
     )
 
     aos_session.request.assert_called_once_with(
@@ -576,6 +708,100 @@ def test_get_virtual_network(
         params=None,
         json=None,
         headers=expected_auth_headers,
+    )
+
+
+def test_create_virtual_network(
+        aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    vn_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_network_id.json"
+    sz_all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
+    bp_id = "evpn-cvx-virtual"
+    sz_name = "blue"
+    sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
+    vn_id = "307944e0-8aa5-4108-9253-0c453a653bde"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+        status=200,
+        resp=read_fixture(sz_all_fixture),
+    )
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
+        status=202,
+        params=None,
+        resp=json.dumps({"id": vn_id})
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+        status=200,
+        resp=read_fixture(vn_fixture),
+    )
+    aos_logged_in.blueprint.create_virtual_network(
+        bp_id=bp_id,
+        name="blue-test1",
+        bound_to=mock.ANY,
+        sz_name=sz_name,
+    )
+
+    bound_to = deserialize_fixture(vn_fixture)["bound_to"]
+    expected_body = {
+        'label': 'blue-test1',
+        'security_zone_id': sz_id,
+        'vn_type': 'vxlan',
+        'vn_id': None,
+        'default_endpoint_tag_types': {
+            'single-link': 'vlan_tagged',
+            'dual-link': 'vlan_tagged'
+        },
+        'bound_to': bound_to,
+        'ipv4_enabled': True,
+        'dhcp_service': "dhcpServiceEnabled",
+        'ipv4_subnet': None,
+        'ipv4_gateway': None
+    }
+
+    aos_session.request.assert_has_calls(
+        [
+            call(
+                "POST",
+                "http://aos:80/api/aaa/login",
+                json=mock.ANY,
+                params=None,
+                headers=mock.ANY,
+            ),
+            call(
+                "GET",
+                f"http://aos:80/api/blueprints/{bp_id}/security-zones",
+                params=None,
+                json=None,
+                headers=mock.ANY,
+            ),
+            call(
+                "POST",
+                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
+                params=None,
+                json=expected_body,
+                headers=mock.ANY,
+            ),
+            call(
+                "GET",
+                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+                params=None,
+                json=None,
+                headers=mock.ANY,
+            ),
+            call(
+                "GET",
+                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+                params=None,
+                json=None,
+                headers=mock.ANY,
+            ),
+        ]
     )
 
 

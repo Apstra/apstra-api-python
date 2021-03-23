@@ -6,11 +6,14 @@ from enum import Enum
 import json
 import logging
 from collections import namedtuple
+from dataclasses import dataclass
 from typing import Optional, List, Generator
+from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
 from .design import AosConfiglets, AosPropertySets, AosTemplates
 from .devices import AosDevices
 from .external_systems import AosExternalRouters
+from .repeat import repeat_until
 
 
 logger = logging.getLogger(__name__)
@@ -53,6 +56,99 @@ class VNTagType(Enum):
     vlan_tagged = "vlan_tagged"
     untagged = "untagged"
     unassigned = "unassigned"
+
+
+@dataclass
+class SecurityZone:
+    label: str
+    id: str
+    routing_policy: dict
+    vni_id: str
+    sz_type: str
+    vrf_name: str
+    rt_policy: dict
+    route_target: dict
+    vlan_id: int
+
+    @classmethod
+    def from_json(cls, sz: Optional[dict]):
+        if sz is None:
+            return NullSecurityZone
+        return SecurityZone(
+            label=sz.get("label", ""),
+            id=sz["id"],
+            routing_policy=sz.get("routing_policy", None),
+            vni_id=sz.get("vni_id", ""),
+            sz_type=sz.get("sz_type", ""),
+            vrf_name=sz.get("vrf_name", ""),
+            rt_policy=sz.get("rt_policy", None),
+            route_target=sz.get("route_target", None),
+            vlan_id=sz.get("vlan_id", None)
+        )
+
+
+NullSecurityZone = SecurityZone(label="", id="", routing_policy={},
+                                vni_id="", sz_type="", vrf_name="",
+                                rt_policy={}, route_target={}, vlan_id=0)
+
+
+@dataclass
+class VirtualNetwork:
+    label: str
+    id: str
+    description: str
+    ipv4_enabled: bool
+    ipv4_subnet: str
+    virtual_gateway_ipv4: str
+    ipv6_enabled: bool
+    ipv6_subnet: str
+    virtual_gateway_ipv6: str
+    vn_id: str
+    security_zone_id: str
+    svi_ips: list
+    virtual_mac: str
+    default_endpoint_tag_types: dict
+    endpoints: list
+    bound_to: list
+    vn_type: str
+    rt_policy: dict
+    dhcp_service: str
+
+    @classmethod
+    def from_json(cls, vn: Optional[dict]):
+        if vn is None:
+            return NullVirtualNetwork
+        return VirtualNetwork(
+            label=vn.get("label", ""),
+            id=vn["id"],
+            description=vn["description"],
+            ipv4_enabled=vn["ipv4_enabled"],
+            ipv4_subnet=vn["ipv4_subnet"],
+            virtual_gateway_ipv4=vn["virtual_gateway_ipv4"],
+            ipv6_enabled=vn["ipv6_enabled"],
+            ipv6_subnet=vn["ipv6_subnet"],
+            virtual_gateway_ipv6=vn["virtual_gateway_ipv6"],
+            vn_id=vn["vn_id"],
+            security_zone_id=vn["security_zone_id"],
+            svi_ips=vn.get("svi_ips", []),
+            virtual_mac=vn["virtual_mac"],
+            default_endpoint_tag_types=vn.get("default_endpoint_tag_types", {}),
+            endpoints=vn.get("endpoints", []),
+            bound_to=vn["bound_to"],
+            vn_type=vn["vn_type"],
+            rt_policy=vn["rt_policy"],
+            dhcp_service=vn["dhcp_service"],
+        )
+
+
+NullVirtualNetwork = VirtualNetwork(label="", id="", description="",
+                                    ipv4_enabled=True, ipv4_subnet="",
+                                    virtual_gateway_ipv4="", ipv6_enabled=False,
+                                    ipv6_subnet="", virtual_gateway_ipv6="",
+                                    vn_id="", security_zone_id="", svi_ips=[],
+                                    virtual_mac="", default_endpoint_tag_types={},
+                                    endpoints=[], bound_to=[], vn_type="",
+                                    rt_policy={}, dhcp_service="",)
 
 
 class AosBlueprint(AosSubsystem):
@@ -411,6 +507,38 @@ class AosBlueprint(AosSubsystem):
 
         return self.rest.json_resp_put(uri=rg_path, data=data)
 
+    def get_bp_resource_pools(self, bp_id: str,
+                              resource_type: str,
+                              group_name: str):
+        """
+        Return existing pools to a given resource group in an AOS Blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        resource_type
+            (str) type of resource pool used
+            (ex: asn, vni, ip, etc)
+        group_name
+            (str) group to apply pool to
+            (options:
+                (asn): spine_asns, leaf_asns, spine_spine_asns,
+                (vni): evpn_l3_vnis, vxlan_vn_ids
+                (ip): spine_loopback_ips, leaf_loopback_ips,
+                spine_superspine_link_ips,
+                spine_leaf_link_ips, to_external_router_link_ips,
+                mlag_domain_svi_subnets, vtep_ips,
+                virtual_network_svi_subnets)
+
+        Returns
+        -------
+
+        """
+        rg_path = f"/api/blueprints/{bp_id}/resource_groups/" \
+                  f"{resource_type}/{group_name}"
+
+        return self.rest.json_resp_get(uri=rg_path)
+
     # configlets, property-sets
     def get_configlets(self, bp_id: str):
         """
@@ -543,6 +671,110 @@ class AosBlueprint(AosSubsystem):
     def get_bp_system_nodes(self, bp_id: str):
 
         return self.get_bp_nodes(bp_id, "system")
+
+    def get_deployed_devices(self, bp_id: str):
+        """
+        Return all AOS managed devices deployed in the given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (obj) - json object
+        """
+        devices = []
+        d_query = (
+            "match(node('system', role='leaf', name='system')"
+            ".having(node(name='system')"
+            ".out('part_of_redundancy_group')"
+            ".node('redundancy_group'),at_most=0,))"
+        )
+        mlag_query = (
+            "match(node('redundancy_group', name='system', rg_type='mlag'),)"
+        )
+
+        d_items = self.qe_query(bp_id, d_query)
+        if d_items:
+            for item in d_items:
+                i = item.get("system")
+                devices.append(
+                    Device(
+                        label=f'{i["hostname"]}-{i["role"]}' f'-{i["system_type"]}',
+                        system_id=i["id"],
+                    )
+                )
+
+        m_items = self.qe_query(bp_id, mlag_query)
+        if m_items:
+            for item in m_items:
+                i = item.get("system")
+                devices.append(Device(label=i["label"], system_id=i["id"]))
+        return devices
+
+    def get_bp_system_leaf_nodes(self, bp_id: str):
+        """
+        Return all nodes with role 'leaf'
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        Returns
+        -------
+
+        """
+        leaf_query = {"query": "match(node('system', name='leaf', role='leaf'))"}
+
+        return self.qe_query(bp_id, query=leaf_query)
+
+    def get_bp_system_redundancy_group(self, bp_id: str, system_id):
+        """
+        Return the redundancy-group (MLAG) the given sysytem is associated with in
+        the given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        system_id
+            (str) - ID of the blueprint system node
+        Returns
+        -------
+
+        """
+        rg_query = {"query": "match(node('redundancy_group', name='rg')"
+                             ".out('composed_of_systems')"
+                             ".node('system', role='leaf',"
+                             f" id='{system_id}'))"}
+
+        return self.qe_query(bp_id, query=rg_query)
+
+    def get_all_tor_nodes(self, bp_id):
+        """
+        Return all nodes associated with Top of Rack. For redundancy-groups (MLAG)
+        this will return the redundancy-group node.
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        Returns
+        -------
+
+        """
+        leaf_nodes = self.get_bp_system_leaf_nodes(bp_id)
+
+        nodes = list()
+        for leaf in leaf_nodes:
+            leaf_id = leaf["leaf"]["id"]
+            rg = self.get_bp_system_redundancy_group(bp_id, leaf_id)
+            if rg:
+                if rg[0]["rg"] not in nodes:
+                    nodes.append(rg[0]["rg"])
+            else:
+                nodes.append(leaf["leaf"])
+
+        return nodes
 
     def assign_devices_from_json(self, bp_id: str, node_assignment: list):
         """
@@ -712,7 +944,6 @@ class AosBlueprint(AosSubsystem):
         return data
 
     # External Routers
-
     def get_external_routers_all(self, bp_id: str):
         """
         Returns all external routers imported into a given blueprint
@@ -907,70 +1138,30 @@ class AosBlueprint(AosSubsystem):
                         return p
                 raise AosAPIError(f"IBA Probe {probe_id} not found")
 
-    def get_deployed_devices(self, bp_id: str):
-        """
-        Return all AOS managed devices deployed in the given blueprint
-
-        Parameters
-        ----------
-        bp_id
-            (str) - ID of AOS blueprint
-
-        Returns
-        -------
-            (obj) - json object
-        """
-        devices = []
-        d_query = (
-            "match(node('system', role='leaf', name='system')"
-            ".having(node(name='system')"
-            ".out('part_of_redundancy_group')"
-            ".node('redundancy_group'),at_most=0,))"
-        )
-        mlag_query = (
-            "match(node('redundancy_group', name='system', rg_type='mlag'),)"
-        )
-
-        d_items = self.qe_query(bp_id, d_query)
-        if d_items:
-            for item in d_items:
-                i = item.get("system")
-                devices.append(
-                    Device(
-                        label=f'{i["hostname"]}-{i["role"]}' f'-{i["system_type"]}',
-                        system_id=i["id"],
-                    )
-                )
-
-        m_items = self.qe_query(bp_id, mlag_query)
-        if m_items:
-            for item in m_items:
-                i = item.get("system")
-                devices.append(Device(label=i["label"], system_id=i["id"]))
-        return devices
-
     # Security Zones
-    def get_security_zones_all(self, bp_id: str):
+    def get_all_security_zones(self, bp_id: str) -> List[SecurityZone]:
         """
-        Return all security-zones in a given blueprint.
-
+        Return all security-zones (VRFs) in a given blueprint
         Parameters
         ----------
         bp_id
-            (str) - ID of AOS blueprint
+            (str) - ID of AOS Blueprint
 
         Returns
         -------
-            (obj) - json object
+            [SecurityZone]
         """
-        sz_path = f"/api/blueprints/{bp_id}/security-zones"
+        sec_zones = self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/security-zones")["items"]
 
-        resp = self.rest.json_resp_get(uri=sz_path)
-        return resp["items"]
+        return [
+            SecurityZone.from_json(sz)
+            for sz in sec_zones.values()
+        ]
 
-    def get_security_zone(self, bp_id: str, sz_id: str = None, sz_name: str = None):
+    def get_security_zone(self, bp_id, sz_id) -> SecurityZone:
         """
-        Return security-zone in a given blueprint based on name or ID.
+        Return security-zone (VRF) in a given blueprint based on ID.
 
         Parameters
         ----------
@@ -979,32 +1170,37 @@ class AosBlueprint(AosSubsystem):
             (str) - ID of AOS blueprint
 
         sz_id
-            (str) - ID of security-zone (optional)
-
-        sz_name
-            (str) - Name or label of security-zone (optional)
+            (str) - ID of security-zone
 
         Returns
         -------
-            (obj) - json object
+            SecurityZone
         """
+        return SecurityZone.from_json(self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/security-zones/{sz_id}"))
 
-        sec_zones = self.get_security_zones_all(bp_id)
+    def find_sz_by_name(self, bp_id: str, name: str) -> Optional[SecurityZone]:
+        """
+        Returns security-zones (VRF) in a given blueprint based on name.
 
-        if sec_zones:
-            if sz_name:
-                for sz, value in sec_zones.items():
-                    if value["label"] == sz_name:
-                        return value
-                raise AosAPIError(f"Security-zone {sz_name} not found")
+        Parameters
+        ----------
 
-            if sz_id:
-                for sz, value in sec_zones.items():
-                    if value["id"] == sz_id:
-                        return value
-                raise AosAPIError(f"Security-zone {sz_name} not found")
+        bp_id
+            (str) - ID of AOS blueprint
 
-    def add_security_zone_from_json(self, bp_id: str, payload: dict):
+        name
+            (str) - ID of security-zone
+
+        Returns
+        -------
+            SecurityZone
+        """
+        for sz in self.get_all_security_zones(bp_id):
+            if sz.vrf_name == name:
+                return sz
+
+    def create_security_zone_from_json(self, bp_id: str, payload: dict):
         """
         Create a security-zone in the given blueprint using a
         preformatted json object.
@@ -1042,6 +1238,7 @@ class AosBlueprint(AosSubsystem):
         vlan_id: int = None,
         leaf_loopback_ip_pools: list = None,
         dhcp_servers: list = None,
+        timeout: int = 60
     ):
         """
         Create a security-zone in the given blueprint
@@ -1078,6 +1275,8 @@ class AosBlueprint(AosSubsystem):
             (list) - list of IP pool IDs to assign to leaf_loopback resources
         dhcp_servers
             (list) - list of DHCP server (relay) IP addresses
+        timeout
+            (int) - time (seconds) to wait for creation
 
         Returns
         -------
@@ -1107,32 +1306,32 @@ class AosBlueprint(AosSubsystem):
             "vlan_id": vlan_id,
         }
 
-        try:
-            resp = self.add_security_zone_from_json(bp_id, sec_zone)
-            sz = self.get_security_zone(bp_id, resp["id"])
-        except AosAPIError as e:
-            return f"Unable to create security-zone {name} Error: {e}"
+        sz = self.create_security_zone_from_json(bp_id, sec_zone)
+        logger.info(f"Creating Security-zone '{name}' in blueprint '{bp_id}'")
+
+        repeat_until(lambda:
+                     self.get_security_zone(bp_id, sz["id"]) != NullSecurityZone,
+                     timeout=timeout)
 
         # SZ leaf loopback pool
         if leaf_loopback_ip_pools:
             group_name = "leaf_loopback_ips"
-            group_path = f"sz%3A{sz['id']}%2C{group_name}"
-
-            self.apply_resource_groups(
-                bp_id=bp_id,
-                resource_type="ip",
-                group_name=group_path,
-                pool_ids=leaf_loopback_ip_pools,
-            )
-
+            group_path = requote_uri(f"sz:{sz['id']} {group_name}")
+            self.apply_resource_groups(bp_id=bp_id, resource_type="ip",
+                                       group_name=group_path,
+                                       pool_ids=leaf_loopback_ip_pools)
+            logger.info(f"Applying '{group_name}' resource pool "
+                        f"'{leaf_loopback_ip_pools}' to Security-zone "
+                        f"'{name}' in blueprint '{bp_id}'")
         # DHCP servers (relay)
         if dhcp_servers:
             dhcp = {"items": dhcp_servers}
-            sz = self.apply_security_zone_dhcp(
-                bp_id=bp_id, sz_id=sz["id"], dhcp_servers=dhcp
-            )
+            self.apply_security_zone_dhcp(bp_id=bp_id, sz_id=sz["id"],
+                                          dhcp_servers=dhcp)
+            logger.info(f"Applying dhcp servers '{dhcp_servers}' to Security-zone "
+                        f"'{name}' in blueprint '{bp_id}'")
 
-        return sz
+        return self.get_security_zone(bp_id, sz["id"])
 
     def update_security_zone(self, bp_id: str, sz_id: str, payload: str):
         """
@@ -1156,25 +1355,140 @@ class AosBlueprint(AosSubsystem):
 
         self.rest.patch(uri=sz_path, data=payload)
 
-    def delete_security_zone(self, bp_id: str, sz_id: str):
+    def get_sz_connectivity_points(self, bp_id: str, sz_id: str):
         """
-        Delete a given security-zone from a blueprint
-
+        return all connectivity-points associated with a security-zone.
         Parameters
         ----------
-
         bp_id
             (str) - ID of AOS blueprint
         sz_id
-            (str) - Id of security-zone
+            (str) - ID of security-zone
 
         Returns
         -------
-            (obj) {}
-        """
-        sz_path = f"/api/blueprints/{bp_id}/security-zones"
 
-        return self.rest.delete(uri=sz_path)
+        """
+        cp_path = f"/api/blueprints/{bp_id}/security-zones/" \
+                  f"{sz_id}/connectivity-points"
+
+        resp = self.rest.json_resp_get(cp_path)
+        return list(resp["items"].values())
+
+    def apply_sz_connectivity_points_raw(self, bp_id: str, sz_id: str, data: dict):
+
+        cp_path = f"/api/blueprints/{bp_id}/security-zones/" \
+                f"{sz_id}/connectivity-points"
+
+        return self.rest.json_resp_post(uri=cp_path, data=data)
+
+    def apply_sz_connectivity_points(self, bp_id: str, sz_id: str,
+                                     links: dict,
+                                     peering_type: str,
+                                     routing_policy: dict = None,
+                                     resources: dict = None,
+                                     ipv4_subnet: dict = str,
+                                     vlan_id: int = None,
+                                     ipv6_enabled: bool = False,
+                                     ipv6_subnet: dict = None,
+                                     routing_protocol: str = 'bgp',
+                                     ospf_domain_id: str = None,
+                                     ospf_policy: dict = None,
+                                     ):
+        """
+        Add connectivity-points to a given security-zone for external-router
+        connectivity
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+        links
+            (dict) - Blueprint link nodes associated with the security-zone
+        peering_type
+            (str) - [ interface, loopback ]
+        routing_policy
+            (dict) - (optional) updated routing-policy to use with external router
+        resources
+            (dict) - (optional) further defined resource assigment such as IPv4/IPv6
+            address
+        ipv4_subnet
+            (dict) - IPv4 subnet to assign to the peering links ex '10.1.2.0/24'
+        vlan_id
+            (int) - (optional) vlan id used for peering. If not specified the
+            vlan_id will be assigned from the resource pool
+        ipv6_enabled
+            (bool) - enable or disable IPv6 on the peering links. Default: disabled
+        ipv6_subnet
+            (dict) - (Optional) IPv4 subnet to assign to the peering links
+        routing_protocol
+            (str) - Routing protol used for external router peering. Default BGP
+            ['bgp', ospf]
+        ospf_domain_id
+            (str) - (Optional) ospf domain for external router peering if using OSPF
+            routing_protocol
+        ospf_policy
+            (dict) - (Optional) ospf policy for external router peering if using
+            OSPF routing_protocol
+
+        Returns
+        -------
+
+        """
+        data = {
+            "routing_policy": routing_policy,
+            "composed_of": links,
+            "resources": resources,
+            "ospf_policy": ospf_policy,
+            "ipv6_subnet": ipv6_subnet,
+            "ospf_domain_id": ospf_domain_id,
+            "routing_protocol": routing_protocol,
+            "ipv4_subnet": ipv4_subnet,
+            "ipv6_enabled": ipv6_enabled,
+            "vlan_id": vlan_id,
+            "peering_type": peering_type,
+        }
+
+        return self.apply_sz_connectivity_points_raw(bp_id=bp_id,
+                                                     sz_id=sz_id,
+                                                     data=data)
+
+    def delete_security_zone(self, bp_id: str, sz_id: str) -> None:
+        """
+        Remove security-zone from a blueprint.
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+
+        Returns
+        -------
+
+        """
+        self.rest.delete(f"/api/blueprints/{bp_id}/security-zones/{sz_id}")
+
+    def delete_sz_connectivity_point(self, bp_id: str, sz_id: str,
+                                     cp_id: str) -> None:
+        """
+        Remove connectivity-points from a given security-zone.
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        sz_id
+            (str) - ID of security-zone
+        cp_id
+            (str) - ID of connectivity-point
+
+        Returns
+        -------
+
+        """
+        self.rest.delete(f"/api/blueprints/{bp_id}/security-zones/{sz_id}/"
+                         f"connectivity-points/{cp_id}")
 
     def apply_leaf_loopback_ip_to_sz(self, bp_id: str, sz_id: str, pool_id: str):
         """
@@ -1202,29 +1516,148 @@ class AosBlueprint(AosSubsystem):
         return self.rest.json_resp_put(uri=p_path, data=data)
 
     # Virtual Networks
-    def get_virtual_networks_all(self, bp_id: str):
+    def create_virtual_network_from_json(self, bp_id: str,
+                                         virtual_network: dict) -> VirtualNetwork:
         """
-        Return all virtual networks in a given blueprint.
+        Create new virtual-network (VLAN) in a given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of blueprint
+        virtual_network
+            (dict) - VirtualNetwork object
+
+        Returns
+        -------
+
+        """
+        vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
+        return self.rest.json_resp_post(uri=vn_path, data=virtual_network)
+
+    def create_virtual_network(self, bp_id: str, name: str,
+                               bound_to: list,
+                               sz_id: str = None,
+                               sz_name: str = None,
+                               vn_type: VNType = VNType.vxlan,
+                               vn_id: str = None,
+                               tag_type: VNTagType = VNTagType.vlan_tagged,
+                               ipv4_subnet: str = None,
+                               ipv4_gateway: str = None,
+                               ipv6_enabled: bool = False,
+                               ipv6_subnet: str = None,
+                               ipv6_gateway: str = None,
+                               timeout: int = 60
+                               ):
+        """
 
         Parameters
         ----------
         bp_id
-            (str) - ID of AOS blueprint
+            (str) - ID of blueprint
+        name
+            (str) - VLAN name
+        bound_to
+            (list) - nodes to assign the given virtual network to
+        sz_id
+            (str) - (optional) Security-zone ID associated with the virtual-network.
+            Default: default security zone
+        sz_name
+            (str) - (optional) Security-zone name associated with the
+            virtual-network.
+            Default: default security zone
+        vn_type
+            (VNType) - Type of virtual network ['vxlan', 'vlan']
+        vn_id
+            (str) - (Optional) ID of virtual network
+        tag_type
+            (VNTagType) - (Optional) Default tag type.
+            ['vlan_tagged', 'untagged', ''unassigned]
+            Default: 'vlan_tagged'
+        ipv4_subnet
+            (str) - (optional) IPV4 subnet assigned to virtual-network. If none
+            given the subnet will be assigned from resource pool
+            default: None
+        ipv4_gateway
+            (str) - (optional) IPV4 gateway address assigned to virtual-network.
+            If none given the subnet will be assigned from resource pool
+            default: None
+        ipv6_enabled
+            (bool) - (Optional) Enable or disable IPv6 on the virtual-network
+        ipv6_subnet
+            (str) - (optional) IPV6 subnet assigned to virtual-network. If none
+            given the subnet will be assigned from resource pool
+            default: None
+        ipv6_gateway
+            (str) - (optional) IPV4 gatewau address assigned to virtual-network.
+            If none given the subnet will be assigned from resource pool
+            default: None
+        timeout
+            (int) - time (seconds) to wait for creation
 
         Returns
         -------
-            (obj) - json object
-        """
-        vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
 
-        resp = self.rest.json_resp_get(uri=vn_path)
-        return resp["virtual_networks"]
-
-    def get_virtual_network(
-        self, bp_id: str, vn_id: str = None, vn_name: str = None
-    ):
         """
-        Return virtual network in a given blueprint based on name or ID.
+        if sz_name:
+            sz = self.find_sz_by_name(bp_id, name=sz_name)
+            if sz:
+                sz_id = sz.id
+            else:
+                raise ValueError(
+                    f"Invalid argument '{sz_name}' was passed")
+
+        virt_net = {
+            "label": name,
+            "security_zone_id": sz_id,
+            "vn_type": vn_type.value,
+            "vn_id": vn_id,
+            "default_endpoint_tag_types": {
+                "single-link": tag_type.value,
+                "dual-link": tag_type.value
+            },
+            "bound_to": bound_to,
+            "ipv4_enabled": True,
+            "dhcp_service": "dhcpServiceEnabled",
+            "ipv4_subnet": ipv4_subnet,
+            "ipv4_gateway": ipv4_gateway
+        }
+
+        if ipv6_enabled:
+            virt_net["ipv6_subnet"] = ipv6_subnet
+            virt_net["ipv6_gateway"] = ipv6_gateway
+
+        vn = self.create_virtual_network_from_json(bp_id, virt_net)
+        logger.info(f"Creating virtual-network '{name}' in blueprint '{bp_id}'")
+
+        repeat_until(lambda:
+                     self.get_virtual_network(bp_id, vn["id"]) != NullVirtualNetwork,
+                     timeout=timeout)
+
+        return self.get_virtual_network(bp_id, vn["id"])
+
+    def get_all_virtual_networks(self, bp_id: str) -> List[VirtualNetwork]:
+        """
+        Return all virtual networks in a given blueprint
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS Blueprint
+
+        Returns
+        -------
+            [VirtualNetwork]
+        """
+        virt_nets = self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/virtual-networks")["virtual_networks"]
+
+        return [
+            VirtualNetwork.from_json(vn)
+            for vn in virt_nets.values()
+        ]
+
+    def get_virtual_network(self, bp_id: str, vn_id: str) -> VirtualNetwork:
+        """
+        Return virtual-networks (VLANS) in a given blueprint based on ID.
 
         Parameters
         ----------
@@ -1233,50 +1666,51 @@ class AosBlueprint(AosSubsystem):
             (str) - ID of AOS blueprint
 
         vn_id
-            (str) - ID of virtual network (optional)
-
-        vn_name
-            (str) - Name or label of virtual networks (optional)
+            (str) - ID of virtual-network
 
         Returns
         -------
-            (obj) - json object
+            VirtualNetwork
         """
 
-        virt_networks = self.get_virtual_networks_all(bp_id)
+        return VirtualNetwork.from_json(self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"))
 
-        if virt_networks:
-            if vn_name:
-                for vn, value in virt_networks.items():
-                    if value["label"] == vn_name:
-                        return value
-                raise AosAPIError(f"Virtual Network {vn_name} not found")
-
-            if vn_id:
-                for vn, value in virt_networks.items():
-                    if value["id"] == vn_id:
-                        return value
-                raise AosAPIError(f"Virtual Network {vn_name} not found")
-
-    def add_virtual_network(self, bp_id: str, payload: str):
+    def find_vn_by_name(self, bp_id: str, name: str) -> Optional[VirtualNetwork]:
         """
-        Create a virtual network in the given blueprint using a
-        preformatted json object.
+        Return virtual-networks (VLANS) in a given blueprint based on name.
 
         Parameters
         ----------
+
         bp_id
             (str) - ID of AOS blueprint
-        payload
-            (str) - json object for payload
+
+        name
+            (str) - ID of virtual-network
 
         Returns
         -------
-            (obj) - virtual network ID
+            (obj) - VirtualNetwork
         """
-        vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
+        for vn in self.get_all_virtual_networks(bp_id):
+            if vn.label == name:
+                return vn
 
-        return self.rest.json_resp_post(uri=vn_path, data=payload)
+    def delete_virtual_network(self, bp_id: str, vn_id: str) -> None:
+        """
+        Removes a given virtual network based
+        Parameters
+        ----------
+        bp_id
+             (str) - ID of AOS Blueprint
+        vn_id
+            (str) - ID of virtual network
+
+        Returns
+        -------
+        """
+        self.rest.delete(f"/api/blueprints/{bp_id}/virtual_networks/{vn_id}")
 
     def add_virtual_network_batch(self, bp_id: str, payload: str):
         """
@@ -1297,45 +1731,3 @@ class AosBlueprint(AosSubsystem):
         vn_path = f"/api/blueprints/{bp_id}/virtual-networks-batch"
 
         return self.rest.json_resp_post(uri=vn_path, data=payload)
-
-    def update_virtual_network(self, bp_id: str, vn_id: str, payload: str):
-        """
-        Update a virtual network in the given blueprint using a
-        preformatted json object.
-
-        Parameters
-        ----------
-        bp_id
-            (str) - ID of AOS blueprint
-        vn_id
-            (str) - ID of virtual network
-        payload
-            (str) - json object for payload
-
-        Returns
-        -------
-
-        """
-        vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
-
-        self.rest.patch(uri=vn_path, data=payload)
-
-    def delete_virtual_network(self, bp_id: str, vn_id: str):
-        """
-        Delete a given virtual network from a blueprint
-
-        Parameters
-        ----------
-
-        bp_id
-            (str) - ID of AOS blueprint
-        vn_id
-            (str) - Id of virtual network
-
-        Returns
-        -------
-            (obj) {}
-        """
-        vn_path = f"/api/blueprints/{bp_id}/virtual-networks/{vn_id}"
-
-        return self.rest.delete(uri=vn_path)
