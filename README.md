@@ -17,7 +17,11 @@ RestAPI.
 
 ```
 ## Documentation
-Documentation is currently found in docs/_build/html folder. 
+Documentation is currently found in [/docs](./docs/_build/html). 
+
+### Scripts and Examples
+Standalone scripts along with a number of end-to-end examples can be
+found in [/scripts](./scripts). Make sure to check out the [Readme](./scripts/README.md)
 
 ### Generating documentation:
 Docs Readme located in docs/

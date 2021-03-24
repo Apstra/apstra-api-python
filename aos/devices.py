@@ -141,6 +141,19 @@ class AosManagedDevices(AosSubsystem):
                 return True
         return False
 
+    def acknowledge_all(self):
+        batch = {
+            d.id: {
+                "user_config": {
+                    "aos_hcl_model": d.model,
+                    "admin_state": "normal",
+                }
+            }
+            for d in self.get_all()
+        }
+
+        self.rest.post("/api/systems-batch-update", data=batch)
+
 
 class AosSystemAgents(AosSubsystem):
     """

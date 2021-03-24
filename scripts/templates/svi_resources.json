@@ -1,0 +1,7 @@
+[
+    {
+        "type": "ip",
+        "group": "mlag_domain_svi_subnets",
+        "pool": "virtual-networks"
+    }
+]

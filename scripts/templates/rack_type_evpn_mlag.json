@@ -1,0 +1,205 @@
+{
+  "display_name": "apstra-mlag",
+  "description": "",
+  "leafs": [
+    {
+      "external_router_links": [
+        {
+          "count": 1,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        }
+      ],
+      "external_router_facing": true,
+      "leaf_leaf_l3_link_speed": null,
+      "redundancy_protocol": "mlag",
+      "leaf_leaf_link_port_channel_id": 0,
+      "leaf_leaf_l3_link_count": 0,
+      "logical_device": "AOS-7x10-1",
+      "leaf_leaf_link_speed": {
+        "unit": "G",
+        "value": 10
+      },
+      "link_per_spine_count": 1,
+      "leaf_leaf_link_count": 2,
+      "link_per_spine_speed": {
+        "unit": "G",
+        "value": 10
+      },
+      "label": "evpn-mlag",
+      "leaf_leaf_l3_link_port_channel_id": 0
+    }
+  ],
+  "logical_devices": [
+    {
+      "panels": [
+        {
+          "panel_layout": {
+            "row_count": 1,
+            "column_count": 7
+          },
+          "port_indexing": {
+            "order": "L-R, T-B",
+            "start_index": 1,
+            "schema": "absolute"
+          },
+          "port_groups": [
+            {
+              "count": 7,
+              "speed": {
+                "unit": "G",
+                "value": 10
+              },
+              "roles": [
+                "superspine",
+                "leaf",
+                "peer",
+                "l2_server",
+                "access",
+                "l3_server",
+                "spine",
+                "external_router"
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "AOS-7x10-1",
+      "id": "AOS-7x10-1"
+    },
+    {
+      "panels": [
+        {
+          "panel_layout": {
+            "row_count": 1,
+            "column_count": 2
+          },
+          "port_indexing": {
+            "order": "T-B, L-R",
+            "start_index": 1,
+            "schema": "absolute"
+          },
+          "port_groups": [
+            {
+              "count": 2,
+              "speed": {
+                "unit": "G",
+                "value": 10
+              },
+              "roles": [
+                "leaf",
+                "access"
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "AOS-2x10-1",
+      "id": "AOS-2x10-1"
+    },
+    {
+      "panels": [
+        {
+          "panel_layout": {
+            "row_count": 1,
+            "column_count": 1
+          },
+          "port_indexing": {
+            "order": "T-B, L-R",
+            "start_index": 1,
+            "schema": "absolute"
+          },
+          "port_groups": [
+            {
+              "count": 1,
+              "speed": {
+                "unit": "G",
+                "value": 10
+              },
+              "roles": [
+                "leaf",
+                "access"
+              ]
+            }
+          ]
+        }
+      ],
+      "display_name": "AOS-1x10-1",
+      "id": "AOS-1x10-1"
+    }
+  ],
+  "access_switches": [],
+  "id": "apstra-mlag",
+  "servers": [
+    {
+      "count": 1,
+      "connectivity_type": "l2",
+      "port_channel_id_min": 0,
+      "links": [
+        {
+          "link_per_switch_count": 1,
+          "label": "dual-link",
+          "link_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "target_switch_label": "evpn-mlag",
+          "attachment_type": "dualAttached",
+          "lag_mode": "lacp_active"
+        }
+      ],
+      "ip_version": "ipv4",
+      "port_channel_id_max": 0,
+      "logical_device": "AOS-2x10-1",
+      "label": "dual-server"
+    },
+    {
+      "count": 1,
+      "connectivity_type": "l2",
+      "port_channel_id_min": 0,
+      "links": [
+        {
+          "link_per_switch_count": 1,
+          "leaf_peer": "first",
+          "label": "single-link",
+          "link_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "target_switch_label": "evpn-mlag",
+          "attachment_type": "singleAttached",
+          "lag_mode": null
+        }
+      ],
+      "ip_version": "ipv4",
+      "port_channel_id_max": 0,
+      "logical_device": "AOS-1x10-1",
+      "label": "single-server-1"
+    },
+    {
+      "count": 1,
+      "connectivity_type": "l2",
+      "port_channel_id_min": 0,
+      "links": [
+        {
+          "link_per_switch_count": 1,
+          "leaf_peer": "second",
+          "label": "single-link",
+          "link_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "target_switch_label": "evpn-mlag",
+          "attachment_type": "singleAttached",
+          "lag_mode": null
+        }
+      ],
+      "ip_version": "ipv4",
+      "port_channel_id_max": 0,
+      "logical_device": "AOS-1x10-1",
+      "label": "single-server-2"
+    }
+  ]
+}
