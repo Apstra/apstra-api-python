@@ -1,0 +1,27 @@
+[
+    {
+        "type": "asn",
+        "group": "spine_asns",
+        "pool": "vpod-evpn-asn-pool"
+    },
+    {
+        "type": "asn",
+        "group": "leaf_asns",
+        "pool": "vpod-evpn-asn-pool"
+    },
+    {
+        "type": "ip",
+        "group": "spine_loopback_ips",
+        "pool": "spine-loopback"
+    },
+    {
+        "type": "ip",
+        "group": "leaf_loopback_ips",
+        "pool": "leaf-loopback"
+    },
+    {
+        "type": "ip",
+        "group": "spine_leaf_link_ips",
+        "pool": "spine-leaf"
+    }
+]

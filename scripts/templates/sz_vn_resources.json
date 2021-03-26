@@ -1,0 +1,17 @@
+[
+    {
+        "type": "vni",
+        "group": "evpn_l3_vnis",
+        "pool": "evpn-vni"
+    },
+    {
+        "type": "vni",
+        "group": "vxlan_vn_ids",
+        "pool": "evpn-vni"
+    },
+    {
+        "type": "ip",
+        "group": "vtep_ips",
+        "pool": "leaf-loopback"
+    }
+]

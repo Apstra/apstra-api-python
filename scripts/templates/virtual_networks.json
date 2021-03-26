@@ -1,0 +1,17 @@
+[
+    {
+        "name": "finance-www",
+        "ipv4_subnet": "10.30.42.0/24",
+        "ipv4_gateway": "10.30.42.1"
+    },
+    {
+        "name": "finance-app",
+        "ipv4_subnet": "10.30.43.0/24",
+        "ipv4_gateway": "10.30.43.1"
+    },
+    {
+        "name": "finance-db",
+        "ipv4_subnet": "10.30.44.0/24",
+        "ipv4_gateway": "10.30.44.1"
+    }
+]
