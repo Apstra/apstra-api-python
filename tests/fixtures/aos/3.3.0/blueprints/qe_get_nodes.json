@@ -1,0 +1,53 @@
+{
+  "count": 3,
+  "items": [
+    {
+      "leaf": {
+        "tags": null,
+        "position_data": null,
+        "property_set": null,
+        "hostname": "evpn-mlag-001-leaf1",
+        "group_label": "evpn-mlag",
+        "label": "evpn_mlag_001_leaf1",
+        "role": "leaf",
+        "system_type": "switch",
+        "deploy_mode": "deploy",
+        "system_id": "525400289C7D",
+        "type": "system",
+        "id": "d704d6f7-6070-4fef-ae99-99a94e08bf62"
+      }
+    },
+    {
+      "leaf": {
+        "tags": null,
+        "position_data": null,
+        "property_set": null,
+        "hostname": "evpn-single-001-leaf1",
+        "group_label": "evpn-single",
+        "label": "evpn_single_001_leaf1",
+        "role": "leaf",
+        "system_type": "switch",
+        "deploy_mode": "deploy",
+        "system_id": "5054003CD009",
+        "type": "system",
+        "id": "9e75966c-bfad-4ed1-83f9-282f552b24b2"
+      }
+    },
+    {
+      "leaf": {
+        "tags": null,
+        "position_data": null,
+        "property_set": null,
+        "hostname": "evpn-mlag-001-leaf2",
+        "group_label": "evpn-mlag",
+        "label": "evpn_mlag_001_leaf2",
+        "role": "leaf",
+        "system_type": "switch",
+        "deploy_mode": "deploy",
+        "system_id": "5254009D7C43",
+        "type": "system",
+        "id": "ef9b2dfb-3e12-4f73-8ec5-7c23911f3b99"
+      }
+    }
+  ]
+}
