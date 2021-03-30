@@ -1184,3 +1184,87 @@ def test_get_anomalies_list(
         json=None,
         headers=expected_auth_headers,
     )
+
+
+def test_get_all_tor_nodes(
+        aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    node_fixture = f"aos/{aos_api_version}/blueprints/qe_get_nodes.json"
+    rd_node_fixture = f"aos/{aos_api_version}/blueprints/qe_get_rd_nodes.json"
+    bp_id = "evpn-cvx-virtual"
+    mlag_node1 = 'd704d6f7-6070-4fef-ae99-99a94e08bf62'
+    mlag_node2 = 'ef9b2dfb-3e12-4f73-8ec5-7c23911f3b99'
+    single_node = '9e75966c-bfad-4ed1-83f9-282f552b24b2'
+
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/qe",
+        status=200,
+        params=None,
+        resp=read_fixture(node_fixture),
+    )
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/qe",
+        status=200,
+        params=None,
+        resp=read_fixture(rd_node_fixture),
+    )
+    aos_session.add_response(
+        "POST",
+        f"http://aos:80/api/blueprints/{bp_id}/qe",
+        status=200,
+        params=None,
+        resp=read_fixture(rd_node_fixture),
+    )
+
+    assert aos_logged_in.blueprint.get_all_tor_nodes(bp_id)
+
+    aos_session.request.assert_has_calls(
+        [
+            call(
+                "POST",
+                "http://aos:80/api/aaa/login",
+                json=mock.ANY,
+                params=None,
+                headers=mock.ANY,
+            ),
+            call(
+                "POST",
+                f"http://aos:80/api/blueprints/{bp_id}/qe",
+                params=None,
+                json={"query": "match(node('system', name='leaf', role='leaf'))"},
+                headers=mock.ANY,
+            ),
+            call(
+                "POST",
+                f"http://aos:80/api/blueprints/{bp_id}/qe",
+                params=None,
+                json={"query": "match(node('redundancy_group', name='rg')"
+                               ".out('composed_of_systems')"
+                               ".node('system', role='leaf',"
+                               f" id='{mlag_node1}'))"},
+                headers=mock.ANY,
+            ),
+            call(
+                "POST",
+                f"http://aos:80/api/blueprints/{bp_id}/qe",
+                params=None,
+                json={"query": "match(node('redundancy_group', name='rg')"
+                               ".out('composed_of_systems')"
+                               ".node('system', role='leaf',"
+                               f" id='{single_node}'))"},
+                headers=mock.ANY,
+            ),
+            call(
+                "POST",
+                f"http://aos:80/api/blueprints/{bp_id}/qe",
+                params=None,
+                json={"query": "match(node('redundancy_group', name='rg')"
+                               ".out('composed_of_systems')"
+                               ".node('system', role='leaf',"
+                               f" id='{mlag_node2}'))"},
+                headers=mock.ANY,
+            ),
+        ]
+    )

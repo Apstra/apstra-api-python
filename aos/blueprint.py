@@ -725,7 +725,7 @@ class AosBlueprint(AosSubsystem):
         -------
 
         """
-        leaf_query = {"query": "match(node('system', name='leaf', role='leaf'))"}
+        leaf_query = "match(node('system', name='leaf', role='leaf'))"
 
         return self.qe_query(bp_id, query=leaf_query)
 
@@ -743,10 +743,10 @@ class AosBlueprint(AosSubsystem):
         -------
 
         """
-        rg_query = {"query": "match(node('redundancy_group', name='rg')"
-                             ".out('composed_of_systems')"
-                             ".node('system', role='leaf',"
-                             f" id='{system_id}'))"}
+        rg_query = "match(node('redundancy_group', name='rg')" \
+                   ".out('composed_of_systems')" \
+                   ".node('system', role='leaf'," \
+                   f" id='{system_id}'))" \
 
         return self.qe_query(bp_id, query=rg_query)
 
