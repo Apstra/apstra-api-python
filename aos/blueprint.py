@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Optional, List, Generator
 from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
-from .design import AosConfiglets, AosPropertySets, AosTemplates
+from .design import AosConfiglets, AosPropertySets, AosTemplate
 from .devices import AosDevices
 from .external_systems import AosExternalRouter
 from .repeat import repeat_until
@@ -264,9 +264,16 @@ class AosBlueprint(AosSubsystem):
         bp_path = "/api/blueprints/"
 
         if template_name:
-            aos_temps = AosTemplates(self.rest)
-            template = aos_temps.get_template(temp_name=template_name)
-            template_id = template.get("id")
+            aos_temps = AosTemplate(self.rest)
+            template = aos_temps.find_by_name(template_name)
+            if len(template) > 1:
+                raise AosInputError(
+                    "Multiple templates with name " f"{template_name} found"
+                )
+            if template:
+                template_id = template[0].id
+            else:
+                raise AosInputError(f"Template with name {template_name} not found")
 
         data = {
             "design": "two_stage_l3clos",
