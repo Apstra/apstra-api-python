@@ -3,7 +3,11 @@
 # This source code is licensed under End User License Agreement found in the
 # LICENSE file at http://www.apstra.com/eula
 import logging
+from dataclasses import dataclass
+from typing import Optional, List, Generator
+
 from .aos import AosSubsystem, AosAPIError
+from aos.repeat import repeat_until
 
 logger = logging.getLogger(__name__)
 
@@ -21,12 +25,19 @@ class AosDesign(AosSubsystem):
     """
 
     def __init__(self, rest):
+        super().__init__(rest)
         self.logical_devices = AosLogicalDevices(rest)
-        self.interface_maps = AosInterfaceMaps(rest)
-        self.rack_types = AosRackTypes(rest)
-        self.templates = AosTemplates(rest)
+        self.interface_maps = AosInterfaceMap(rest)
+        self.rack_types = AosRackType(rest)
+        self.templates = AosTemplate(rest)
         self.configlets = AosConfiglets(rest)
         self.property_sets = AosPropertySets(rest)
+
+
+@dataclass
+class Design:
+    display_name: str
+    id: str
 
 
 class AosLogicalDevices(AosSubsystem):
@@ -120,277 +131,192 @@ class AosLogicalDevices(AosSubsystem):
         return ids
 
 
-class AosInterfaceMaps(AosSubsystem):
-    """
-    Manage AOS Interface Maps.
-    This does not apply the logical device to a blueprint
-    Use `blueprint.apply_configlet` to apply to blueprint
-    """
+@dataclass
+class InterfaceMap(Design):
+    device_profile_id: str
+    interfaces: list
+    logical_device_id: str
+    label: str
 
-    def get_all(self):
-        """
-        Return all interface maps configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        im_path = "/api/design/interface-maps"
-        resp = self.rest.json_resp_get(im_path)
-        return resp["items"]
-
-    def get_interface_map(self, im_id: str = None, im_name: str = None):
-        """
-        Return an existing interface map by id or name
-        Parameters
-        ----------
-        im_id
-            (str) ID of AOS interface map (optional)
-        im_name
-            (str) Name or label of AOS interface map (optional)
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return InterfaceMap(
+            id=d["id"],
+            device_profile_id=d.get("device_profile_id"),
+            interfaces=d.get("interfaces"),
+            logical_device_id=d.get("logical_device_id"),
+            label=d.get("label", ""),
+            display_name=d.get("label"),
+        )
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+class AosInterfaceMap(AosSubsystem):
+    def create(self, interface_map: dict) -> InterfaceMap:
 
-        if im_name:
-            int_maps = self.get_all()
-            if int_maps:
-                for im in int_maps:
-                    if im.get("display_name") == im_name:
-                        return im
-                raise AosAPIError(f"Interface Map {im_name} not found")
+        im_data = {
+            "id": interface_map.get("id", None),
+            "device_profile_id": interface_map["device_profile_id"],
+            "interfaces": interface_map["interfaces"],
+            "logical_device_id": interface_map["logical_device_id"],
+            "label": interface_map["label"],
+        }
 
-        return self.rest.json_resp_get(f"/api/design/interface-maps/{im_id}")
+        created = self.rest.json_resp_post(
+            "/api/design/interface-maps", data=im_data
+        )
+        return self.get(created["id"])
 
-    def add_interface_map(self, im_list: list):
-        """
-        Add one or more ip pools to AOS
+    def delete(self, im_id: str) -> None:
+        self.rest.delete(f"/api/design/interface-maps/{im_id}")
 
-        Parameters
-        ----------
-        im_list
-            (list) - list of json payloads
+    def get(self, im_id: str) -> Optional[InterfaceMap]:
+        return InterfaceMap.from_json(
+            self.rest.json_resp_get(f"/api/design/interface-maps/{im_id}")
+        )
 
-        Returns
-        -------
-            (list) interface map IDs
-        """
-        p_path = "/api/design/interface-maps"
+    def iter_all(self) -> Generator[InterfaceMap, None, None]:
+        ims = self.rest.json_resp_get("/api/design/interface-maps")
+        if ims:
+            for i in ims["items"]:
+                yield InterfaceMap.from_json(i)
 
-        ids = []
-        for im in im_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=im)
-            if item_id:
-                ids.append(item_id)
-
-        return ids
-
-    def delete_interface_maps(self, im_list: str):
-        """
-        Delete one or more logical devices from AOS
-
-        Parameters
-        ----------
-        im_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/design/interface-maps"
-
-        ids = []
-        for im_id in im_list:
-            self.rest.delete(f"{p_path}/{im_id}")
-            ids.append(im_id)
-
-        return ids
+    def find_by_name(self, im_name: str) -> List[InterfaceMap]:
+        return [i for i in self.iter_all() if i.label == im_name]
 
 
-class AosRackTypes(AosSubsystem):
-    """
-    Manage AOS Rack Types
-    This does not apply the rack type to a blueprint
-    Use `blueprint.apply_rack_type` to apply to blueprint
-    """
+@dataclass
+class RackType(Design):
+    description: str
+    leafs: list
+    logical_devices: list
+    access_switches: list
+    servers: list
 
-    def get_all(self):
-        """
-        Return all rack types configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        r_path = "/api/design/rack-types"
-        resp = self.rest.json_resp_get(r_path)
-        return resp["items"]
-
-    def get_rack_type(self, rt_id: str = None, rt_name: str = None):
-        """
-        Return an existing rack type by id or name
-        Parameters
-        ----------
-        rt_id
-            (str) ID of AOS rack type (optional)
-        rt_name
-            (str) Name or label of AOS rack type (optional)
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return RackType(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            description=d.get("description"),
+            leafs=d.get("leafs"),
+            logical_devices=d.get("logical_devices"),
+            access_switches=d.get("access_switches"),
+            servers=d.get("servers"),
+        )
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+class AosRackType(AosSubsystem):
+    def create(self, rack_type: dict) -> RackType:
+        rt_data = {
+            "display_name": rack_type["display_name"],
+            "id": rack_type.get("id", None),
+            "description": rack_type["description"],
+            "leafs": rack_type["leafs"],
+            "logical_devices": rack_type["logical_devices"],
+            "access_switches": rack_type["access_switches"],
+            "servers": rack_type["servers"],
+        }
 
-        if rt_name:
-            rack_types = self.get_all()
-            if rack_types:
-                for rt in rack_types:
-                    if rt.get("display_name") == rt_name:
-                        return rt
-                raise AosAPIError(f"Rack Type {rt_name} not found")
+        created = self.rest.json_resp_post("/api/design/rack-types", data=rt_data)
+        return self.get(created["id"])
 
-        return self.rest.json_resp_get(f"/api/design/rack-types/{rt_id}")
+    def delete(self, rack_type_id: str) -> None:
+        self.rest.delete(f"/api/design/rack-types/{rack_type_id}")
 
-    def add_rack_type(self, rt_list: list):
-        """
-        Add one or more rack types to AOS
+    def delete_sync(self, rack_type_id: str, timeout: int = 60) -> None:
+        self.delete(rack_type_id)
+        repeat_until(lambda: self.get(rack_type_id) is None, timeout=timeout)
 
-        Parameters
-        ----------
-        rt_list
-            (list) - list of json payloads
+    def get(self, rt_id: str) -> Optional[RackType]:
+        return RackType.from_json(
+            self.rest.json_resp_get(f"/api/design/rack-types/{rt_id}")
+        )
 
-        Returns
-        -------
-            (list) rack type IDs
-        """
-        p_path = "/api/design/rack-types"
+    def iter_all(self) -> Generator[RackType, None, None]:
+        rts = self.rest.json_resp_get("/api/design/rack-types")
+        if rts:
+            for r in rts["items"]:
+                yield RackType.from_json(r)
 
-        ids = []
-        for rt in rt_list:
-            item_id = self.rest.json_resp_post(uri=p_path, data=rt)
-            if item_id:
-                ids.append(item_id)
-
-        return ids
-
-    def delete_rack_type(self, rt_list: str):
-        """
-        Delete one or more rack types from AOS
-
-        Parameters
-        ----------
-        rt_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/design/rack-types"
-
-        ids = []
-        for rt_id in rt_list:
-            self.rest.delete(f"{p_path}/{rt_id}")
-            ids.append(rt_id)
-
-        return ids
+    def find_by_name(self, rt_name: str) -> List[RackType]:
+        return [r for r in self.iter_all() if r.display_name == rt_name]
 
 
-class AosTemplates(AosSubsystem):
-    """
-    Manage AOS Templates
-    This does not apply the template to an existing blueprint
-    built from the given template.
-    """
+@dataclass
+class Template(Design):
+    external_routing_policy: dict
+    virtual_network_policy: dict
+    fabric_addressing_policy: dict
+    spine: dict
+    rack_type_counts: list
+    dhcp_service_intent: dict
+    rack_types: list
+    asn_allocation_policy: dict
+    type: str
 
-    def get_all(self):
-        """
-        Return all blueprint templates configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        t_path = "/api/design/templates"
-        resp = self.rest.json_resp_get(t_path)
-        return resp["items"]
-
-    def get_template(self, temp_id: str = None, temp_name: str = None):
-        """
-        Return an existing template by id or name
-        Parameters
-        ----------
-        temp_id
-            (str) ID of AOS template (optional)
-        temp_name
-            (str) Name or label of AOS template (optional)
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return Template(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            external_routing_policy=d.get("external_routing_policy"),
+            virtual_network_policy=d.get("virtual_network_policy"),
+            fabric_addressing_policy=d.get("fabric_addressing_policy"),
+            spine=d.get("spine"),
+            rack_type_counts=d.get("rack_type_counts"),
+            dhcp_service_intent=d.get("dhcp_service_intent"),
+            rack_types=d.get("rack_types"),
+            asn_allocation_policy=d.get("asn_allocation_policy"),
+            type=d.get("type"),
+        )
 
 
-        Returns
-        -------
-            (obj) json response
-        """
+class AosTemplate(AosSubsystem):
+    def create(self, template: dict) -> Template:
 
-        if temp_name:
-            templates = self.get_all()
-            if templates:
-                for template in templates:
-                    if template.get("display_name") == temp_name:
-                        return template
-                raise AosAPIError(f"Template {temp_name} not found")
+        temp_data = {
+            "display_name": template["display_name"],
+            "id": template.get("id", None),
+            "external_routing_policy": template["external_routing_policy"],
+            "virtual_network_policy": template["virtual_network_policy"],
+            "fabric_addressing_policy": template["fabric_addressing_policy"],
+            "spine": template["spine"],
+            "rack_type_counts": template["rack_type_counts"],
+            "dhcp_service_intent": template["dhcp_service_intent"],
+            "rack_types": template["rack_types"],
+            "asn_allocation_policy": template["asn_allocation_policy"],
+            "type": template["type"],
+        }
 
-        return self.rest.json_resp_get(f"/api/design/templates/{temp_id}")
+        created = self.rest.json_resp_post("/api/design/templates", data=temp_data)
+        return self.get(created["id"])
 
-    def add_template(self, template_list: list):
-        """
-        Add one or more templates to AOS
+    def delete(self, template_id: str) -> None:
+        self.rest.delete(f"/api/design/templates/{template_id}")
 
-        Parameters
-        ----------
-        template_list
-            (list) - list of json payloads
+    def delete_sync(self, template_id: str, timeout: int = 60) -> None:
+        self.delete(template_id)
+        repeat_until(lambda: self.get(template_id) is None, timeout=timeout)
 
-        Returns
-        -------
-            (list) template IDs
-        """
-        t_path = "/api/design/templates"
+    def get(self, template_id: str) -> Optional[Template]:
+        return Template.from_json(
+            self.rest.json_resp_get(f"/api/design/templates/{template_id}")
+        )
 
-        ids = []
-        for template in template_list:
-            item_id = self.rest.json_resp_post(uri=t_path, data=template)
-            if item_id:
-                ids.append(item_id)
+    def iter_all(self) -> Generator[Template, None, None]:
+        temps = self.rest.json_resp_get("/api/design/templates")
+        if temps:
+            for t in temps["items"]:
+                yield Template.from_json(t)
 
-        return ids
-
-    def delete_templates(self, temp_list: str):
-        """
-        Delete one or more templates from AOS
-
-        Parameters
-        ----------
-        temp_list
-            (list) - list of ids
-
-        Returns
-        -------
-            (list) deleted IDs
-        """
-        p_path = "/api/design/templates"
-
-        ids = []
-        for temp_id in temp_list:
-            self.rest.delete(f"{p_path}/{temp_id}")
-            ids.append(temp_id)
-
-        return ids
+    def find_by_name(self, template_name: str) -> List[Template]:
+        return [t for t in self.iter_all() if t.display_name == template_name]
 
 
 class AosConfiglets(AosSubsystem):

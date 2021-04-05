@@ -1,0 +1,804 @@
+{
+  "items": [
+    {
+      "logical_device_id": "slicer-7x10-1",
+      "device_profile_id": "Arista_vEOS",
+      "created_at": "2021-03-24T01:20:43.481596Z",
+      "last_modified_at": "2021-03-24T01:20:43.481596Z",
+      "id": "Arista_vEOS__slicer-7x10-1",
+      "label": "Arista_vEOS__slicer-7x10-1",
+      "interfaces": [
+        {
+          "name": "Ethernet1",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 1,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet2",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            2,
+            1,
+            1,
+            1,
+            2
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 2,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet3",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            3,
+            1,
+            1,
+            1,
+            3
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 3,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet4",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            4,
+            1,
+            1,
+            1,
+            4
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 4,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet5",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            5,
+            1,
+            1,
+            1,
+            5
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 5,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet6",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            6,
+            1,
+            1,
+            1,
+            6
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 6,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "Ethernet7",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            7,
+            1,
+            1,
+            1,
+            7
+          ],
+          "state": "active",
+          "setting": {
+            "param": ""
+          },
+          "position": 7,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        }
+      ]
+    },
+    {
+      "logical_device_id": "slicer-7x10-1",
+      "device_profile_id": "Cumulus_VX",
+      "created_at": "2021-03-24T01:20:42.040595Z",
+      "last_modified_at": "2021-03-24T01:20:42.040595Z",
+      "id": "Cumulus_VX__slicer-7x10-1",
+      "label": "Cumulus_VX__slicer-7x10-1",
+      "interfaces": [
+        {
+          "name": "swp1",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 1,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp2",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            2,
+            1,
+            1,
+            1,
+            2
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 2,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp3",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            3,
+            1,
+            1,
+            1,
+            3
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 3,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp4",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            4,
+            1,
+            1,
+            1,
+            4
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 4,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp5",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            5,
+            1,
+            1,
+            1,
+            5
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 5,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp6",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            6,
+            1,
+            1,
+            1,
+            6
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 6,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp7",
+          "roles": [
+            "superspine",
+            "leaf",
+            "peer",
+            "l2_server",
+            "access",
+            "l3_server",
+            "spine",
+            "external_router"
+          ],
+          "mapping": [
+            7,
+            1,
+            1,
+            1,
+            7
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"\", \"speed\": \"10G\"}}"
+          },
+          "position": 7,
+          "speed": {
+            "unit": "G",
+            "value": 10
+          }
+        },
+        {
+          "name": "swp8",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            8,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 8,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp9",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            9,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 9,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp10",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            10,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 10,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp11",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            11,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 11,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp12",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            12,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 12,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp13",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            13,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 13,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp14",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            14,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 14,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp15",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            15,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 15,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp16",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            16,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 16,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp17",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            17,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 17,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp18",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            18,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 18,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp19",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            19,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 19,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp20",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            20,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 20,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp21",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            21,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 21,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp22",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            22,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 22,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp23",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            23,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 23,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        },
+        {
+          "name": "swp24",
+          "roles": [
+            "unused"
+          ],
+          "mapping": [
+            24,
+            2,
+            1,
+            null,
+            null
+          ],
+          "state": "active",
+          "setting": {
+            "param": "{\"interface\": {\"command\": \"link-speed 1000\", \"speed\": \"10G\"}}"
+          },
+          "position": 24,
+          "speed": {
+            "unit": "G",
+            "value": 1
+          }
+        }
+      ]
+    }
+  ]
+}

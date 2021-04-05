@@ -246,7 +246,7 @@ def test_add_bp_by_temp_name_invalid(
         resp=read_fixture(f"aos/{aos_api_version}/design/get_templates.json"),
     )
 
-    with pytest.raises(AosAPIError):
+    with pytest.raises(AosInputError):
         aos_logged_in.blueprint.add_blueprint(
             label="test-bp", template_name=template_name
         )

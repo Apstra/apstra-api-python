@@ -1,0 +1,702 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aos.design &mdash; aos-api 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> aos-api
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/getstarted.html">Getting Started</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aos-api</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>aos.design</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aos.design</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020-present, Apstra, Inc. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under End User License Agreement found in the</span>
+<span class="c1"># LICENSE file at http://www.apstra.com/eula</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generator</span>
+
+<span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span>
+<span class="kn">from</span> <span class="nn">aos.repeat</span> <span class="kn">import</span> <span class="n">repeat_until</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AosDesign"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosDesign">[docs]</a><span class="k">class</span> <span class="nc">AosDesign</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Management of AOS design elements:</span>
+<span class="sd">    - Logical Devices</span>
+<span class="sd">    - Interface Maps</span>
+<span class="sd">    - Rack Types</span>
+<span class="sd">    - Templates</span>
+<span class="sd">    - Configlets</span>
+<span class="sd">    - Property Sets</span>
+<span class="sd">    - TCP/UDP Ports</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rest</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logical_devices</span> <span class="o">=</span> <span class="n">AosLogicalDevices</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface_maps</span> <span class="o">=</span> <span class="n">AosInterfaceMap</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rack_types</span> <span class="o">=</span> <span class="n">AosRackType</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">templates</span> <span class="o">=</span> <span class="n">AosTemplate</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configlets</span> <span class="o">=</span> <span class="n">AosConfiglets</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property_sets</span> <span class="o">=</span> <span class="n">AosPropertySets</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Design"><a class="viewcode-back" href="../../source/aos.html#aos.design.Design">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Design</span><span class="p">:</span>
+    <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="AosLogicalDevices"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosLogicalDevices">[docs]</a><span class="k">class</span> <span class="nc">AosLogicalDevices</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS Logical Devices.</span>
+<span class="sd">    This does not apply the logical device to a blueprint</span>
+<span class="sd">    Use `blueprint.apply_configlet` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosLogicalDevices.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosLogicalDevices.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all logical devices configured from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ld_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/logical-devices&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">ld_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosLogicalDevices.get_logical_device"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosLogicalDevices.get_logical_device">[docs]</a>    <span class="k">def</span> <span class="nf">get_logical_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ld_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ld_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing logical device by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ld_id</span>
+<span class="sd">            (str) ID of AOS logical device (optional)</span>
+<span class="sd">        ld_name</span>
+<span class="sd">            (str) Name or label of AOS logical device (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ld_name</span><span class="p">:</span>
+            <span class="n">log_dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">log_dev</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ld</span> <span class="ow">in</span> <span class="n">log_dev</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ld</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ld_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">ld</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logical Device </span><span class="si">{</span><span class="n">ld_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/logical-devices/</span><span class="si">{</span><span class="n">ld_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosLogicalDevices.add_logical_device"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosLogicalDevices.add_logical_device">[docs]</a>    <span class="k">def</span> <span class="nf">add_logical_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ld_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more vni pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ld_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) logical device IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/logical-devices&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ld</span> <span class="ow">in</span> <span class="n">ld_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">p_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">ld</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosLogicalDevices.delete_logical_device"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosLogicalDevices.delete_logical_device">[docs]</a>    <span class="k">def</span> <span class="nf">delete_logical_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ld_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more logical devices from AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ld_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/logical-devices&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ld_id</span> <span class="ow">in</span> <span class="n">ld_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ld_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ld_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+
+
+<div class="viewcode-block" id="InterfaceMap"><a class="viewcode-back" href="../../source/aos.html#aos.design.InterfaceMap">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">InterfaceMap</span><span class="p">(</span><span class="n">Design</span><span class="p">):</span>
+    <span class="n">device_profile_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">interfaces</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">logical_device_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">InterfaceMap</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">device_profile_id</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device_profile_id&quot;</span><span class="p">),</span>
+            <span class="n">interfaces</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interfaces&quot;</span><span class="p">),</span>
+            <span class="n">logical_device_id</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;logical_device_id&quot;</span><span class="p">),</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">AosInterfaceMap</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterfaceMap</span><span class="p">:</span>
+
+        <span class="n">im_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">interface_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="s2">&quot;device_profile_id&quot;</span><span class="p">:</span> <span class="n">interface_map</span><span class="p">[</span><span class="s2">&quot;device_profile_id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;interfaces&quot;</span><span class="p">:</span> <span class="n">interface_map</span><span class="p">[</span><span class="s2">&quot;interfaces&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;logical_device_id&quot;</span><span class="p">:</span> <span class="n">interface_map</span><span class="p">[</span><span class="s2">&quot;logical_device_id&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">interface_map</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/design/interface-maps&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">im_data</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/interface-maps/</span><span class="si">{</span><span class="n">im_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">InterfaceMap</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">InterfaceMap</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/interface-maps/</span><span class="si">{</span><span class="n">im_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">InterfaceMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">ims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/design/interface-maps&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ims</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ims</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">yield</span> <span class="n">InterfaceMap</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">InterfaceMap</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">im_name</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="RackType"><a class="viewcode-back" href="../../source/aos.html#aos.design.RackType">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">RackType</span><span class="p">(</span><span class="n">Design</span><span class="p">):</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">leafs</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">logical_devices</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">access_switches</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">servers</span><span class="p">:</span> <span class="nb">list</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">RackType</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">),</span>
+            <span class="n">leafs</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;leafs&quot;</span><span class="p">),</span>
+            <span class="n">logical_devices</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;logical_devices&quot;</span><span class="p">),</span>
+            <span class="n">access_switches</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;access_switches&quot;</span><span class="p">),</span>
+            <span class="n">servers</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;servers&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">AosRackType</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rack_type</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RackType</span><span class="p">:</span>
+        <span class="n">rt_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;leafs&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;leafs&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;logical_devices&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;logical_devices&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;access_switches&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;access_switches&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;servers&quot;</span><span class="p">:</span> <span class="n">rack_type</span><span class="p">[</span><span class="s2">&quot;servers&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/design/rack-types&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rt_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rack_type_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/rack-types/</span><span class="si">{</span><span class="n">rack_type_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rack_type_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">rack_type_id</span><span class="p">)</span>
+        <span class="n">repeat_until</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rack_type_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rt_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RackType</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">RackType</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/rack-types/</span><span class="si">{</span><span class="n">rt_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">RackType</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">rts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/design/rack-types&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rts</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rts</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">yield</span> <span class="n">RackType</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rt_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RackType</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">rt_name</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Template"><a class="viewcode-back" href="../../source/aos.html#aos.design.Template">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Template</span><span class="p">(</span><span class="n">Design</span><span class="p">):</span>
+    <span class="n">external_routing_policy</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">virtual_network_policy</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">fabric_addressing_policy</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">spine</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">rack_type_counts</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">dhcp_service_intent</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">rack_types</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">asn_allocation_policy</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Template</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">external_routing_policy</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;external_routing_policy&quot;</span><span class="p">),</span>
+            <span class="n">virtual_network_policy</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;virtual_network_policy&quot;</span><span class="p">),</span>
+            <span class="n">fabric_addressing_policy</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fabric_addressing_policy&quot;</span><span class="p">),</span>
+            <span class="n">spine</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;spine&quot;</span><span class="p">),</span>
+            <span class="n">rack_type_counts</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rack_type_counts&quot;</span><span class="p">),</span>
+            <span class="n">dhcp_service_intent</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dhcp_service_intent&quot;</span><span class="p">),</span>
+            <span class="n">rack_types</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rack_types&quot;</span><span class="p">),</span>
+            <span class="n">asn_allocation_policy</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;asn_allocation_policy&quot;</span><span class="p">),</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">AosTemplate</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+
+        <span class="n">temp_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">template</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="s2">&quot;external_routing_policy&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;external_routing_policy&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;virtual_network_policy&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;virtual_network_policy&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;fabric_addressing_policy&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;fabric_addressing_policy&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;spine&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;spine&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;rack_type_counts&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;rack_type_counts&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;dhcp_service_intent&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;dhcp_service_intent&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;rack_types&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;rack_types&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;asn_allocation_policy&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;asn_allocation_policy&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">template</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/design/templates&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">temp_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/templates/</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
+        <span class="n">repeat_until</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/templates/</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Template</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">temps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/design/templates&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temps</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">yield</span> <span class="n">Template</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">template_name</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="AosConfiglets"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosConfiglets">[docs]</a><span class="k">class</span> <span class="nc">AosConfiglets</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS configlets.</span>
+<span class="sd">    This does not apply the configlet to a blueprint</span>
+<span class="sd">    Use `blueprint.apply_configlet` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosConfiglets.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosConfiglets.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all configlets configured from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/configlets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">t_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosConfiglets.get_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosConfiglets.get_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conf_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing configlet by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        conf_id</span>
+<span class="sd">            (str) ID of AOS configlet (optional)</span>
+<span class="sd">        conf_name</span>
+<span class="sd">            (str) Name or label of AOS configlet (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">conf_name</span><span class="p">:</span>
+            <span class="n">configlets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">configlets</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">configlet</span> <span class="ow">in</span> <span class="n">configlets</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">configlet</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">conf_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">configlet</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configlet </span><span class="si">{</span><span class="n">conf_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/design/configlets/</span><span class="si">{</span><span class="n">conf_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosConfiglets.add_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosConfiglets.add_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">add_configlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more vni pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        conf_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) configlet IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/configlets&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">conf</span> <span class="ow">in</span> <span class="n">conf_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">p_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">conf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosConfiglets.delete_configlet"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosConfiglets.delete_configlet">[docs]</a>    <span class="k">def</span> <span class="nf">delete_configlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more configlets from AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        conf_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/design/configlets&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">conf_id</span> <span class="ow">in</span> <span class="n">conf_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">conf_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conf_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+
+
+<div class="viewcode-block" id="AosPropertySets"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosPropertySets">[docs]</a><span class="k">class</span> <span class="nc">AosPropertySets</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manage AOS property-set.</span>
+<span class="sd">    This does not apply the property-set to a blueprint</span>
+<span class="sd">    Use `blueprint.apply_property_set` to apply to blueprint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AosPropertySets.get_all"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosPropertySets.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all property sets configured from AOS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ps_path</span> <span class="o">=</span> <span class="s2">&quot;/api/property-sets&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">ps_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AosPropertySets.get_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosPropertySets.get_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ps_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ps_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an existing property set by id or name</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ps_id</span>
+<span class="sd">            (str) ID of AOS property set (optional)</span>
+<span class="sd">        ps_name</span>
+<span class="sd">            (str) Name or label of AOS property set (optional)</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (obj) json response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ps_name</span><span class="p">:</span>
+            <span class="n">property_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">property_sets</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">property_sets</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ps_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">ps</span>
+                <span class="k">raise</span> <span class="n">AosAPIError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configlet </span><span class="si">{</span><span class="n">ps_name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/property-sets/</span><span class="si">{</span><span class="n">ps_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AosPropertySets.add_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosPropertySets.add_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">add_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ps_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or more vni pools to AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ps_list</span>
+<span class="sd">            (list) - list of json payloads</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) property set IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/property-sets&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">ps_list</span><span class="p">:</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">p_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">ps</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_id</span><span class="p">:</span>
+                <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="AosPropertySets.delete_property_set"><a class="viewcode-back" href="../../source/aos.html#aos.design.AosPropertySets.delete_property_set">[docs]</a>    <span class="k">def</span> <span class="nf">delete_property_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ps_list</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete one or more property sets from AOS</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ps_list</span>
+<span class="sd">            (list) - list of ids</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            (list) deleted IDs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="s2">&quot;/api/property-sets&quot;</span>
+
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ps_id</span> <span class="ow">in</span> <span class="n">ps_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ps_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ps_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ids</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Ryan Booth
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

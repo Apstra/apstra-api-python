@@ -1816,79 +1816,6 @@ Use <cite>blueprint.apply_configlet</cite> to apply to blueprint</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="aos.design.AosInterfaceMaps">
-<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">AosInterfaceMaps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosInterfaceMaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosInterfaceMaps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS Interface Maps.
-This does not apply the logical device to a blueprint
-Use <cite>blueprint.apply_configlet</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.design.AosInterfaceMaps.add_interface_map">
-<code class="sig-name descname">add_interface_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosInterfaceMaps.add_interface_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosInterfaceMaps.add_interface_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more ip pools to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>im_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) interface map IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosInterfaceMaps.delete_interface_maps">
-<code class="sig-name descname">delete_interface_maps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosInterfaceMaps.delete_interface_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosInterfaceMaps.delete_interface_maps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more logical devices from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>im_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosInterfaceMaps.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosInterfaceMaps.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosInterfaceMaps.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all interface maps configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosInterfaceMaps.get_interface_map">
-<code class="sig-name descname">get_interface_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">im_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosInterfaceMaps.get_interface_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosInterfaceMaps.get_interface_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing interface map by id or name
-:param im_id: (str) ID of AOS interface map (optional)
-:param im_name: (str) Name or label of AOS interface map (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="aos.design.AosLogicalDevices">
 <em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">AosLogicalDevices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosLogicalDevices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosLogicalDevices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
@@ -2035,302 +1962,32 @@ Use <cite>blueprint.apply_property_set</cite> to apply to blueprint</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="aos.design.AosRackTypes">
-<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">AosRackTypes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosRackTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosRackTypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS Rack Types
-This does not apply the rack type to a blueprint
-Use <cite>blueprint.apply_rack_type</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.design.AosRackTypes.add_rack_type">
-<code class="sig-name descname">add_rack_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rt_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosRackTypes.add_rack_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosRackTypes.add_rack_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more rack types to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>rt_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) rack type IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosRackTypes.delete_rack_type">
-<code class="sig-name descname">delete_rack_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rt_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosRackTypes.delete_rack_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosRackTypes.delete_rack_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more rack types from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>rt_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosRackTypes.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosRackTypes.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosRackTypes.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all rack types configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosRackTypes.get_rack_type">
-<code class="sig-name descname">get_rack_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rt_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rt_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosRackTypes.get_rack_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosRackTypes.get_rack_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing rack type by id or name
-:param rt_id: (str) ID of AOS rack type (optional)
-:param rt_name: (str) Name or label of AOS rack type (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
+<dt id="aos.design.Design">
+<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">Design</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#Design"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.Design" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="aos.design.AosTemplates">
-<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">AosTemplates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosTemplates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosTemplates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS Templates
-This does not apply the template to an existing blueprint
-built from the given template.</p>
-<dl class="py method">
-<dt id="aos.design.AosTemplates.add_template">
-<code class="sig-name descname">add_template</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">template_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosTemplates.add_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosTemplates.add_template" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more templates to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>template_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) template IDs</p>
-</dd>
-</dl>
+<dt id="aos.design.InterfaceMap">
+<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">InterfaceMap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">device_profile_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">interfaces</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">logical_device_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#InterfaceMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.InterfaceMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.design.Design" title="aos.design.Design"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.design.Design</span></code></a></p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.design.AosTemplates.delete_templates">
-<code class="sig-name descname">delete_templates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temp_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosTemplates.delete_templates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosTemplates.delete_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more templates from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>temp_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt id="aos.design.RackType">
+<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">RackType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">leafs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">logical_devices</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">access_switches</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">servers</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#RackType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.RackType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.design.Design" title="aos.design.Design"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.design.Design</span></code></a></p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.design.AosTemplates.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosTemplates.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosTemplates.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all blueprint templates configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.design.AosTemplates.get_template">
-<code class="sig-name descname">get_template</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temp_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">temp_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#AosTemplates.get_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.AosTemplates.get_template" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing template by id or name
-:param temp_id: (str) ID of AOS template (optional)
-:param temp_name: (str) Name or label of AOS template (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
+<dl class="py class">
+<dt id="aos.design.Template">
+<em class="property">class </em><code class="sig-prename descclassname">aos.design.</code><code class="sig-name descname">Template</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">external_routing_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">virtual_network_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">fabric_addressing_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">spine</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">rack_type_counts</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">dhcp_service_intent</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">rack_types</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">asn_allocation_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/design.html#Template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.design.Template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.design.Design" title="aos.design.Design"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.design.Design</span></code></a></p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-aos.resources">
 <span id="aos-resources-module"></span><h2>aos.resources module<a class="headerlink" href="#module-aos.resources" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="aos.resources.AosAsnPools">
-<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosAsnPools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosAsnPools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosAsnPools" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS ASN Pools.
-This does not apply the resource to a blueprint
-See <cite>aos.blueprint</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.resources.AosAsnPools.add_pool">
-<code class="sig-name descname">add_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosAsnPools.add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosAsnPools.add_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more ASN pools to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) ASN pool IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosAsnPools.delete_pool">
-<code class="sig-name descname">delete_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosAsnPools.delete_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosAsnPools.delete_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more asn pools from AOS.
-ASN Pools can not be deleted if they are “in_us” by a Blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosAsnPools.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosAsnPools.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosAsnPools.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all asn pools configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosAsnPools.get_pool">
-<code class="sig-name descname">get_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosAsnPools.get_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosAsnPools.get_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing ASN pool by id or name
-:param pool_id: (str) ID of AOS asn pool (optional)
-:param pool_name: (str) Name or label of AOS asn pool (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="aos.resources.AosIpv4Pools">
-<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosIpv4Pools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv4Pools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv4Pools" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS IPv4 address Pools.
-This does not apply the resource to a blueprint
-See <cite>aos.blueprint</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.resources.AosIpv4Pools.add_pool">
-<code class="sig-name descname">add_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv4Pools.add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv4Pools.add_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more ip pools to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) ip pool IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosIpv4Pools.delete_pool">
-<code class="sig-name descname">delete_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv4Pools.delete_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv4Pools.delete_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more asn pools from AOS.
-ASN Pools can not be deleted if they are “in_us” by a Blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosIpv4Pools.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv4Pools.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv4Pools.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all ip pools from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.resources.AosIpv4Pools.get_pool">
-<code class="sig-name descname">get_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv4Pools.get_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv4Pools.get_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing IPv4 pool by id or name
-:param pool_id: (str) ID of AOS ipv4 pool (optional)
-:param pool_name: (str) Name or label of AOS ipv4 pool (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt id="aos.resources.AosIpv6Pools">
 <em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosIpv6Pools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosIpv6Pools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosIpv6Pools" title="Permalink to this definition">¶</a></dt>
@@ -2406,6 +2063,12 @@ IPv6 Pools can not be deleted if they are “in_us” by a Blueprint</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="aos.resources.AosResource">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
 <dt id="aos.resources.AosResources">
 <em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosResources</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosResources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosResources" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
@@ -2417,157 +2080,38 @@ IPv6 Pools can not be deleted if they are “in_us” by a Blueprint</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="aos.resources.AosVniPools">
-<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AosVniPools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosVniPools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosVniPools" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS VNI Pools.
-This does not apply the resource to a blueprint
-See <cite>aos.blueprint</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.resources.AosVniPools.add_pool">
-<code class="sig-name descname">add_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosVniPools.add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosVniPools.add_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more vni pools to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) VNI pool IDs</p>
-</dd>
-</dl>
+<dt id="aos.resources.AsnPool">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">AsnPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ranges</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#aos.resources.Range" title="aos.resources.Range">aos.resources.Range</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AsnPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AsnPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.resources.AosResource" title="aos.resources.AosResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.resources.AosResource</span></code></a></p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.resources.AosVniPools.delete_pool">
-<code class="sig-name descname">delete_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosVniPools.delete_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosVniPools.delete_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more vni pools from AOS.
-VNI Pools can not be deleted if they are “in_us” by a Blueprint</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pool_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt id="aos.resources.IPPool">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">IPPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">subnets</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#aos.resources.PoolSubnet" title="aos.resources.PoolSubnet">aos.resources.PoolSubnet</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#IPPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.IPPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.resources.AosResource" title="aos.resources.AosResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.resources.AosResource</span></code></a></p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.resources.AosVniPools.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosVniPools.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosVniPools.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all vni pools configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt id="aos.resources.PoolSubnet">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">PoolSubnet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">network</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#PoolSubnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.PoolSubnet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="aos.resources.AosVniPools.get_pool">
-<code class="sig-name descname">get_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#AosVniPools.get_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.AosVniPools.get_pool" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing VNI pool by id or name
-:param pool_id: (str) ID of AOS vni pool (optional)
-:param pool_name: (str) Name or label of AOS vni pool (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt id="aos.resources.Range">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">Range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">last</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#Range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.Range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
+<dl class="py class">
+<dt id="aos.resources.VniPool">
+<em class="property">class </em><code class="sig-prename descclassname">aos.resources.</code><code class="sig-name descname">VniPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ranges</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#aos.resources.Range" title="aos.resources.Range">aos.resources.Range</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/resources.html#VniPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.resources.VniPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.resources.AosResource" title="aos.resources.AosResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.resources.AosResource</span></code></a></p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-aos.external_systems">
 <span id="aos-external-systems-module"></span><h2>aos.external_systems module<a class="headerlink" href="#module-aos.external_systems" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="aos.external_systems.AosExternalRouters">
-<em class="property">class </em><code class="sig-prename descclassname">aos.external_systems.</code><code class="sig-name descname">AosExternalRouters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalRouters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalRouters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Manage AOS external routers.
-This does not apply the resource to a blueprint
-See <cite>aos.blueprint</cite> to apply to blueprint</p>
-<dl class="py method">
-<dt id="aos.external_systems.AosExternalRouters.add_external_router">
-<code class="sig-name descname">add_external_router</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">router_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalRouters.add_external_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalRouters.add_external_router" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one or more external routers to AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>router_list</strong> – (list) - list of json payloads</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) external router IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.external_systems.AosExternalRouters.delete_external_router">
-<code class="sig-name descname">delete_external_router</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ext_list</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalRouters.delete_external_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalRouters.delete_external_router" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete one or more device profiles from AOS
-External routers can not be deleted if they are associated with
-a blueprint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ext_list</strong> – (list) - list of ids</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list) deleted IDs</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.external_systems.AosExternalRouters.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalRouters.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalRouters.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all external routers configured from AOS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.external_systems.AosExternalRouters.get_external_router">
-<code class="sig-name descname">get_external_router</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ex_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalRouters.get_external_router"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalRouters.get_external_router" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an existing external router by id or name
-:param ex_id: (str) ID of AOS external router (optional)
-:param ex_name: (str) Name or label of AOS external router (optional)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) json response</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt id="aos.external_systems.AosExternalSystems">
 <em class="property">class </em><code class="sig-prename descclassname">aos.external_systems.</code><code class="sig-name descname">AosExternalSystems</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosExternalSystems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosExternalSystems" title="Permalink to this definition">¶</a></dt>
@@ -2576,6 +2120,18 @@ a blueprint.</p>
 - Providers
 - External Routers
 - Virtual Infra Managers</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="aos.external_systems.AosResource">
+<em class="property">class </em><code class="sig-prename descclassname">aos.external_systems.</code><code class="sig-name descname">AosResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#AosResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.AosResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="aos.external_systems.ExternalRouter">
+<em class="property">class </em><code class="sig-prename descclassname">aos.external_systems.</code><code class="sig-name descname">ExternalRouter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">display_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">asn</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">address</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/external_systems.html#ExternalRouter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.external_systems.ExternalRouter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aos.external_systems.AosResource" title="aos.external_systems.AosResource"><code class="xref py py-class docutils literal notranslate"><span class="pre">aos.external_systems.AosResource</span></code></a></p>
 </dd></dl>
 
 </div>

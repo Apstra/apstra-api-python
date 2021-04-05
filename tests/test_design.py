@@ -6,9 +6,11 @@
 
 import json
 import pytest
+from unittest import mock
 
 from aos.client import AosClient
 from aos.aos import AosRestAPI, AosAPIError
+from aos.design import RackType, Template, InterfaceMap
 
 from tests.util import make_session, read_fixture, deserialize_fixture
 
@@ -54,139 +56,8 @@ def aos_logged_in(aos, aos_session):
     return aos
 
 
-# Logical Devices
-def test_logical_devices_get_all(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    fixture_path = f"aos/{aos_api_version}/design/get_logical_devices.json"
-
-    aos_session.add_response(
-        "GET",
-        "http://aos:80/api/design/logical-devices",
-        status=200,
-        resp=read_fixture(fixture_path),
-    )
-
-    ld_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.design.logical_devices.get_all() == ld_dict["items"]
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        "http://aos:80/api/design/logical-devices",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
-
-
-def test_logical_devices_get_ld(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    fixture_path = f"aos/{aos_api_version}/design/get_logical_device_id.json"
-    ld_id = "AOS-7x10-Leaf"
-
-    aos_session.add_response(
-        "GET",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        status=200,
-        resp=read_fixture(fixture_path),
-    )
-
-    ld_dict = deserialize_fixture(fixture_path)
-
-    assert (
-        aos_logged_in.design.logical_devices.get_logical_device(ld_id=ld_id)
-        == ld_dict
-    )
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
-
-
-def test_logical_devices_ld_invalid(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    fixture_path = f"aos/{aos_api_version}/design/get_invalid_ld.json"
-    ld_id = "test-id-invalid"
-
-    aos_session.add_response(
-        "GET",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        status=422,
-        resp=read_fixture(fixture_path),
-    )
-
-    with pytest.raises(AosAPIError):
-        aos_logged_in.design.logical_devices.get_logical_device(ld_id=ld_id)
-
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
-
-
-def test_logical_devices_add_ld(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    fixture_path = f"aos/{aos_api_version}/design/get_logical_device_id.json"
-    ld_dict = deserialize_fixture(fixture_path)
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/design/logical-devices",
-        status=202,
-        resp=json.dumps({"id": "AOS-7x10-Leaf"}),
-    )
-
-    resp = aos_logged_in.design.logical_devices.add_logical_device([ld_dict])
-    assert resp == [{"id": ld_dict["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/design/logical-devices",
-        params=None,
-        json=ld_dict,
-        headers=expected_auth_headers,
-    )
-
-
-def test_logical_devices_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    ld_id = "AOS-7x10-Leaf"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.design.logical_devices.delete_logical_device([ld_id]) == [
-        ld_id
-    ]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/design/logical-devices/{ld_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
-
-
-# Rack Types
-def test_rack_types_get_all(
+# Rack-types
+def test_rack_type_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/design/get_rack_types.json"
@@ -198,9 +69,26 @@ def test_rack_types_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    rt_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.design.rack_types.get_all() == rt_dict["items"]
+    assert list(aos_logged_in.design.rack_types.iter_all()) == [
+        RackType(
+            id="evpn-mlag",
+            display_name="evpn-mlag",
+            description="",
+            leafs=mock.ANY,
+            logical_devices=mock.ANY,
+            access_switches=mock.ANY,
+            servers=mock.ANY,
+        ),
+        RackType(
+            id="evpn-single",
+            display_name="evpn-single",
+            description="",
+            leafs=mock.ANY,
+            logical_devices=mock.ANY,
+            access_switches=mock.ANY,
+            servers=mock.ANY,
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -211,108 +99,74 @@ def test_rack_types_get_all(
     )
 
 
-def test_rack_types_get_rt(
+def test_find_rack_type_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/design/get_rack_type_id.json"
-    rt_id = "evpn-single"
+    fixture_path = f"aos/{aos_api_version}/design/get_rack_types.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/design/rack-types/{rt_id}",
+        "http://aos:80/api/design/rack-types",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    rt_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.design.rack_types.get_rack_type(rt_id=rt_id) == rt_dict
+    assert aos_logged_in.design.rack_types.find_by_name("evpn-single") == [
+        RackType(
+            id="evpn-single",
+            display_name="evpn-single",
+            description="",
+            leafs=mock.ANY,
+            logical_devices=mock.ANY,
+            access_switches=mock.ANY,
+            servers=mock.ANY,
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/design/rack-types/{rt_id}",
+        "http://aos:80/api/design/rack-types",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_rack_types_ld_invalid(
+def test_rack_type_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/design/get_invalid.json"
-    rt_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/design/get_rack_type_id.json"
+    rt_id = "test-id"
 
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/design/rack-types",
+        status=202,
+        resp=json.dumps({"id": rt_id}),
+    )
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/design/rack-types/{rt_id}",
-        status=404,
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.design.rack_types.get_rack_type(rt_id=rt_id)
+    rt = deserialize_fixture(fixture_path)
 
-    aos_session.request.assert_called_once_with(
-        "GET",
-        f"http://aos:80/api/design/rack-types/{rt_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
+    created = aos_logged_in.design.rack_types.create(rt)
+
+    assert created == RackType(
+        id="evpn-single",
+        display_name="evpn-single",
+        description=rt["description"],
+        leafs=rt["leafs"],
+        logical_devices=rt["logical_devices"],
+        access_switches=rt["access_switches"],
+        servers=rt["servers"],
     )
 
 
-def test_rack_types_add_rt(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-
-    fixture_path = f"aos/{aos_api_version}/design/get_rack_type_id.json"
-    rt_dict = deserialize_fixture(fixture_path)
-
-    aos_session.add_response(
-        "POST",
-        "http://aos:80/api/design/rack-types",
-        status=202,
-        resp=json.dumps({"id": "evpn-single"}),
-    )
-
-    resp = aos_logged_in.design.rack_types.add_rack_type([rt_dict])
-    assert resp == [{"id": rt_dict["id"]}]
-
-    aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/design/rack-types",
-        params=None,
-        json=rt_dict,
-        headers=expected_auth_headers,
-    )
-
-
-def test_rack_types_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    rt_id = "evpn-single"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/design/rack-types/{rt_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.design.rack_types.delete_rack_type([rt_id]) == [rt_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/design/rack-types/{rt_id}",
-        params=None,
-        json=None,
-        headers=expected_auth_headers,
-    )
-
-
-# Rack Types
-def test_templates_get_all(
+# Templates
+def test_templates_iter_all(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     fixture_path = f"aos/{aos_api_version}/design/get_templates.json"
@@ -324,9 +178,34 @@ def test_templates_get_all(
         resp=read_fixture(fixture_path),
     )
 
-    temp_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.design.templates.get_all() == temp_dict["items"]
+    assert list(aos_logged_in.design.templates.iter_all()) == [
+        Template(
+            id="lab_evpn_mlag",
+            display_name="lab_evpn_mlag",
+            external_routing_policy=mock.ANY,
+            virtual_network_policy=mock.ANY,
+            fabric_addressing_policy=mock.ANY,
+            spine=mock.ANY,
+            rack_type_counts=mock.ANY,
+            dhcp_service_intent=mock.ANY,
+            rack_types=mock.ANY,
+            asn_allocation_policy=mock.ANY,
+            type="rack_based",
+        ),
+        Template(
+            id="pod1",
+            display_name="L2 Pod External",
+            external_routing_policy=mock.ANY,
+            virtual_network_policy=mock.ANY,
+            fabric_addressing_policy=mock.ANY,
+            spine=mock.ANY,
+            rack_type_counts=mock.ANY,
+            dhcp_service_intent=mock.ANY,
+            rack_types=mock.ANY,
+            asn_allocation_policy=mock.ANY,
+            type="rack_based",
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
@@ -337,103 +216,182 @@ def test_templates_get_all(
     )
 
 
-def test_templates_get_template(
+def test_find_templates_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/design/get_template_id.json"
-    temp_id = "evpn-single"
+    fixture_path = f"aos/{aos_api_version}/design/get_templates.json"
 
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/design/templates/{temp_id}",
+        "http://aos:80/api/design/templates",
         status=200,
         resp=read_fixture(fixture_path),
     )
 
-    temp_dict = deserialize_fixture(fixture_path)
-
-    assert aos_logged_in.design.templates.get_template(temp_id=temp_id) == temp_dict
+    assert aos_logged_in.design.templates.find_by_name("lab_evpn_mlag") == [
+        Template(
+            id="lab_evpn_mlag",
+            display_name="lab_evpn_mlag",
+            external_routing_policy=mock.ANY,
+            virtual_network_policy=mock.ANY,
+            fabric_addressing_policy=mock.ANY,
+            spine=mock.ANY,
+            rack_type_counts=mock.ANY,
+            dhcp_service_intent=mock.ANY,
+            rack_types=mock.ANY,
+            asn_allocation_policy=mock.ANY,
+            type="rack_based",
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/design/templates/{temp_id}",
+        "http://aos:80/api/design/templates",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_templates_ld_invalid(
+def test_templates_create(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-    fixture_path = f"aos/{aos_api_version}/design/get_invalid.json"
-    temp_id = "test-id-invalid"
+    fixture_path = f"aos/{aos_api_version}/design/get_template_id.json"
+    t_id = "test-id"
 
     aos_session.add_response(
+        "POST",
+        "http://aos:80/api/design/templates",
+        status=202,
+        resp=json.dumps({"id": t_id}),
+    )
+    aos_session.add_response(
         "GET",
-        f"http://aos:80/api/design/templates/{temp_id}",
-        status=404,
+        f"http://aos:80/api/design/templates/{t_id}",
         resp=read_fixture(fixture_path),
     )
 
-    with pytest.raises(AosAPIError):
-        aos_logged_in.design.templates.get_template(temp_id=temp_id)
+    t = deserialize_fixture(fixture_path)
+
+    created = aos_logged_in.design.templates.create(t)
+
+    assert created == Template(
+        id="lab_evpn_mlag",
+        display_name="lab_evpn_mlag",
+        external_routing_policy=t["external_routing_policy"],
+        virtual_network_policy=t["virtual_network_policy"],
+        fabric_addressing_policy=t["fabric_addressing_policy"],
+        spine=t["spine"],
+        rack_type_counts=t["rack_type_counts"],
+        dhcp_service_intent=t["dhcp_service_intent"],
+        rack_types=t["rack_types"],
+        asn_allocation_policy=t["asn_allocation_policy"],
+        type="rack_based",
+    )
+
+
+# Interface-Maps
+def test_interface_map_iter_all(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    fixture_path = f"aos/{aos_api_version}/design/get_ims.json"
+
+    aos_session.add_response(
+        "GET",
+        "http://aos:80/api/design/interface-maps",
+        status=200,
+        resp=read_fixture(fixture_path),
+    )
+
+    assert list(aos_logged_in.design.interface_maps.iter_all()) == [
+        InterfaceMap(
+            id="Arista_vEOS__slicer-7x10-1",
+            display_name="Arista_vEOS__slicer-7x10-1",
+            device_profile_id="Arista_vEOS",
+            interfaces=mock.ANY,
+            logical_device_id="slicer-7x10-1",
+            label="Arista_vEOS__slicer-7x10-1",
+        ),
+        InterfaceMap(
+            id="Cumulus_VX__slicer-7x10-1",
+            display_name="Cumulus_VX__slicer-7x10-1",
+            device_profile_id="Cumulus_VX",
+            interfaces=mock.ANY,
+            logical_device_id="slicer-7x10-1",
+            label="Cumulus_VX__slicer-7x10-1",
+        ),
+    ]
 
     aos_session.request.assert_called_once_with(
         "GET",
-        f"http://aos:80/api/design/templates/{temp_id}",
+        "http://aos:80/api/design/interface-maps",
         params=None,
         json=None,
         headers=expected_auth_headers,
     )
 
 
-def test_templates_add_template(
+def test_find_interface_map_by_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
-
-    fixture_path = f"aos/{aos_api_version}/design/get_template_id.json"
-    temp_dict = deserialize_fixture(fixture_path)
-
+    fixture_path = f"aos/{aos_api_version}/design/get_ims.json"
+    im_name = "Arista_vEOS__slicer-7x10-1"
     aos_session.add_response(
-        "POST",
-        "http://aos:80/api/design/templates",
-        status=202,
-        resp=json.dumps({"id": "lab_evpn_mlag"}),
+        "GET",
+        "http://aos:80/api/design/interface-maps",
+        status=200,
+        resp=read_fixture(fixture_path),
     )
 
-    resp = aos_logged_in.design.templates.add_template([temp_dict])
-    assert resp == [{"id": temp_dict["id"]}]
+    assert aos_logged_in.design.interface_maps.find_by_name(im_name) == [
+        InterfaceMap(
+            id="Arista_vEOS__slicer-7x10-1",
+            display_name="Arista_vEOS__slicer-7x10-1",
+            device_profile_id="Arista_vEOS",
+            interfaces=mock.ANY,
+            logical_device_id="slicer-7x10-1",
+            label="Arista_vEOS__slicer-7x10-1",
+        )
+    ]
 
     aos_session.request.assert_called_once_with(
-        "POST",
-        "http://aos:80/api/design/templates",
-        params=None,
-        json=temp_dict,
-        headers=expected_auth_headers,
-    )
-
-
-def test_templates_delete(
-    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
-):
-    temp_id = "lab_evpn_mlag"
-
-    aos_session.add_response(
-        "DELETE",
-        f"http://aos:80/api/design/templates/{temp_id}",
-        status=202,
-        resp=json.dumps({}),
-    )
-
-    assert aos_logged_in.design.templates.delete_templates([temp_id]) == [temp_id]
-
-    aos_session.request.assert_called_once_with(
-        "DELETE",
-        f"http://aos:80/api/design/templates/{temp_id}",
+        "GET",
+        "http://aos:80/api/design/interface-maps",
         params=None,
         json=None,
         headers=expected_auth_headers,
+    )
+
+
+def test_interface_map_create(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    fixture_path = f"aos/{aos_api_version}/design/get_im_id.json"
+    im_id = "test-id"
+
+    aos_session.add_response(
+        "POST",
+        "http://aos:80/api/design/interface-maps",
+        status=202,
+        resp=json.dumps({"id": im_id}),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/design/interface-maps/{im_id}",
+        resp=read_fixture(fixture_path),
+    )
+
+    im = deserialize_fixture(fixture_path)
+
+    created = aos_logged_in.design.interface_maps.create(im)
+
+    assert created == InterfaceMap(
+        id="Arista_vEOS__slicer-7x10-1",
+        display_name="Arista_vEOS__slicer-7x10-1",
+        device_profile_id="Arista_vEOS",
+        interfaces=im["interfaces"],
+        logical_device_id="slicer-7x10-1",
+        label="Arista_vEOS__slicer-7x10-1",
     )
 
 
