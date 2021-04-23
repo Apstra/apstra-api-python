@@ -26,7 +26,7 @@ aos.auth.login(AOS_USER, AOS_PW)
 
 # Create Blueprint
 bp_name = "apstra-pod1"
-template = aos.design.templates.get_template(temp_name="apstra")
+template = aos.design.templates.find_by_name(template_name="apstra")
 
 
 # Blueprint id is returned when creating and we will use that throughout.
