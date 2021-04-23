@@ -58,9 +58,9 @@ aos.design.rack_types.add_rack_type(rt_list=rt_list)
 evpn_template = deserialize_fixture("evpn_template.json")
 
 # make sure the template does not already exist
-temp_id = evpn_template["id"]
-if aos.design.templates.get_template(temp_id):
-    aos.design.templates.delete_templates(temp_id)
+template = evpn_template["display_name"]
+if aos.design.templates.find_by_name(template):
+    aos.design.templates.delete(evpn_template["id"])
 
 aos.design.templates.add_template([evpn_template])
 
