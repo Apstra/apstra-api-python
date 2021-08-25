@@ -1,0 +1,32 @@
+{
+      "ref_archs": [
+        "two_stage_l3clos"
+      ],
+      "generators": [
+        {
+          "config_style": "nxos",
+          "section": "system",
+          "template_text": "ntp server {{ntp_server}} use-vrf {{mgmt_vrf}}",
+          "negation_template_text": "no ntp server {{ntp_server}} use-vrf {{mgmt_vrf}}",
+          "filename": ""
+        },
+        {
+          "config_style": "eos",
+          "section": "system",
+          "template_text": "ntp server vrf {{mgmt_vrf}} {{ntp_server}}",
+          "negation_template_text": "no ntp server vrf {{mgmt_vrf}} {{ntp_server}}",
+          "filename": ""
+        },
+        {
+          "config_style": "cumulus",
+          "section": "system",
+          "template_text": "net add time ntp server {{ntp_server}} iburst\nsystemctl enable ntp\nsystemctl restart ntp\nnet commit",
+          "negation_template_text": "net del time ntp server {{ntp_server}}\nsystemctl disable ntp",
+          "filename": ""
+        }
+      ],
+      "created_at": "2020-10-26T18:28:37.011487Z",
+      "id": "ntp_configlet",
+      "last_modified_at": "2020-10-26T18:28:37.011487Z",
+      "display_name": "NTP-server"
+    }

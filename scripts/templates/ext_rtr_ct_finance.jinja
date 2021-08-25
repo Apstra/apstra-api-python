@@ -1,0 +1,191 @@
+{
+  "policies": [
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link",
+      "visible": false,
+      "policy_type_name": "AttachLogicalLink",
+      "attributes": {
+        "security_zone": "{{default_rz_id}}",
+        "untagged": false,
+        "ipv6_addressing_type": "none",
+        "vlan_id": 2,
+        "ipv4_addressing_type": "numbered"
+      },
+      "id": "81ef6ccb-e7db-4f99-9282-31f9a11fdeb7"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Finance IP Link (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "86ab97a7-303c-4faa-b6ad-b604ba548091",
+        "first_subpolicy": "96614294-0ec5-4137-97c7-edc78e87f912",
+        "resolver": null
+      },
+      "id": "d3053c52-1967-442b-bb13-f41ccb0d50ad"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Finance IP Link (batch)",
+      "visible": false,
+      "policy_type_name": "batch",
+      "attributes": {
+        "subpolicies": [
+          "eb5840f0-cda2-4a3f-842a-5c024809990a"
+        ]
+      },
+      "id": "86ab97a7-303c-4faa-b6ad-b604ba548091"
+    },
+    {
+      "description": "",
+      "tags": [
+        "Router"
+      ],
+      "user_data": "{\"isSausage\":true,\"positions\":{\"81ef6ccb-e7db-4f99-9282-31f9a11fdeb7\":[290,80,1],\"2dc376b3-bae4-403a-940d-b949db184981\":[290,150,2],\"96614294-0ec5-4137-97c7-edc78e87f912\":[506,80,3],\"7be72069-cc5b-48f7-9f2f-c138a470a57c\":[506,150,4]}}",
+      "label": "External Router Peering",
+      "visible": true,
+      "policy_type_name": "batch",
+      "attributes": {
+        "subpolicies": [
+          "e0541819-4033-42db-993d-43e6c7acfe10",
+          "d3053c52-1967-442b-bb13-f41ccb0d50ad"
+        ]
+      },
+      "id": "external-router-peering"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "ebd868a6-ee0f-4aa9-aff7-fdefa9d42153",
+        "first_subpolicy": "81ef6ccb-e7db-4f99-9282-31f9a11fdeb7",
+        "resolver": null
+      },
+      "id": "e0541819-4033-42db-993d-43e6c7acfe10"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Finance BGP Peering (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "231650bc-9424-4800-beed-0507f3f994dc",
+        "first_subpolicy": "7be72069-cc5b-48f7-9f2f-c138a470a57c",
+        "resolver": null
+      },
+      "id": "eb5840f0-cda2-4a3f-842a-5c024809990a"
+    },
+    {
+      "description": "",
+      "tags": [],
+      "label": "noop",
+      "visible": false,
+      "policy_type_name": "noop",
+      "attributes": {},
+      "id": "231650bc-9424-4800-beed-0507f3f994dc"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Finance IP Link",
+      "visible": false,
+      "policy_type_name": "AttachLogicalLink",
+      "attributes": {
+        "security_zone": "{{finance_rz_id}}",
+        "untagged": false,
+        "ipv6_addressing_type": "none",
+        "vlan_id": 3,
+        "ipv4_addressing_type": "numbered"
+      },
+      "id": "96614294-0ec5-4137-97c7-edc78e87f912"
+    },
+    {
+      "description": "",
+      "tags": [],
+      "label": "noop",
+      "visible": false,
+      "policy_type_name": "noop",
+      "attributes": {},
+      "id": "ff46acf6-c192-4037-970b-2599cb694137"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Default BGP Peering (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "ff46acf6-c192-4037-970b-2599cb694137",
+        "first_subpolicy": "2dc376b3-bae4-403a-940d-b949db184981",
+        "resolver": null
+      },
+      "id": "dd4d551e-905f-4530-a669-cb587bf31063"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Finance BGP Peering",
+      "visible": false,
+      "policy_type_name": "AttachBgpOverSubinterfacesOrSvi",
+      "attributes": {
+        "ipv6_safi": false,
+        "keepalive_timer": 30,
+        "bfd": false,
+        "peer_from": "loopback",
+        "peer_to": "loopback",
+        "session_addressing_ipv4": "addressed",
+        "session_addressing_ipv6": "none",
+        "ttl": 2,
+        "neighbor_asn_type": "static",
+        "password": null,
+        "holdtime_timer": 90,
+        "ipv4_safi": true
+      },
+      "id": "7be72069-cc5b-48f7-9f2f-c138a470a57c"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Default BGP Peering",
+      "visible": false,
+      "policy_type_name": "AttachBgpOverSubinterfacesOrSvi",
+      "attributes": {
+        "ipv6_safi": false,
+        "keepalive_timer": 30,
+        "bfd": false,
+        "peer_from": "loopback",
+        "peer_to": "loopback",
+        "session_addressing_ipv4": "addressed",
+        "session_addressing_ipv6": "none",
+        "ttl": 2,
+        "neighbor_asn_type": "static",
+        "password": null,
+        "holdtime_timer": 90,
+        "ipv4_safi": true
+      },
+      "id": "2dc376b3-bae4-403a-940d-b949db184981"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link (batch)",
+      "visible": false,
+      "policy_type_name": "batch",
+      "attributes": {
+        "subpolicies": [
+          "dd4d551e-905f-4530-a669-cb587bf31063"
+        ]
+      },
+      "id": "ebd868a6-ee0f-4aa9-aff7-fdefa9d42153"
+    }
+  ]
+}

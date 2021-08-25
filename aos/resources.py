@@ -59,10 +59,10 @@ class IPPool(AosResource):
 
 class AosIPPool(AosSubsystem):
     def create(
-            self,
-            name: str,
-            subnets: List[str],
-            tags: Optional[List[str]] = None,
+        self,
+        name: str,
+        subnets: List[str],
+        tags: Optional[List[str]] = None,
     ) -> IPPool:
         if tags is None:
             tags = []
@@ -97,10 +97,10 @@ class AosIPPool(AosSubsystem):
 
 class AosIPv6Pool(AosSubsystem):
     def create(
-            self,
-            name: str,
-            subnets: List[str],
-            tags: Optional[List[str]] = None,
+        self,
+        name: str,
+        subnets: List[str],
+        tags: Optional[List[str]] = None,
     ) -> IPPool:
         if tags is None:
             tags = []
@@ -131,105 +131,6 @@ class AosIPv6Pool(AosSubsystem):
 
     def find_by_name(self, name: str) -> List[IPPool]:
         return [p for p in self.iter_all() if p.display_name == name]
-
-
-@dataclass
-class Range:
-    first: int
-    last: int
-
-    @classmethod
-    def from_json(cls, d: dict):
-        return Range(first=d["first"], last=d["last"])
-
-
-@dataclass
-class AsnPool(AosResource):
-    ranges: List[Range]
-
-    @classmethod
-    def from_json(cls, d):
-        if d is None:
-            return None
-        return AsnPool(
-            id=d["id"],
-            display_name=d.get("display_name", ""),
-            ranges=[Range.from_json(r) for r in d["ranges"]],
-        )
-
-
-class AosAsnPool(AosSubsystem):
-    def create(self, name: str, ranges: List[Range]) -> AsnPool:
-        asn_pool = {
-            "display_name": name,
-            "id": name,
-            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
-        }
-
-        created = self.rest.json_resp_post("/api/resources/asn-pools", data=asn_pool)
-        return self.get(created["id"])
-
-    def delete(self, pool_id: str) -> None:
-        self.rest.delete(f"/api/resources/asn-pools/{pool_id}")
-
-    def get(self, pool_id: str) -> Optional[AsnPool]:
-        return AsnPool.from_json(
-            self.rest.json_resp_get(f"/api/resources/asn-pools/{pool_id}")
-        )
-
-    def iter_all(self) -> Generator[AsnPool, None, None]:
-        pools = self.rest.json_resp_get("/api/resources/asn-pools")
-        if pools:
-            for p in pools["items"]:
-                yield AsnPool.from_json(p)
-
-    def find_by_name(self, pool_name: str) -> List[AsnPool]:
-        return [p for p in self.iter_all() if p.display_name == pool_name]
-
-
-@dataclass
-class VniPool(AosResource):
-    ranges: List[Range]
-
-    @classmethod
-    def from_json(cls, d):
-        if d is None:
-            return None
-        return VniPool(
-            id=d["id"],
-            display_name=d.get("display_name", ""),
-            ranges=[Range.from_json(r) for r in d["ranges"]],
-        )
-
-
-class AosVniPool(AosSubsystem):
-    def create(self, name: str, ranges: List[Range]) -> VniPool:
-        vni_pool = {
-            "display_name": name,
-            "id": name,
-            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
-        }
-
-        created = self.rest.json_resp_post("/api/resources/vni-pools",
-                                           data=vni_pool)
-        return self.get(created["id"])
-
-    def delete(self, pool_id: str) -> None:
-        self.rest.delete(f"/api/resources/vni-pools/{pool_id}")
-
-    def get(self, pool_id: str) -> Optional[VniPool]:
-        return VniPool.from_json(
-            self.rest.json_resp_get(f"/api/resources/vni-pools/{pool_id}")
-        )
-
-    def iter_all(self) -> Generator[VniPool, None, None]:
-        pools = self.rest.json_resp_get("/api/resources/vni-pools")
-        if pools:
-            for p in pools["items"]:
-                yield VniPool.from_json(p)
-
-    def find_by_name(self, pool_name: str) -> List[VniPool]:
-        return [p for p in self.iter_all() if p.display_name == pool_name]
 
 
 class AosIpv6Pools(AosSubsystem):
@@ -322,3 +223,101 @@ class AosIpv6Pools(AosSubsystem):
             ids.append(pool_id)
 
         return ids
+
+
+@dataclass
+class Range:
+    first: int
+    last: int
+
+    @classmethod
+    def from_json(cls, d: dict):
+        return Range(first=d["first"], last=d["last"])
+
+
+@dataclass
+class AsnPool(AosResource):
+    ranges: List[Range]
+
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return AsnPool(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            ranges=[Range.from_json(r) for r in d["ranges"]],
+        )
+
+
+class AosAsnPool(AosSubsystem):
+    def create(self, name: str, ranges: List[Range]) -> AsnPool:
+        asn_pool = {
+            "display_name": name,
+            "id": name,
+            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
+        }
+
+        created = self.rest.json_resp_post("/api/resources/asn-pools", data=asn_pool)
+        return self.get(created["id"])
+
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/asn-pools/{pool_id}")
+
+    def get(self, pool_id: str) -> Optional[AsnPool]:
+        return AsnPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/asn-pools/{pool_id}")
+        )
+
+    def iter_all(self) -> Generator[AsnPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/asn-pools")
+        if pools:
+            for p in pools["items"]:
+                yield AsnPool.from_json(p)
+
+    def find_by_name(self, pool_name: str) -> List[AsnPool]:
+        return [p for p in self.iter_all() if p.display_name == pool_name]
+
+
+@dataclass
+class VniPool(AosResource):
+    ranges: List[Range]
+
+    @classmethod
+    def from_json(cls, d):
+        if d is None:
+            return None
+        return VniPool(
+            id=d["id"],
+            display_name=d.get("display_name", ""),
+            ranges=[Range.from_json(r) for r in d["ranges"]],
+        )
+
+
+class AosVniPool(AosSubsystem):
+    def create(self, name: str, ranges: List[Range]) -> VniPool:
+        vni_pool = {
+            "display_name": name,
+            "id": name,
+            "ranges": [{"first": r.first, "last": r.last} for r in ranges],
+        }
+
+        created = self.rest.json_resp_post("/api/resources/vni-pools", data=vni_pool)
+        return self.get(created["id"])
+
+    def delete(self, pool_id: str) -> None:
+        self.rest.delete(f"/api/resources/vni-pools/{pool_id}")
+
+    def get(self, pool_id: str) -> Optional[VniPool]:
+        return VniPool.from_json(
+            self.rest.json_resp_get(f"/api/resources/vni-pools/{pool_id}")
+        )
+
+    def iter_all(self) -> Generator[VniPool, None, None]:
+        pools = self.rest.json_resp_get("/api/resources/vni-pools")
+        if pools:
+            for p in pools["items"]:
+                yield VniPool.from_json(p)
+
+    def find_by_name(self, pool_name: str) -> List[VniPool]:
+        return [p for p in self.iter_all() if p.display_name == pool_name]

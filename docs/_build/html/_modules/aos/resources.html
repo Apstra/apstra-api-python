@@ -211,10 +211,10 @@
 
 <span class="k">class</span> <span class="nc">AosIPPool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">subnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">subnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IPPool</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">tags</span> <span class="o">=</span> <span class="p">[]</span>
@@ -249,10 +249,10 @@
 
 <span class="k">class</span> <span class="nc">AosIPv6Pool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">subnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">subnets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IPPool</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">tags</span> <span class="o">=</span> <span class="p">[]</span>
@@ -283,105 +283,6 @@
 
     <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">IPPool</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">name</span><span class="p">]</span>
-
-
-<div class="viewcode-block" id="Range"><a class="viewcode-back" href="../../source/aos.html#aos.resources.Range">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Range</span><span class="p">:</span>
-    <span class="n">first</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">last</span><span class="p">:</span> <span class="nb">int</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Range</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">],</span> <span class="n">last</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">])</span></div>
-
-
-<div class="viewcode-block" id="AsnPool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AsnPool">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">AsnPool</span><span class="p">(</span><span class="n">AosResource</span><span class="p">):</span>
-    <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">]</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">AsnPool</span><span class="p">(</span>
-            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="n">ranges</span><span class="o">=</span><span class="p">[</span><span class="n">Range</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;ranges&quot;</span><span class="p">]],</span>
-        <span class="p">)</span></div>
-
-
-<span class="k">class</span> <span class="nc">AosAsnPool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AsnPool</span><span class="p">:</span>
-        <span class="n">asn_pool</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;ranges&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">last</span><span class="p">}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">],</span>
-        <span class="p">}</span>
-
-        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/resources/asn-pools&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">asn_pool</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/asn-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">AsnPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/asn-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/resources/asn-pools&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
-                <span class="k">yield</span> <span class="n">AsnPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">]</span>
-
-
-<div class="viewcode-block" id="VniPool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.VniPool">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">VniPool</span><span class="p">(</span><span class="n">AosResource</span><span class="p">):</span>
-    <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">]</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">VniPool</span><span class="p">(</span>
-            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="n">ranges</span><span class="o">=</span><span class="p">[</span><span class="n">Range</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;ranges&quot;</span><span class="p">]],</span>
-        <span class="p">)</span></div>
-
-
-<span class="k">class</span> <span class="nc">AosVniPool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">VniPool</span><span class="p">:</span>
-        <span class="n">vni_pool</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;ranges&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">last</span><span class="p">}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">],</span>
-        <span class="p">}</span>
-
-        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/resources/vni-pools&quot;</span><span class="p">,</span>
-                                           <span class="n">data</span><span class="o">=</span><span class="n">vni_pool</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/vni-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VniPool</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">VniPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/vni-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">VniPool</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/resources/vni-pools&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
-                <span class="k">yield</span> <span class="n">VniPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">VniPool</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="AosIpv6Pools"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AosIpv6Pools">[docs]</a><span class="k">class</span> <span class="nc">AosIpv6Pools</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
@@ -474,6 +375,104 @@
             <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pool_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ids</span></div></div>
+
+
+<div class="viewcode-block" id="Range"><a class="viewcode-back" href="../../source/aos.html#aos.resources.Range">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Range</span><span class="p">:</span>
+    <span class="n">first</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Range</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">],</span> <span class="n">last</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AsnPool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.AsnPool">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AsnPool</span><span class="p">(</span><span class="n">AosResource</span><span class="p">):</span>
+    <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">AsnPool</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">ranges</span><span class="o">=</span><span class="p">[</span><span class="n">Range</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;ranges&quot;</span><span class="p">]],</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">AosAsnPool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AsnPool</span><span class="p">:</span>
+        <span class="n">asn_pool</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;ranges&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">last</span><span class="p">}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/resources/asn-pools&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">asn_pool</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/asn-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">AsnPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/asn-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/resources/asn-pools&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">yield</span> <span class="n">AsnPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AsnPool</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="VniPool"><a class="viewcode-back" href="../../source/aos.html#aos.resources.VniPool">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">VniPool</span><span class="p">(</span><span class="n">AosResource</span><span class="p">):</span>
+    <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">VniPool</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">display_name</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;display_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="n">ranges</span><span class="o">=</span><span class="p">[</span><span class="n">Range</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;ranges&quot;</span><span class="p">]],</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">AosVniPool</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Range</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">VniPool</span><span class="p">:</span>
+        <span class="n">vni_pool</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;ranges&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">last</span><span class="p">}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">created</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="s2">&quot;/api/resources/vni-pools&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">vni_pool</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">created</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/vni-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VniPool</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">VniPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/resources/vni-pools/</span><span class="si">{</span><span class="n">pool_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">iter_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">VniPool</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">pools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="s2">&quot;/api/resources/vni-pools&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pools</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span>
+                <span class="k">yield</span> <span class="n">VniPool</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">VniPool</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_all</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">display_name</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">]</span>
 </pre></div>
 
            </div>

@@ -1,27 +1,74 @@
 [
     {
         "type": "asn",
-        "group": "spine_asns",
-        "pool": "vpod-evpn-asn-pool"
+        "name": "spine_asns",
+        "pool": "vpod-evpn-asn-pool",
+        "sz_name": "none"
     },
     {
         "type": "asn",
-        "group": "leaf_asns",
-        "pool": "vpod-evpn-asn-pool"
+        "name": "leaf_asns",
+        "pool": "vpod-evpn-asn-pool",
+        "sz_name": "none"
     },
     {
         "type": "ip",
-        "group": "spine_loopback_ips",
-        "pool": "spine-loopback"
+        "name": "spine_loopback_ips",
+        "pool": "spine-loopback",
+        "sz_name": "none"
     },
     {
         "type": "ip",
-        "group": "leaf_loopback_ips",
-        "pool": "leaf-loopback"
+        "name": "leaf_loopback_ips",
+        "pool": "leaf-loopback",
+        "sz_name": "none"
     },
     {
         "type": "ip",
-        "group": "spine_leaf_link_ips",
-        "pool": "spine-leaf"
+        "name": "spine_leaf_link_ips",
+        "pool": "spine-leaf",
+        "sz_name": "none"
+    },
+    {
+        "type": "ip",
+        "name": "mlag_domain_svi_subnets",
+        "pool": "virtual-networks",
+        "sz_name": "none"
+    },
+    {
+        "type": "ip",
+        "name": "vtep_ips",
+        "pool": "leaf-loopback",
+        "sz_name": "none"
+    },
+    {
+        "type": "vni",
+        "name": "evpn_l3_vnis",
+        "pool": "evpn-vni",
+        "sz_name": "none"
+    },
+    {
+        "type": "vni",
+        "name": "vxlan_vn_ids",
+        "pool": "evpn-vni",
+        "sz_name": "none"
+    },
+    {
+        "type": "ip",
+        "name": "vtep_ips",
+        "pool": "leaf-loopback",
+        "sz_name": "none"
+    },
+    {
+        "type": "ip",
+        "name": "to_generic_link_ips",
+        "pool": "external-router",
+        "sz_name": "none"
+    },
+    {
+        "type": "ip",
+        "name": "to_generic_link_ips",
+        "pool": "external-router",
+        "sz_name": "Finance"
     }
 ]

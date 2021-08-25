@@ -1,0 +1,85 @@
+{
+  "bound_to": [
+    {
+      "access_switch_node_ids": [],
+      "system_id": "141e7ea7-144f-4773-a84f-ef0ba637f4a3",
+      "vlan_id": 3
+    },
+    {
+      "access_switch_node_ids": [],
+      "system_id": "8aec0884-c2cc-42da-a577-9b51de497201",
+      "vlan_id": 3
+    }
+  ],
+  "svi_ips": [
+    {
+      "ipv6_addr": null,
+      "ipv4_mode": "enabled",
+      "ipv4_requirement": null,
+      "ipv4_addr": null,
+      "ipv6_requirement": null,
+      "system_id": "8aec0884-c2cc-42da-a577-9b51de497201",
+      "ipv6_mode": "disabled"
+    },
+    {
+      "ipv6_addr": null,
+      "ipv4_mode": "enabled",
+      "ipv4_requirement": null,
+      "ipv4_addr": null,
+      "ipv6_requirement": null,
+      "system_id": "321e6063-4768-4dfe-89d2-46fc2740bb1b",
+      "ipv6_mode": "disabled"
+    },
+    {
+      "ipv6_addr": null,
+      "ipv4_mode": "enabled",
+      "ipv4_requirement": null,
+      "ipv4_addr": null,
+      "ipv6_requirement": null,
+      "system_id": "669d20fd-76bd-4904-9a1f-59e24d9adbc9",
+      "ipv6_mode": "disabled"
+    }
+  ],
+  "rt_policy": null,
+  "id": "307944e0-8aa5-4108-9253-0c453a653bde",
+  "dhcp_service": "dhcpServiceEnabled",
+  "virtual_gateway_ipv4": "10.30.42.1",
+  "virtual_gateway_ipv6": null,
+  "floating_ips": [],
+  "label": "test-blue15",
+  "virtual_gateway_ipv6_enabled": false,
+  "ipv4_enabled": true,
+  "description": null,
+  "virtual_mac": null,
+  "l3_connectivity": "l3Enabled",
+  "ipv6_subnet": null,
+  "vn_type": "vxlan",
+  "ipv4_subnet": "10.30.42.0/24",
+  "ipv6_enabled": false,
+  "security_zone_id": "1fff5051-f7a2-480c-8d68-c02bb3c518eb",
+  "route_target": "5003:1",
+  "virtual_gateway_ipv4_enabled": true,
+  "vn_id": "5003",
+  "endpoints": [
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "87754b7e-3358-480f-9b3d-8b7c7eb5faec"
+    },
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "0b5098b2-0d7d-4fdb-be87-690205922c0b"
+    },
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "ecb740d0-50d7-478e-88ee-18985574e1ae"
+    },
+    {
+      "tag_type": "vlan_tagged",
+      "label": "",
+      "interface_id": "8465f85e-3f6b-4d14-b55f-c1f8b8b0cae3"
+    }
+  ]
+}

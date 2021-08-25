@@ -1,0 +1,64 @@
+{
+  "items": [
+    {
+      "status": "not_in_use",
+      "subnets": [
+        {
+          "status": "pool_element_available",
+          "used": "0",
+          "network": "10.10.0.0/22",
+          "total": "1024",
+          "used_percentage": 0
+        }
+      ],
+      "used": "0",
+      "display_name": "spine-leaf",
+      "tags": [],
+      "created_at": "2020-10-26T18:22:49.854241Z",
+      "last_modified_at": "2020-10-26T18:22:49.854241Z",
+      "used_percentage": 0,
+      "total": "1024",
+      "id": "adb5641b-3182-4092-bcc4-85c49befe122"
+    },
+    {
+      "status": "not_in_use",
+      "subnets": [
+        {
+          "status": "pool_element_available",
+          "used": "0",
+          "network": "10.30.40.0/21",
+          "total": "2048",
+          "used_percentage": 0
+        }
+      ],
+      "used": "0",
+      "display_name": "virtual-networks",
+      "tags": [],
+      "created_at": "2020-10-26T18:22:49.753020Z",
+      "last_modified_at": "2020-10-26T18:22:49.753020Z",
+      "used_percentage": 0,
+      "total": "2048",
+      "id": "e772e121-594c-48dc-a801-5a17f643c237"
+    },
+    {
+      "status": "not_in_use",
+      "subnets": [
+        {
+          "status": "pool_element_available",
+          "used": "0",
+          "network": "10.20.30.0/24",
+          "total": "256",
+          "used_percentage": 0
+        }
+      ],
+      "used": "0",
+      "display_name": "leaf-loopback",
+      "tags": [],
+      "created_at": "2020-10-26T18:22:49.802274Z",
+      "last_modified_at": "2020-10-26T18:22:49.802274Z",
+      "used_percentage": 0,
+      "total": "256",
+      "id": "2f278c1b-78bd-4b6f-8aef-052e984a9fa7"
+    }
+  ]
+}
