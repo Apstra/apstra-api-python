@@ -1,0 +1,55 @@
+{
+  "status": "created",
+  "leaf_count": 3,
+  "top_level_root_cause_count": 0,
+  "spine_count": 2,
+  "access_count": 0,
+  "anomaly_counts": {
+    "arp": 0,
+    "probe": 0,
+    "hostname": 0,
+    "streaming": 0,
+    "series": 0,
+    "cabling": 0,
+    "route": 0,
+    "counter": 0,
+    "all": 0,
+    "bgp": 0,
+    "blueprint_rendering": 0,
+    "mac": 0,
+    "mlag": 0,
+    "deployment": 0,
+    "interface": 0,
+    "liveness": 0,
+    "config": 0,
+    "lag": 0
+  },
+  "last_modified_at": "2020-09-01T18:02:21.175707Z",
+  "label": "evpn-cvx-virtual",
+  "version": 99,
+  "design": "two_stage_l3clos",
+  "remote_gateway_count": 0,
+  "root_cause_count": 0,
+  "external_router_count": 3,
+  "l2_server_count": 4,
+  "l3_server_count": 0,
+  "id": "evpn-cvx-virtual",
+  "superspine_count": 0,
+  "deployment_status": {
+    "service_config": {
+      "num_succeeded": 5,
+      "num_failed": 0,
+      "num_pending": 0
+    },
+    "drain_config": {
+      "num_succeeded": 0,
+      "num_failed": 0,
+      "num_pending": 0
+    },
+    "discovery2_config": {
+      "num_succeeded": 0,
+      "num_failed": 0,
+      "num_pending": 0
+    }
+  }
+}

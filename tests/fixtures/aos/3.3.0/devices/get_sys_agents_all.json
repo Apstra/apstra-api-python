@@ -1,0 +1,196 @@
+{
+  "per_page": 9223372036854776000,
+  "items": [
+    {
+      "status": {
+        "connection_state": "connected",
+        "last_other_failure": "1970-01-01T00:00:00.000000Z",
+        "install_status_message": "",
+        "packages_installed": [],
+        "num_other_failures": 0,
+        "last_network_failure": "1970-01-01T00:00:00.000000Z",
+        "system_id": "5254001BF851",
+        "num_network_failures": 0,
+        "status_message": "Connected to device.",
+        "operation_mode": "full_control"
+      },
+      "device_facts": {
+        "device_os_family": "Junos",
+        "device_os_version": "20.2R1.10",
+        "device_state": "IS-ACTIVE",
+        "hostname": "evpn-single-001-leaf1"
+      },
+      "container_status": {
+        "status": "running",
+        "host": "AosController",
+        "name": "aos-offbox-172_20_20_14-f",
+        "error": ""
+      },
+      "platform_status": {
+        "platform_version": "20.2R1.10",
+        "platform": "junos",
+        "state": "success",
+        "has_credential": false,
+        "error": "",
+        "current_task": ""
+      },
+      "running_config": {
+        "profile": "profile_vqfx",
+        "packages": [],
+        "platform": "junos",
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.20.14",
+        "agent_type": "offbox",
+        "open_options": {},
+        "id": "01f2057b-931b-4610-8579-4a1097ee2f32",
+        "operation_mode": "full_control"
+      },
+      "config": {
+        "profile": "profile_vqfx",
+        "allowed_job_types": [
+          "check",
+          "upgrade"
+        ],
+        "open_options": {},
+        "platform": "junos",
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.20.14",
+        "agent_type": "offbox",
+        "packages": [],
+        "id": "01f2057b-931b-4610-8579-4a1097ee2f32",
+        "operation_mode": "full_control"
+      },
+      "id": "01f2057b-931b-4610-8579-4a1097ee2f32",
+      "last_job_status": {
+        "job_id": 1,
+        "created": "2021-08-16T16:00:58.589823Z",
+        "started": "2021-08-16T16:00:58.594719Z",
+        "job_type": "check",
+        "state": "success",
+        "finished": "2021-08-16T16:01:06.922935Z",
+        "agent_type": "offbox",
+        "error": "",
+        "host_id": "01f2057b-931b-4610-8579-4a1097ee2f32"
+      }
+    },
+    {
+      "status": {
+        "aos_version": "3.3.0-123",
+        "platform_version": "4.2.1",
+        "platform": "cumulus",
+        "state": "success",
+        "system_id": "525400553CFC",
+        "has_credential": false,
+        "error": "",
+        "current_task": "",
+        "operation_mode": "full_control"
+      },
+      "device_facts": {
+        "device_os_family": "Cumulus",
+        "device_os_version": "4.2.1",
+        "device_state": "IS-ACTIVE",
+        "hostname": "spine2"
+      },
+      "running_config": {
+        "profile": "",
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.19.12",
+        "agent_type": "onbox",
+        "install_requirements": true,
+        "packages": [],
+        "operation_mode": "full_control"
+      },
+      "config": {
+        "profile": "",
+        "allowed_job_types": [
+          "upgrade",
+          "showTech",
+          "check",
+          "uninstall"
+        ],
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.19.12",
+        "agent_type": "onbox",
+        "install_requirements": true,
+        "packages": [],
+        "operation_mode": "full_control"
+      },
+      "id": "77f8ed4e-eb6f-4378-aac0-9f5a6358a6be",
+      "last_job_status": {
+        "job_id": 1,
+        "created": "2021-08-06T18:05:22.709688Z",
+        "started": "2021-08-06T18:05:22.716287Z",
+        "job_type": "install",
+        "finished": "2021-08-06T18:07:04.848697Z",
+        "state": "success",
+        "agent_type": "onbox",
+        "error": "",
+        "host_id": "77f8ed4e-eb6f-4378-aac0-9f5a6358a6be"
+      }
+    },
+    {
+      "status": {
+        "aos_version": "3.3.0-123",
+        "platform_version": "4.24.5M",
+        "platform": "eos",
+        "state": "success",
+        "system_id": "505400E24540",
+        "has_credential": false,
+        "error": "",
+        "current_task": "",
+        "operation_mode": "full_control"
+      },
+      "device_facts": {
+        "device_os_family": "EOS",
+        "device_os_version": "4.24.5M",
+        "device_state": "IS-ACTIVE",
+        "hostname": "leaf3"
+      },
+      "running_config": {
+        "profile": "",
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.19.14",
+        "agent_type": "onbox",
+        "install_requirements": true,
+        "packages": [],
+        "operation_mode": "full_control"
+      },
+      "config": {
+        "profile": "",
+        "allowed_job_types": [
+          "upgrade",
+          "showTech",
+          "check",
+          "uninstall"
+        ],
+        "label": "",
+        "force_package_install": false,
+        "management_ip": "172.20.19.14",
+        "agent_type": "onbox",
+        "install_requirements": true,
+        "packages": [],
+        "operation_mode": "full_control"
+      },
+      "id": "13e0de32-e99d-460b-abb8-c207b7041e8c",
+      "last_job_status": {
+        "job_id": 2,
+        "created": "2021-08-06T18:07:25.555990Z",
+        "started": "2021-08-06T18:07:25.565292Z",
+        "job_type": "install",
+        "finished": "2021-08-06T18:09:11.172953Z",
+        "state": "success",
+        "agent_type": "onbox",
+        "error": "",
+        "host_id": "13e0de32-e99d-460b-abb8-c207b7041e8c"
+      }
+    }
+  ],
+  "offset": 0,
+  "page": 1,
+  "total_count": 3
+}

@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "created_at": "2020-10-26T18:22:50.038322+0000",
+      "label": "US-EAST-NTP",
+      "values": {
+        "ntp_server": "10.10.100.1"
+      },
+      "updated_at": "2020-10-26T18:22:50.038322+0000",
+      "id": "b9b1c7ee-205e-406c-8155-57ad3ece8a1f"
+    },
+    {
+      "created_at": "2020-10-26T18:28:36.932392+0000",
+      "label": "NTP Server",
+      "values": {
+        "ntp_server": "172.20.32.4"
+      },
+      "updated_at": "2020-10-26T18:28:36.932392+0000",
+      "id": "99e82d22-38ee-4ec9-aa6e-b01f29d25d17"
+    },
+    {
+      "created_at": "2020-10-26T18:22:50.134767+0000",
+      "label": "US-DC-MAC-AGING",
+      "values": {
+        "timer": "1200"
+      },
+      "updated_at": "2020-10-26T18:22:50.134767+0000",
+      "id": "b72354c9-e32c-4687-8f65-ad9df50d93b2"
+    },
+    {
+      "created_at": "2020-10-26T18:28:36.870328+0000",
+      "label": "MGMT VRF",
+      "values": {
+        "mgmt_vrf": "management"
+      },
+      "updated_at": "2020-10-26T18:28:36.870328+0000",
+      "id": "6bdc8da0-c398-4851-8e56-fcd12a8ce6ed"
+    }
+  ]
+}

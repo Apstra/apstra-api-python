@@ -1,0 +1,26 @@
+{
+  "items": {
+    "78eff7d7-e936-4e6e-a9f7-079b9aa45f98": {
+      "vni_id": 5000,
+      "sz_type": "evpn",
+      "routing_policy_id": "07e0dbc4-dfea-4914-b4a1-12236860f9ff",
+      "label": "blue",
+      "vrf_name": "blue",
+      "rt_policy": null,
+      "route_target": "5000:1",
+      "id": "78eff7d7-e936-4e6e-a9f7-079b9aa45f98",
+      "vlan_id": 2
+    },
+    "5dd8887f-f2c2-409c-a996-99d9161e17ca": {
+      "vni_id": null,
+      "sz_type": "l3_fabric",
+      "routing_policy_id": "07e0dbc4-dfea-4914-b4a1-12236860f9ff",
+      "label": "Default routing zone",
+      "vrf_name": "default",
+      "rt_policy": null,
+      "route_target": null,
+      "id": "5dd8887f-f2c2-409c-a996-99d9161e17ca",
+      "vlan_id": null
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "policies": [
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link",
+      "visible": false,
+      "policy_type_name": "AttachLogicalLink",
+      "attributes": {
+        "security_zone": "{{default_rz_id}}",
+        "untagged": false,
+        "ipv6_addressing_type": "none",
+        "vlan_id": 2,
+        "ipv4_addressing_type": "numbered"
+      },
+      "id": "81ef6ccb-e7db-4f99-9282-31f9a11fdeb7"
+    },
+    {
+      "description": "",
+      "tags": [
+        "Router"
+      ],
+      "user_data": "{\"isSausage\":true,\"positions\":{\"81ef6ccb-e7db-4f99-9282-31f9a11fdeb7\":[290,80,1],\"2dc376b3-bae4-403a-940d-b949db184981\":[290,150,2]}}",
+      "label": "External Router Peering",
+      "visible": true,
+      "policy_type_name": "batch",
+      "attributes": {
+        "subpolicies": [
+          "e0541819-4033-42db-993d-43e6c7acfe10"
+        ]
+      },
+      "id": "external-router-peering"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "ebd868a6-ee0f-4aa9-aff7-fdefa9d42153",
+        "first_subpolicy": "81ef6ccb-e7db-4f99-9282-31f9a11fdeb7",
+        "resolver": null
+      },
+      "id": "e0541819-4033-42db-993d-43e6c7acfe10"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Default BGP Peering (pipeline)",
+      "visible": false,
+      "policy_type_name": "pipeline",
+      "attributes": {
+        "second_subpolicy": "3a06022b-2ca4-466b-b3b0-b2b288a67657",
+        "first_subpolicy": "2dc376b3-bae4-403a-940d-b949db184981",
+        "resolver": null
+      },
+      "id": "dd4d551e-905f-4530-a669-cb587bf31063"
+    },
+    {
+      "description": "",
+      "tags": [],
+      "label": "noop",
+      "visible": false,
+      "policy_type_name": "noop",
+      "attributes": {},
+      "id": "3a06022b-2ca4-466b-b3b0-b2b288a67657"
+    },
+    {
+      "description": "Create a BGP peering session with Generic Systems inherited from AOS Generic System properties such as loopback and ASN (addressed, or link-local peer).",
+      "tags": [],
+      "label": "Default BGP Peering",
+      "visible": false,
+      "policy_type_name": "AttachBgpOverSubinterfacesOrSvi",
+      "attributes": {
+        "ipv6_safi": false,
+        "keepalive_timer": 30,
+        "bfd": false,
+        "peer_from": "loopback",
+        "peer_to": "loopback",
+        "session_addressing_ipv4": "addressed",
+        "session_addressing_ipv6": "none",
+        "ttl": 2,
+        "neighbor_asn_type": "static",
+        "password": null,
+        "holdtime_timer": 90,
+        "ipv4_safi": true
+      },
+      "id": "2dc376b3-bae4-403a-940d-b949db184981"
+    },
+    {
+      "description": "Build an IP link between a fabric node and a generic system. This primitive uses AOS resource pool \"Link IPs - To Generic\" by default to dynamically allocate an IP endpoint (/31) on each side of the link. To allocate different IP endpoints, navigate under Routing Zone>Subinterfaces Table.",
+      "tags": [],
+      "label": "Default IP Link (batch)",
+      "visible": false,
+      "policy_type_name": "batch",
+      "attributes": {
+        "subpolicies": [
+          "dd4d551e-905f-4530-a669-cb587bf31063"
+        ]
+      },
+      "id": "ebd868a6-ee0f-4aa9-aff7-fdefa9d42153"
+    }
+  ]
+}

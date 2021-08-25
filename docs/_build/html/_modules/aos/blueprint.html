@@ -160,6 +160,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">requests.utils</span> <span class="kn">import</span> <span class="n">requote_uri</span>
 <span class="kn">from</span> <span class="nn">.aos</span> <span class="kn">import</span> <span class="n">AosSubsystem</span><span class="p">,</span> <span class="n">AosAPIError</span><span class="p">,</span> <span class="n">AosInputError</span><span class="p">,</span> <span class="n">AosAPIResourceNotFound</span>
 <span class="kn">from</span> <span class="nn">.design</span> <span class="kn">import</span> <span class="n">AosConfiglets</span><span class="p">,</span> <span class="n">AosPropertySets</span><span class="p">,</span> <span class="n">AosTemplate</span>
@@ -173,6 +174,12 @@
 
 <div class="viewcode-block" id="AosBPCommitError"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBPCommitError">[docs]</a><span class="k">class</span> <span class="nc">AosBPCommitError</span><span class="p">(</span><span class="n">AosAPIError</span><span class="p">):</span>
     <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">response</span><span class="p">(</span><span class="n">resp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">resp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
 <span class="n">Blueprint</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Blueprint&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">])</span>
@@ -215,6 +222,7 @@
     <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">routing_policy</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">routing_policy_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">vni_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">sz_type</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">vrf_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -229,7 +237,8 @@
         <span class="k">return</span> <span class="n">SecurityZone</span><span class="p">(</span>
             <span class="n">label</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">sz</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">routing_policy</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;routing_policy&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">routing_policy</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;routing_policy&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="n">routing_policy_id</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;routing_policy_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">vni_id</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vni_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">sz_type</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sz_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">vrf_name</span><span class="o">=</span><span class="n">sz</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vrf_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
@@ -243,6 +252,7 @@
     <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">routing_policy</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">routing_policy_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">vni_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">sz_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">vrf_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -267,12 +277,14 @@
     <span class="n">security_zone_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">svi_ips</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">virtual_mac</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">default_endpoint_tag_types</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">default_endpoint_tag_types</span><span class="p">:</span> <span class="p">{}</span>
     <span class="n">endpoints</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">bound_to</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">vn_type</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">rt_policy</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="n">dhcp_service</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tagged_ct</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">untagged_ct</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
@@ -298,6 +310,8 @@
             <span class="n">vn_type</span><span class="o">=</span><span class="n">vn</span><span class="p">[</span><span class="s2">&quot;vn_type&quot;</span><span class="p">],</span>
             <span class="n">rt_policy</span><span class="o">=</span><span class="n">vn</span><span class="p">[</span><span class="s2">&quot;rt_policy&quot;</span><span class="p">],</span>
             <span class="n">dhcp_service</span><span class="o">=</span><span class="n">vn</span><span class="p">[</span><span class="s2">&quot;dhcp_service&quot;</span><span class="p">],</span>
+            <span class="n">tagged_ct</span><span class="o">=</span><span class="n">vn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;create_policy_tagged&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">untagged_ct</span><span class="o">=</span><span class="n">vn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;create_policy_untagged&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span></div>
 
 
@@ -321,7 +335,36 @@
     <span class="n">vn_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">rt_policy</span><span class="o">=</span><span class="p">{},</span>
     <span class="n">dhcp_service</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">tagged_ct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">untagged_ct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<div class="viewcode-block" id="ResourceGroup"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.ResourceGroup">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ResourceGroup</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">pool_ids</span><span class="p">:</span> <span class="nb">list</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">rg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">NullResourceGroup</span>
+
+        <span class="n">group_name</span> <span class="o">=</span> <span class="n">rg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;sz:&quot;</span><span class="p">):</span>
+            <span class="n">group_name</span> <span class="o">=</span> <span class="n">rg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResourceGroup</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">rg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">rg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">pool_ids</span><span class="o">=</span><span class="n">rg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pool_ids&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="p">)</span></div>
+
+
+<span class="n">NullResourceGroup</span> <span class="o">=</span> <span class="n">ResourceGroup</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pool_ids</span><span class="o">=</span><span class="p">[])</span>
 
 
 <div class="viewcode-block" id="AosBlueprint"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint">[docs]</a><span class="k">class</span> <span class="nc">AosBlueprint</span><span class="p">(</span><span class="n">AosSubsystem</span><span class="p">):</span>
@@ -603,17 +646,34 @@
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">commit_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div>
 
+    <span class="c1"># tasks</span>
+    <span class="k">def</span> <span class="nf">get_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span>
+            <span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/tasks&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span>
+        <span class="p">)[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_task_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span>
+            <span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;/tasks/</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_active_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;status in [&#39;in_progress&#39;, &#39;init&#39;]&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tasks</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
     <span class="c1"># Graph Queries</span>
-<div class="viewcode-block" id="AosBlueprint.qe_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.qe_query">[docs]</a>    <span class="k">def</span> <span class="nf">qe_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.qe_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.qe_query">[docs]</a>    <span class="k">def</span> <span class="nf">qe_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        QE query aginst a Blueprint graphDB</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+<span class="sd">            (str) (optional) ID of AOS blueprint</span>
 <span class="sd">        query</span>
 <span class="sd">            (str) qe query string</span>
+<span class="sd">        params</span>
+<span class="sd">            (dict) (optional) query parameters</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -621,20 +681,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">qe_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/qe&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">}</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">qe_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">qe_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.ql_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.ql_query">[docs]</a>    <span class="k">def</span> <span class="nf">ql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.ql_query"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.ql_query">[docs]</a>    <span class="k">def</span> <span class="nf">ql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        QL query aginst a Blueprint graphDB</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bp_id</span>
-<span class="sd">            (str) ID of AOS blueprint (optional)</span>
+<span class="sd">            (str) (optional) ID of AOS blueprint</span>
 <span class="sd">        query</span>
 <span class="sd">            (str) qe query string</span>
+<span class="sd">        params</span>
+<span class="sd">            (dict) (optional) query parameters</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -642,14 +704,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ql_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/ql&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">}</span>
-        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">ql_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">ql_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span></div>
 
     <span class="c1"># Resources</span>
+<div class="viewcode-block" id="AosBlueprint.get_all_bp_resource_groups"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_all_bp_resource_groups">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_bp_resource_groups</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ResourceGroup</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all resource groups required in a given blueprint.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[ResourceGroup]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rg_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/resource_groups&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">)[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">ResourceGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">rg</span><span class="p">)</span> <span class="k">for</span> <span class="n">rg</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="AosBlueprint.apply_resource_groups"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.apply_resource_groups">[docs]</a>    <span class="k">def</span> <span class="nf">apply_resource_groups</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pool_ids</span><span class="p">:</span> <span class="nb">list</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResourceGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assign existing pools to a given resource group in an AOS Blueprint</span>
 <span class="sd">        Parameters</span>
@@ -685,11 +766,15 @@
             <span class="s2">&quot;pool_ids&quot;</span><span class="p">:</span> <span class="n">pool_ids</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">rg_path</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="AosBlueprint.get_bp_resource_pools"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_bp_resource_pools">[docs]</a>    <span class="k">def</span> <span class="nf">get_bp_resource_pools</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="AosBlueprint.get_bp_resource_group"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_bp_resource_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_bp_resource_group</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resource_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceGroup</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return existing pools to a given resource group in an AOS Blueprint</span>
+<span class="sd">        Return a given resource group in an AOS Blueprint including</span>
+<span class="sd">        the pools assigned.</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bp_id</span>
@@ -717,7 +802,7 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_type</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">ResourceGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">rg_path</span><span class="p">))</span></div>
 
     <span class="c1"># configlets, property-sets</span>
 <div class="viewcode-block" id="AosBlueprint.get_configlets"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_configlets">[docs]</a>    <span class="k">def</span> <span class="nf">get_configlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -848,6 +933,9 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">n_path</span><span class="p">)[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span>
 
+    <span class="k">def</span> <span class="nf">get_bp_node_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/nodes/</span><span class="si">{</span><span class="n">node_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">get_bp_system_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bp_nodes</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">)</span>
@@ -956,6 +1044,11 @@
                 <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">leaf</span><span class="p">[</span><span class="s2">&quot;leaf&quot;</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">nodes</span></div>
+
+    <span class="k">def</span> <span class="nf">create_switch_system_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/switch-system-links&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AosBlueprint.assign_devices_from_json"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.assign_devices_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">assign_devices_from_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_assignment</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1124,6 +1217,52 @@
 
         <span class="k">return</span> <span class="n">data</span></div>
 
+    <span class="c1"># Connectivity Templates</span>
+    <span class="k">def</span> <span class="nf">get_connectivity_templates_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">r_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/obj-policy-export&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">r_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_connectivity_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ct_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">r_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/obj-policy-export/</span><span class="si">{</span><span class="n">ct_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">r_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">find_connectivity_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ct_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">cts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connectivity_templates_all</span><span class="p">(</span><span class="n">bp_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">cts</span><span class="p">[</span><span class="s2">&quot;policies&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">ct_name</span> <span class="ow">in</span> <span class="n">ct</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">ct</span><span class="p">[</span><span class="s2">&quot;policy_type_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ct</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">create_connectivity_template_from_json</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">response</span><span class="p">]:</span>
+        <span class="n">ct_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/obj-policy-import&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ct_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_connectivity_template</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">response</span><span class="p">]:</span>
+        <span class="n">ct_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/obj-policy-batch-apply&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">ct_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_connectivity_template</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ct_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">response</span><span class="p">]:</span>
+        <span class="n">r_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/policies/</span><span class="si">{</span><span class="n">ct_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;delete_recursive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">r_path</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_endpoint_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">policy_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/endpoint-policies/</span><span class="si">{</span><span class="n">policy_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_endpoint_policy_app_points</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">policy_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">p_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/obj-policy-application-points&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;policy&quot;</span><span class="p">:</span> <span class="n">policy_id</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_get</span><span class="p">(</span><span class="n">p_path</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
     <span class="c1"># External Routers</span>
 <div class="viewcode-block" id="AosBlueprint.get_external_routers_all"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.get_external_routers_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_external_routers_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1258,6 +1397,57 @@
     <span class="k">def</span> <span class="nf">delete_external_router</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp_rtr_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">r_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/external-routers/</span><span class="si">{</span><span class="n">bp_rtr_id</span><span class="si">}</span><span class="s2">&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">r_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AosBlueprint.create_ext_generic_systems"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.create_ext_generic_systems">[docs]</a>    <span class="k">def</span> <span class="nf">create_ext_generic_systems</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asn</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loopback_ip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates external-generic blueprint node for external router usage in</span>
+<span class="sd">        configuration templates</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bp_id</span>
+<span class="sd">            (str) ID of blueprint</span>
+<span class="sd">        hostname</span>
+<span class="sd">            (str) Name assigned to the node and device as hostname</span>
+<span class="sd">        asn</span>
+<span class="sd">            (str) ASN number assigned to external router for BGP peering</span>
+<span class="sd">            with the AOS managed fabric</span>
+<span class="sd">        loopback_ip</span>
+<span class="sd">            (str) IPv4 address assigned to the external-router for bgp</span>
+<span class="sd">            loopback peering.</span>
+<span class="sd">            example: &quot;10.10.11.11/32&quot;</span>
+<span class="sd">        tags:</span>
+<span class="sd">            (list) Blueprint tags associated with the node.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/external-generic-systems&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="n">hostname</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">hostname</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="n">tags</span><span class="p">}</span>
+
+        <span class="n">ext_rtr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_post</span><span class="p">(</span><span class="n">n_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">n_asn_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/systems/</span><span class="si">{</span><span class="n">ext_rtr</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/domain&quot;</span>
+        <span class="n">n_lo_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/systems/</span><span class="si">{</span><span class="n">ext_rtr</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/loopback/0&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">n_asn_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;domain_id&quot;</span><span class="p">:</span> <span class="n">asn</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">n_lo_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ipv4_addr&quot;</span><span class="p">:</span> <span class="n">loopback_ip</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bp_node_by_id</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">ext_rtr</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">delete_external_generic_system</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">response</span><span class="p">]:</span>
+        <span class="n">r_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/external-generic-systems/</span><span class="si">{</span><span class="n">node_id</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">r_path</span><span class="p">)</span>
 
     <span class="c1"># IBA probes and dashboards</span>
@@ -1404,7 +1594,7 @@
 
     <span class="k">def</span> <span class="nf">apply_security_zone_dhcp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sz_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dhcp_servers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
             <span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/blueprints/</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">/security-zones/</span><span class="si">{</span><span class="n">sz_id</span><span class="si">}</span><span class="s2">/dhcp-servers&quot;</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">dhcp_servers</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1715,9 +1905,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest</span><span class="o">.</span><span class="n">json_resp_put</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">p_path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
     <span class="c1"># Virtual Networks</span>
-<div class="viewcode-block" id="AosBlueprint.create_virtual_network_from_json"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.create_virtual_network_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">create_virtual_network_from_json</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">virtual_network</span><span class="p">:</span> <span class="nb">dict</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VirtualNetwork</span><span class="p">:</span>
+<div class="viewcode-block" id="AosBlueprint.create_virtual_network_from_json"><a class="viewcode-back" href="../../source/aos.html#aos.blueprint.AosBlueprint.create_virtual_network_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">create_virtual_network_from_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bp_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">virtual_network</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create new virtual-network (VLAN) in a given blueprint</span>
 <span class="sd">        Parameters</span>
@@ -1743,12 +1931,14 @@
         <span class="n">sz_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">vn_type</span><span class="p">:</span> <span class="n">VNType</span> <span class="o">=</span> <span class="n">VNType</span><span class="o">.</span><span class="n">vxlan</span><span class="p">,</span>
         <span class="n">vn_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">tag_type</span><span class="p">:</span> <span class="n">VNTagType</span> <span class="o">=</span> <span class="n">VNTagType</span><span class="o">.</span><span class="n">vlan_tagged</span><span class="p">,</span>
+        <span class="n">tag_type</span><span class="p">:</span> <span class="n">VNTagType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ipv4_subnet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ipv4_gateway</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ipv6_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">ipv6_subnet</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ipv6_gateway</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tagged_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">untagged_ct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1775,7 +1965,7 @@
 <span class="sd">        tag_type</span>
 <span class="sd">            (VNTagType) - (Optional) Default tag type.</span>
 <span class="sd">            [&#39;vlan_tagged&#39;, &#39;untagged&#39;, &#39;&#39;unassigned]</span>
-<span class="sd">            Default: &#39;vlan_tagged&#39;</span>
+<span class="sd">            Default: None</span>
 <span class="sd">        ipv4_subnet</span>
 <span class="sd">            (str) - (optional) IPV4 subnet assigned to virtual-network. If none</span>
 <span class="sd">            given the subnet will be assigned from resource pool</span>
@@ -1791,9 +1981,15 @@
 <span class="sd">            given the subnet will be assigned from resource pool</span>
 <span class="sd">            default: None</span>
 <span class="sd">        ipv6_gateway</span>
-<span class="sd">            (str) - (optional) IPV4 gatewau address assigned to virtual-network.</span>
+<span class="sd">            (str) - (optional) IPV4 gateway address assigned to virtual-network.</span>
 <span class="sd">            If none given the subnet will be assigned from resource pool</span>
 <span class="sd">            default: None</span>
+<span class="sd">        tagged_ct</span>
+<span class="sd">            (bool) - (optional) Create tagged connectivity template for the given</span>
+<span class="sd">            virtual-network.</span>
+<span class="sd">        untagged_ct</span>
+<span class="sd">            (bool) - (optional) Create untagged connectivity template for the given</span>
+<span class="sd">            virtual-network.</span>
 <span class="sd">        timeout</span>
 <span class="sd">            (int) - time (seconds) to wait for creation</span>
 
@@ -1813,10 +2009,6 @@
             <span class="s2">&quot;security_zone_id&quot;</span><span class="p">:</span> <span class="n">sz_id</span><span class="p">,</span>
             <span class="s2">&quot;vn_type&quot;</span><span class="p">:</span> <span class="n">vn_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="s2">&quot;vn_id&quot;</span><span class="p">:</span> <span class="n">vn_id</span><span class="p">,</span>
-            <span class="s2">&quot;default_endpoint_tag_types&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;single-link&quot;</span><span class="p">:</span> <span class="n">tag_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                <span class="s2">&quot;dual-link&quot;</span><span class="p">:</span> <span class="n">tag_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="p">},</span>
             <span class="s2">&quot;bound_to&quot;</span><span class="p">:</span> <span class="n">bound_to</span><span class="p">,</span>
             <span class="s2">&quot;ipv4_enabled&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="s2">&quot;dhcp_service&quot;</span><span class="p">:</span> <span class="s2">&quot;dhcpServiceEnabled&quot;</span><span class="p">,</span>
@@ -1827,6 +2019,16 @@
         <span class="k">if</span> <span class="n">ipv6_enabled</span><span class="p">:</span>
             <span class="n">virt_net</span><span class="p">[</span><span class="s2">&quot;ipv6_subnet&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipv6_subnet</span>
             <span class="n">virt_net</span><span class="p">[</span><span class="s2">&quot;ipv6_gateway&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipv6_gateway</span>
+
+        <span class="k">if</span> <span class="n">tag_type</span><span class="p">:</span>
+            <span class="n">virt_net</span><span class="p">[</span><span class="s2">&quot;default_endpoint_tag_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;single-link&quot;</span><span class="p">:</span> <span class="n">tag_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;dual-link&quot;</span><span class="p">:</span> <span class="n">tag_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">if</span> <span class="n">tagged_ct</span><span class="p">:</span>
+            <span class="n">virt_net</span><span class="p">[</span><span class="s2">&quot;create_policy_tagged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tagged_ct</span>
+        <span class="k">if</span> <span class="n">untagged_ct</span><span class="p">:</span>
+            <span class="n">virt_net</span><span class="p">[</span><span class="s2">&quot;create_policy_untagged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">untagged_ct</span>
 
         <span class="n">vn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_virtual_network_from_json</span><span class="p">(</span><span class="n">bp_id</span><span class="p">,</span> <span class="n">virt_net</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating virtual-network &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; in blueprint &#39;</span><span class="si">{</span><span class="n">bp_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>

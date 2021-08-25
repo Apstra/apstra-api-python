@@ -14,7 +14,7 @@ ONE_MINUTE = 60
 
 
 def repeat_until(
-        condition, timeout=TEN_SECONDS, func=None, fargs=None, fkwargs=None
+    condition, timeout=TEN_SECONDS, func=None, fargs=None, fkwargs=None
 ):
     """
     Repeats :func: until :condition: is met.
@@ -29,18 +29,20 @@ def repeat_until(
     return repeat(
         stop_condition=condition,
         timeout=timeout,
-        func=func, fargs=fargs, fkwargs=fkwargs,
+        func=func,
+        fargs=fargs,
+        fkwargs=fkwargs,
     )
 
 
 def repeat(
-        func=None,
-        fargs=None,
-        fkwargs=None,
-        stop_condition=None,
-        timeout=TEN_SECONDS,
-        max_delay=ONE_MINUTE,
-        error_condition=None,
+    func=None,
+    fargs=None,
+    fkwargs=None,
+    stop_condition=None,
+    timeout=TEN_SECONDS,
+    max_delay=ONE_MINUTE,
+    error_condition=None,
 ):
     """
     Repeats :func: until :stop_condition: is met.
@@ -106,8 +108,8 @@ def _continue(stop_condition, error_condition, retval):
     err_args = args(error_condition, retval)
 
     is_error = error_condition(*err_args) if callable(error_condition) else False
-    should_continue = (not stop_condition(*stop_args)
-                       if callable(stop_condition)
-                       else False)
+    should_continue = (
+        not stop_condition(*stop_args) if callable(stop_condition) else False
+    )
 
     return not is_error and should_continue

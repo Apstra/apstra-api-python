@@ -234,18 +234,8 @@ class AosRestAPI:
         """
         return self.raw_request_json("GET", uri, params, data, headers)
 
-    def delete(self, uri: str):
-        """
-        AOS rest API DELETE.
-        Parameters
-        ----------
-        uri - (str) API endpoint ex: /api/blueprints
-
-        Returns
-        -------
-            (obj) - Rest Api Response object
-        """
-        return self.raw_request("DELETE", uri, params=None, data=None, headers=None)
+    def delete(self, uri, params=None, data=None, headers=None):
+        return self.raw_request("DELETE", uri, params, data, headers)
 
     def get_aos_version(self):
         """

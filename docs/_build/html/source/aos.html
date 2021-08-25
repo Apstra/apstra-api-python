@@ -266,22 +266,6 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The core class for rest api integration with AOS</p>
 <dl class="py method">
-<dt id="aos.aos.AosRestAPI.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>AOS rest API DELETE.
-:param uri - (str) API endpoint ex:
-:type uri - (str) API endpoint ex: /api/blueprints</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) - Rest Api Response object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="aos.aos.AosRestAPI.get_aos_version">
 <code class="sig-name descname">get_aos_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/aos.html#AosRestAPI.get_aos_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.aos.AosRestAPI.get_aos_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get AOS server version installed</p>
@@ -597,7 +581,7 @@ loopback IPs.
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.apply_resource_groups">
-<code class="sig-name descname">apply_resource_groups</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">resource_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">pool_ids</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.apply_resource_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.apply_resource_groups" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply_resource_groups</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">resource_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">pool_ids</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#aos.blueprint.ResourceGroup" title="aos.blueprint.ResourceGroup">aos.blueprint.ResourceGroup</a><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.apply_resource_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.apply_resource_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign existing pools to a given resource group in an AOS Blueprint
 :param bp_id: (str) ID of blueprint
 :param resource_type: (str) type of resource pool used</p>
@@ -745,6 +729,35 @@ based on system node name.
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.create_ext_generic_systems">
+<code class="sig-name descname">create_ext_generic_systems</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">hostname</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">asn</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loopback_ip</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tags</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_ext_generic_systems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_ext_generic_systems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates external-generic blueprint node for external router usage in
+configuration templates
+:param bp_id: (str) ID of blueprint
+:param hostname: (str) Name assigned to the node and device as hostname
+:param asn: (str) ASN number assigned to external router for BGP peering</p>
+<blockquote>
+<div><p>with the AOS managed fabric</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loopback_ip</strong> – (str) IPv4 address assigned to the external-router for bgp
+loopback peering.
+example: “10.10.11.11/32”</p></li>
+<li><p><strong>tags</strong> – (list) Blueprint tags associated with the node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.create_security_zone">
 <code class="sig-name descname">create_security_zone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">import_policy</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">leaf_loopback_ip_pools</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dhcp_servers</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">60</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_security_zone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_security_zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a security-zone in the given blueprint</p>
@@ -825,7 +838,7 @@ preformatted json object.</p>
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.create_virtual_network">
-<code class="sig-name descname">create_virtual_network</code><span class="sig-paren">(</span><em class="sig-param">bp_id: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">bound_to: list</em>, <em class="sig-param">sz_id: Optional[str] = None</em>, <em class="sig-param">sz_name: Optional[str] = None</em>, <em class="sig-param">vn_type: aos.blueprint.VNType = &lt;VNType.vxlan: 'vxlan'&gt;</em>, <em class="sig-param">vn_id: Optional[str] = None</em>, <em class="sig-param">tag_type: aos.blueprint.VNTagType = &lt;VNTagType.vlan_tagged: 'vlan_tagged'&gt;</em>, <em class="sig-param">ipv4_subnet: Optional[str] = None</em>, <em class="sig-param">ipv4_gateway: Optional[str] = None</em>, <em class="sig-param">ipv6_enabled: bool = False</em>, <em class="sig-param">ipv6_subnet: Optional[str] = None</em>, <em class="sig-param">ipv6_gateway: Optional[str] = None</em>, <em class="sig-param">timeout: int = 60</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_virtual_network</code><span class="sig-paren">(</span><em class="sig-param">bp_id: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">bound_to: list</em>, <em class="sig-param">sz_id: Optional[str] = None</em>, <em class="sig-param">sz_name: Optional[str] = None</em>, <em class="sig-param">vn_type: aos.blueprint.VNType = &lt;VNType.vxlan: 'vxlan'&gt;</em>, <em class="sig-param">vn_id: Optional[str] = None</em>, <em class="sig-param">tag_type: Optional[aos.blueprint.VNTagType] = None</em>, <em class="sig-param">ipv4_subnet: Optional[str] = None</em>, <em class="sig-param">ipv4_gateway: Optional[str] = None</em>, <em class="sig-param">ipv6_enabled: bool = False</em>, <em class="sig-param">ipv6_subnet: Optional[str] = None</em>, <em class="sig-param">ipv6_gateway: Optional[str] = None</em>, <em class="sig-param">tagged_ct: bool = False</em>, <em class="sig-param">untagged_ct: bool = False</em>, <em class="sig-param">timeout: int = 60</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -841,7 +854,7 @@ Default: default security zone</p></li>
 <li><p><strong>vn_id</strong> – (str) - (Optional) ID of virtual network</p></li>
 <li><p><strong>tag_type</strong> – (VNTagType) - (Optional) Default tag type.
 [‘vlan_tagged’, ‘untagged’, ‘’unassigned]
-Default: ‘vlan_tagged’</p></li>
+Default: None</p></li>
 <li><p><strong>ipv4_subnet</strong> – (str) - (optional) IPV4 subnet assigned to virtual-network. If none
 given the subnet will be assigned from resource pool
 default: None</p></li>
@@ -852,9 +865,13 @@ default: None</p></li>
 <li><p><strong>ipv6_subnet</strong> – (str) - (optional) IPV6 subnet assigned to virtual-network. If none
 given the subnet will be assigned from resource pool
 default: None</p></li>
-<li><p><strong>ipv6_gateway</strong> – (str) - (optional) IPV4 gatewau address assigned to virtual-network.
+<li><p><strong>ipv6_gateway</strong> – (str) - (optional) IPV4 gateway address assigned to virtual-network.
 If none given the subnet will be assigned from resource pool
 default: None</p></li>
+<li><p><strong>tagged_ct</strong> – (bool) - (optional) Create tagged connectivity template for the given
+virtual-network.</p></li>
+<li><p><strong>untagged_ct</strong> – (bool) - (optional) Create untagged connectivity template for the given
+virtual-network.</p></li>
 <li><p><strong>timeout</strong> – (int) - time (seconds) to wait for creation</p></li>
 </ul>
 </dd>
@@ -863,7 +880,7 @@ default: None</p></li>
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.create_virtual_network_from_json">
-<code class="sig-name descname">create_virtual_network_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_network</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#aos.blueprint.VirtualNetwork" title="aos.blueprint.VirtualNetwork">aos.blueprint.VirtualNetwork</a><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network_from_json" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_virtual_network_from_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_network</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.create_virtual_network_from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.create_virtual_network_from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new virtual-network (VLAN) in a given blueprint
 :param bp_id: (str) - ID of blueprint
 :param virtual_network: (dict) - VirtualNetwork object</p>
@@ -989,6 +1006,21 @@ given name (label).
 </dd></dl>
 
 <dl class="py method">
+<dt id="aos.blueprint.AosBlueprint.get_all_bp_resource_groups">
+<code class="sig-name descname">get_all_bp_resource_groups</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.blueprint.ResourceGroup" title="aos.blueprint.ResourceGroup">aos.blueprint.ResourceGroup</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_all_bp_resource_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_all_bp_resource_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all resource groups required in a given blueprint.
+:param bp_id: (str) ID of blueprint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#aos.blueprint.ResourceGroup" title="aos.blueprint.ResourceGroup">ResourceGroup</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.get_all_ids">
 <code class="sig-name descname">get_all_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_all_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_all_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all blueprint names and IDs
@@ -1070,9 +1102,10 @@ this will return the redundancy-group node.
 </dd></dl>
 
 <dl class="py method">
-<dt id="aos.blueprint.AosBlueprint.get_bp_resource_pools">
-<code class="sig-name descname">get_bp_resource_pools</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">resource_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp_resource_pools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp_resource_pools" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return existing pools to a given resource group in an AOS Blueprint
+<dt id="aos.blueprint.AosBlueprint.get_bp_resource_group">
+<code class="sig-name descname">get_bp_resource_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">resource_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#aos.blueprint.ResourceGroup" title="aos.blueprint.ResourceGroup">aos.blueprint.ResourceGroup</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.get_bp_resource_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.get_bp_resource_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a given resource group in an AOS Blueprint including
+the pools assigned.
 :param bp_id: (str) ID of blueprint
 :param resource_type: (str) type of resource pool used</p>
 <blockquote>
@@ -1332,13 +1365,14 @@ connectivity
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.qe_query">
-<code class="sig-name descname">qe_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">query</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.qe_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.qe_query" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">qe_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">query</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.qe_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.qe_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>QE query aginst a Blueprint graphDB</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) ID of AOS blueprint (optional)</p></li>
+<li><p><strong>bp_id</strong> – (str) (optional) ID of AOS blueprint</p></li>
 <li><p><strong>query</strong> – (str) qe query string</p></li>
+<li><p><strong>params</strong> – (dict) (optional) query parameters</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1352,13 +1386,14 @@ connectivity
 
 <dl class="py method">
 <dt id="aos.blueprint.AosBlueprint.ql_query">
-<code class="sig-name descname">ql_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">query</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.ql_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.ql_query" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ql_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bp_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">query</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#AosBlueprint.ql_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.AosBlueprint.ql_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>QL query aginst a Blueprint graphDB</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bp_id</strong> – (str) ID of AOS blueprint (optional)</p></li>
+<li><p><strong>bp_id</strong> – (str) (optional) ID of AOS blueprint</p></li>
 <li><p><strong>query</strong> – (str) qe query string</p></li>
+<li><p><strong>params</strong> – (dict) (optional) query parameters</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1440,8 +1475,14 @@ preformatted json object.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="aos.blueprint.ResourceGroup">
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">ResourceGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">pool_ids</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#ResourceGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.ResourceGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
 <dt id="aos.blueprint.SecurityZone">
-<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">SecurityZone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">vni_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vrf_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">route_target</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#SecurityZone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.SecurityZone" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">SecurityZone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">routing_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">routing_policy_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vni_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sz_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vrf_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">route_target</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">vlan_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#SecurityZone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.SecurityZone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -1467,7 +1508,7 @@ preformatted json object.</p>
 
 <dl class="py class">
 <dt id="aos.blueprint.VirtualNetwork">
-<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VirtualNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv4_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv4_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv4</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv6_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv6_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv6</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">security_zone_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">svi_ips</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">virtual_mac</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">default_endpoint_tag_types</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">endpoints</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">bound_to</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">vn_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">dhcp_service</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VirtualNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VirtualNetwork" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">aos.blueprint.</code><code class="sig-name descname">VirtualNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv4_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv4_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv4</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ipv6_enabled</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">ipv6_subnet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">virtual_gateway_ipv6</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vn_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">security_zone_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">svi_ips</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">virtual_mac</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">default_endpoint_tag_types</span><span class="p">:</span> <span class="n">{}</span></em>, <em class="sig-param"><span class="n">endpoints</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">bound_to</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">vn_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rt_policy</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">dhcp_service</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tagged_ct</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">untagged_ct</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/blueprint.html#VirtualNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.blueprint.VirtualNetwork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -1476,32 +1517,8 @@ preformatted json object.</p>
 <span id="aos-devices-module"></span><h2>aos.devices module<a class="headerlink" href="#module-aos.devices" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="aos.devices.Anomaly">
-<em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">Anomaly</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">agent_id</span></em>, <em class="sig-param"><span class="n">severity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#aos.devices.Anomaly" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
-<dl class="py attribute">
-<dt id="aos.devices.Anomaly.agent_id">
-<code class="sig-name descname">agent_id</code><a class="headerlink" href="#aos.devices.Anomaly.agent_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.Anomaly.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#aos.devices.Anomaly.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.Anomaly.severity">
-<code class="sig-name descname">severity</code><a class="headerlink" href="#aos.devices.Anomaly.severity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.Anomaly.type">
-<code class="sig-name descname">type</code><a class="headerlink" href="#aos.devices.Anomaly.type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
+<em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">Anomaly</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">system_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">severity</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#Anomaly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.Anomaly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
@@ -1592,70 +1609,7 @@ to apply to the respective resource.</p>
 <dt id="aos.devices.AosManagedDevices">
 <em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">AosManagedDevices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
-<p>Management of system-agent for AOS controlled devices</p>
-<dl class="py method">
-<dt id="aos.devices.AosManagedDevices.accept_running_config_as_golden">
-<code class="sig-name descname">accept_running_config_as_golden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system_agent_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices.accept_running_config_as_golden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices.accept_running_config_as_golden" title="Permalink to this definition">¶</a></dt>
-<dd><p>Accept current running configuration of device as AOS golden config
-:param system_agent_id: (str) ID of system_agent</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.devices.AosManagedDevices.get_all">
-<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.devices.SystemAgent" title="aos.devices.SystemAgent">aos.devices.SystemAgent</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all system-agents configured in AOS
-:returns:
-:rtype: (obj) “SystemAgent”, [“id”, “fqdn”, “operation_mode”, “vendor”]</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.devices.AosManagedDevices.get_anomalies">
-<code class="sig-name descname">get_anomalies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system_agent_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#aos.devices.Anomaly" title="aos.devices.Anomaly">aos.devices.Anomaly</a><span class="p">]</span><a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices.get_anomalies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices.get_anomalies" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return list of all anomalies and errors for a specific device
-:param system_agent_id: (str) ID of system_agent</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(obj) [“Anomaly”, [“type”, “id”, “agent_id”, “severity”], ..]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.devices.AosManagedDevices.has_anomalies">
-<code class="sig-name descname">has_anomalies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system_agent_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices.has_anomalies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices.has_anomalies" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if given device has anomalies or errors.
-False if none are returned
-:param system_agent_id: (str) ID of system_agent</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(bool) True or False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="aos.devices.AosManagedDevices.has_anomalies_of_type">
-<code class="sig-name descname">has_anomalies_of_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system_agent_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">anomaly_type</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/aos/devices.html#AosManagedDevices.has_anomalies_of_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosManagedDevices.has_anomalies_of_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if an anomaly of a specific type is returned for the
-specified device. False if none are returned
-:param system_agent_id: (str) ID of system_agent
-:param anomaly_type: (str) Type of anomaly to filter on</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(bool) True or False</p>
-</dd>
-</dl>
-</dd></dl>
-
+<p>Management of AOS controlled devices</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1663,6 +1617,39 @@ specified device. False if none are returned
 <em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">AosSystemAgents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rest</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#aos.aos.AosRestAPI" title="aos.aos.AosRestAPI">aos.aos.AosRestAPI</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#AosSystemAgents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosSystemAgents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aos.aos.AosSubsystem</span></code></p>
 <p>Management of system-agent for AOS controlled devices</p>
+<dl class="py method">
+<dt id="aos.devices.AosSystemAgents.create">
+<code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">management_ip</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">password</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">platform</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">telemetry_only</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">is_offbox</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/aos/devices.html#AosSystemAgents.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosSystemAgents.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates system agent in AOS.
+:param management_ip: (str) management IP address for system
+:param label: (str) unique device identifier or name
+:param username: (str) username for authentication on target device
+:param password: (str) password for authentication on target device
+:param platform: (str) (optional) system platform of target device can be one of:</p>
+<blockquote>
+<div><p>[junos, nxos, eos]
+Only applicable to offbox agents, ignored for onbox agents.
+default: None</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>telemetry_only</strong> – (bool) (optional) AOS agent operation mode, Default sets agent
+to full_control
+default: False</p></li>
+<li><p><strong>is_offbox</strong> – (bool) (optional) setup offbox agent instead of directly on target device
+default: False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>UUID of created system agent</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="aos.devices.AosSystemAgents.get_os_images">
 <code class="sig-name descname">get_os_images</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#AosSystemAgents.get_os_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.AosSystemAgents.get_os_images" title="Permalink to this definition">¶</a></dt>
@@ -1690,39 +1677,15 @@ specified device. False if none are returned
 </dd></dl>
 
 <dl class="py class">
+<dt id="aos.devices.System">
+<em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">System</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">container_status</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">device_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">facts</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">services</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">status</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">user_config</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
 <dt id="aos.devices.SystemAgent">
-<em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">SystemAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">fqdn</span></em>, <em class="sig-param"><span class="n">operation_mode</span></em>, <em class="sig-param"><span class="n">vendor</span></em>, <em class="sig-param"><span class="n">user_config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#aos.devices.SystemAgent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
-<dl class="py attribute">
-<dt id="aos.devices.SystemAgent.fqdn">
-<code class="sig-name descname">fqdn</code><a class="headerlink" href="#aos.devices.SystemAgent.fqdn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.SystemAgent.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#aos.devices.SystemAgent.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.SystemAgent.operation_mode">
-<code class="sig-name descname">operation_mode</code><a class="headerlink" href="#aos.devices.SystemAgent.operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.SystemAgent.user_config">
-<code class="sig-name descname">user_config</code><a class="headerlink" href="#aos.devices.SystemAgent.user_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="aos.devices.SystemAgent.vendor">
-<code class="sig-name descname">vendor</code><a class="headerlink" href="#aos.devices.SystemAgent.vendor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
+<em class="property">class </em><code class="sig-prename descclassname">aos.devices.</code><code class="sig-name descname">SystemAgent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_uuid</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">management_ip</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">operation_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">platform</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">system_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">hostname</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">password</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_offbox</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/aos/devices.html#SystemAgent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aos.devices.SystemAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 </div>

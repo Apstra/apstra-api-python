@@ -5,10 +5,11 @@
 
 import json
 import pkg_resources
+from jinja2 import PackageLoader, Environment
 
 
 def fixtures_path(path):
-    return pkg_resources.resource_filename("aos.scripts", f"templates/{path}")
+    return pkg_resources.resource_filename("scripts", f"templates/{path}")
 
 
 def deserialize_fixture(path):
@@ -21,3 +22,13 @@ def deserialize_fixture(path):
 def read_fixture(path):
     with open(fixtures_path(path), "r") as fp:
         return fp.read()
+
+
+def render_jinja_template(template: str, context: dict) -> str:
+    file_loader = PackageLoader("scripts", "templates")
+    env = Environment(
+        loader=file_loader, autoescape=True, lstrip_blocks=True, trim_blocks=True
+    )
+    template = env.get_template(template)
+
+    return template.render(context)

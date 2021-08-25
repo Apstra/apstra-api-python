@@ -1,0 +1,145 @@
+{
+  "items": [
+    {
+      "container_status": {
+        "error": "",
+        "host": "AosController",
+        "name": "aos-offbox-172_20_20_15-f",
+        "status": "running"
+      },
+      "device_key": "5254009E7083",
+      "facts": {
+        "aos_hcl_model": "Juniper_vQFX",
+        "aos_server": "172.20.20.3",
+        "aos_version": "AOS_4.0.0_OB.314",
+        "chassis_mac_ranges": "00:00:9a:92:00:00-00:00:9a:92:00:3f,02:05:86:71:b1:00-02:05:86:71:b1:00",
+        "hw_model": "VQFX-10000",
+        "hw_version": "",
+        "mgmt_ifname": "em0",
+        "mgmt_ipaddr": "172.20.20.15",
+        "mgmt_macaddr": "52:54:00:9E:70:83",
+        "os_arch": "x86_64",
+        "os_family": "Junos",
+        "os_version": "20.2R1.10",
+        "os_version_info": {
+          "build": "10",
+          "major": "20",
+          "minor": "2R1"
+        },
+        "serial_number": "5254009E7083",
+        "vendor": "Juniper"
+      },
+      "id": "5254009E7083",
+      "status": {
+        "agent_start_time": "2021-08-16T16:01:06.401099Z",
+        "blueprint_active": true,
+        "blueprint_id": "7234a266-0fd5-4acc-8c1f-f6efc394658a",
+        "comm_state": "on",
+        "device_start_time": "2021-08-16T15:58:00.000000Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "evpn-esi-001-leaf2",
+        "hostname": "evpn-esi-001-leaf2",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Juniper_vQFX",
+        "location": ""
+      }
+    },
+    {
+      "device_key": "525400F7B342",
+      "facts": {
+        "aos_hcl_model": "Cumulus_VX",
+        "aos_server": "172.20.19.3",
+        "aos_version": "AOS_4.0.0_OB.314",
+        "chassis_mac_ranges": "52:54:00:f7:b3:42-52:54:00:f7:b3:4a",
+        "hw_model": "VX",
+        "hw_version": "3",
+        "mgmt_ifname": "eth0",
+        "mgmt_ipaddr": "172.20.19.13",
+        "mgmt_macaddr": "52:54:00:F7:B3:42",
+        "os_arch": "x86_64",
+        "os_family": "Cumulus",
+        "os_version": "4.2.1",
+        "os_version_info": {
+          "build": "1",
+          "major": "4",
+          "minor": "2"
+        },
+        "serial_number": "525400F7B342",
+        "vendor": "Cumulus"
+      },
+      "id": "525400F7B342",
+      "status": {
+        "agent_start_time": "2021-08-06T18:14:53.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2021-08-06T18:14:36.481772Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "leaf1",
+        "hostname": "leaf1",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Cumulus_VX",
+        "location": "leaf1"
+      }
+    },
+    {
+      "device_key": "505400E24540",
+      "facts": {
+        "aos_hcl_model": "Arista_vEOS",
+        "aos_server": "172.20.19.3",
+        "aos_version": "AOS_4.0.0_OB.314",
+        "chassis_mac_ranges": "50:54:00:cd:1d:4c-50:54:00:cd:1d:4c",
+        "hw_model": "vEOS",
+        "hw_version": "",
+        "mgmt_ifname": "Management1",
+        "mgmt_ipaddr": "172.20.19.14",
+        "mgmt_macaddr": "50:54:00:CD:1D:4C",
+        "os_arch": "x86_64",
+        "os_family": "EOS",
+        "os_version": "4.24.5M",
+        "os_version_info": {
+          "build": "5M",
+          "major": "4",
+          "minor": "24"
+        },
+        "serial_number": "505400CD1D4C",
+        "vendor": "Arista"
+      },
+      "id": "505400E24540",
+      "status": {
+        "agent_start_time": "2021-08-06T18:15:05.000000Z",
+        "blueprint_active": true,
+        "blueprint_id": "evpn-cvx-virtual",
+        "comm_state": "on",
+        "device_start_time": "2021-08-06T18:13:59.764074Z",
+        "domain_name": "",
+        "error_message": "",
+        "fqdn": "leaf3",
+        "hostname": "leaf3",
+        "is_acknowledged": true,
+        "operation_mode": "full_control",
+        "pool_id": "default_pool",
+        "state": "IS-ACTIVE"
+      },
+      "user_config": {
+        "admin_state": "normal",
+        "aos_hcl_model": "Arista_vEOS",
+        "location": "leaf3"
+      }
+    }
+  ]
+}

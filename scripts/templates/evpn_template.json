@@ -1,18 +1,21 @@
 {
   "external_routing_policy": {
     "export_policy": {
-      "all_routes": true,
-      "spine_leaf_links": true,
+      "spine_leaf_links": false,
       "l3edge_server_links": true,
       "l2edge_subnets": true,
+      "static_routes": true,
       "loopbacks": true
     },
+    "import_policy": "default_only",
+    "expect_default_ipv6_route": true,
+    "expect_default_ipv4_route": true,
     "extra_export_routes": [],
     "extra_import_routes": [],
-    "import_policy": "default_only",
-    "aggregate_prefixes": []
+    "aggregate_prefixes": [],
+    "label": "Default_immutable"
   },
-  "display_name": "apstra",
+  "display_name": "apstra-evpn-mlag",
   "virtual_network_policy": {
     "overlay_control_protocol": "evpn"
   },
@@ -22,11 +25,8 @@
   },
   "spine": {
     "count": 2,
-    "external_link_speed": null,
     "link_per_superspine_count": 0,
-    "link_per_superspine_speed": null,
-    "external_links_per_node": 0,
-    "external_facing_node_count": 0,
+    "tags": [],
     "logical_device": {
       "panels": [
         {
@@ -49,12 +49,10 @@
               "roles": [
                 "superspine",
                 "leaf",
+                "generic",
                 "peer",
-                "l2_server",
                 "access",
-                "l3_server",
-                "spine",
-                "external_router"
+                "spine"
               ]
             }
           ]
@@ -63,8 +61,9 @@
       "display_name": "slicer-7x10-1",
       "id": "slicer-7x10-1"
     },
-    "external_link_count": 0
+    "link_per_superspine_speed": null
   },
+  "created_at": "2021-07-01T15:27:41.234171Z",
   "rack_type_counts": [
     {
       "rack_type_id": "evpn-mlag",
@@ -78,42 +77,11 @@
   "dhcp_service_intent": {
     "active": true
   },
+  "last_modified_at": "2021-07-01T15:27:41.234171Z",
   "rack_types": [
     {
-      "created_at": "1970-01-01T00:00:00.000000Z",
-      "display_name": "evpn-mlag",
       "description": "",
-      "leafs": [
-        {
-          "external_router_links": [
-            {
-              "count": 1,
-              "speed": {
-                "unit": "G",
-                "value": 10
-              }
-            }
-          ],
-          "external_router_facing": true,
-          "leaf_leaf_l3_link_speed": null,
-          "redundancy_protocol": "mlag",
-          "leaf_leaf_link_port_channel_id": 0,
-          "leaf_leaf_l3_link_count": 0,
-          "logical_device": "slicer-7x10-1",
-          "leaf_leaf_link_speed": {
-            "unit": "G",
-            "value": 10
-          },
-          "link_per_spine_count": 1,
-          "leaf_leaf_link_count": 2,
-          "link_per_spine_speed": {
-            "unit": "G",
-            "value": 10
-          },
-          "label": "evpn-mlag",
-          "leaf_leaf_l3_link_port_channel_id": 0
-        }
-      ],
+      "tags": [],
       "logical_devices": [
         {
           "panels": [
@@ -137,12 +105,10 @@
                   "roles": [
                     "superspine",
                     "leaf",
+                    "generic",
                     "peer",
-                    "l2_server",
                     "access",
-                    "l3_server",
-                    "spine",
-                    "external_router"
+                    "spine"
                   ]
                 }
               ]
@@ -212,16 +178,13 @@
           "id": "AOS-1x10-1"
         }
       ],
-      "access_switches": [],
-      "id": "evpn-mlag",
-      "last_modified_at": "2021-01-18T20:35:57.342135Z",
-      "servers": [
+      "generic_systems": [
         {
           "count": 1,
-          "connectivity_type": "l2",
-          "port_channel_id_min": 0,
+          "asn_domain": "disabled",
           "links": [
             {
+              "tags": [],
               "link_per_switch_count": 1,
               "label": "dual-link",
               "link_speed": {
@@ -233,17 +196,20 @@
               "lag_mode": "lacp_active"
             }
           ],
-          "ip_version": "ipv4",
+          "management_level": "unmanaged",
+          "port_channel_id_min": 0,
           "port_channel_id_max": 0,
           "logical_device": "AOS-2x10-1",
+          "loopback": "disabled",
+          "tags": [],
           "label": "dual-server"
         },
         {
           "count": 1,
-          "connectivity_type": "l2",
-          "port_channel_id_min": 0,
+          "asn_domain": "disabled",
           "links": [
             {
+              "tags": [],
               "link_per_switch_count": 1,
               "leaf_peer": "first",
               "label": "single-link",
@@ -256,17 +222,20 @@
               "lag_mode": null
             }
           ],
-          "ip_version": "ipv4",
+          "management_level": "unmanaged",
+          "port_channel_id_min": 0,
           "port_channel_id_max": 0,
           "logical_device": "AOS-1x10-1",
+          "loopback": "disabled",
+          "tags": [],
           "label": "single-server-1"
         },
         {
           "count": 1,
-          "connectivity_type": "l2",
-          "port_channel_id_min": 0,
+          "asn_domain": "disabled",
           "links": [
             {
+              "tags": [],
               "link_per_switch_count": 1,
               "leaf_peer": "second",
               "label": "single-link",
@@ -279,37 +248,49 @@
               "lag_mode": null
             }
           ],
-          "ip_version": "ipv4",
+          "management_level": "unmanaged",
+          "port_channel_id_min": 0,
           "port_channel_id_max": 0,
           "logical_device": "AOS-1x10-1",
+          "loopback": "disabled",
+          "tags": [],
           "label": "single-server-2"
         }
-      ]
-    },
-    {
-      "created_at": "1970-01-01T00:00:00.000000Z",
-      "display_name": "evpn-single",
-      "description": "",
+      ],
+      "servers": [],
       "leafs": [
         {
-          "external_router_links": [],
-          "external_router_facing": false,
           "leaf_leaf_l3_link_speed": null,
-          "redundancy_protocol": null,
+          "redundancy_protocol": "mlag",
           "leaf_leaf_link_port_channel_id": 0,
           "leaf_leaf_l3_link_count": 0,
           "logical_device": "slicer-7x10-1",
-          "leaf_leaf_link_speed": null,
+          "leaf_leaf_link_speed": {
+            "unit": "G",
+            "value": 10
+          },
           "link_per_spine_count": 1,
-          "leaf_leaf_link_count": 0,
+          "leaf_leaf_link_count": 2,
+          "tags": [],
           "link_per_spine_speed": {
             "unit": "G",
             "value": 10
           },
-          "label": "evpn-single",
+          "label": "evpn-mlag",
+          "mlag_vlan_id": 2999,
           "leaf_leaf_l3_link_port_channel_id": 0
         }
       ],
+      "access_switches": [],
+      "id": "evpn-mlag",
+      "display_name": "evpn-mlag",
+      "fabric_connectivity_design": "l3clos",
+      "created_at": "1970-01-01T00:00:00.000000Z",
+      "last_modified_at": "1970-01-01T00:00:00.000000Z"
+    },
+    {
+      "description": "",
+      "tags": [],
       "logical_devices": [
         {
           "panels": [
@@ -333,12 +314,10 @@
                   "roles": [
                     "superspine",
                     "leaf",
+                    "generic",
                     "peer",
-                    "l2_server",
                     "access",
-                    "l3_server",
-                    "spine",
-                    "external_router"
+                    "spine"
                   ]
                 }
               ]
@@ -378,16 +357,13 @@
           "id": "AOS-1x10-1"
         }
       ],
-      "access_switches": [],
-      "id": "evpn-single",
-      "last_modified_at": "2021-01-18T20:35:57.392730Z",
-      "servers": [
+      "generic_systems": [
         {
           "count": 1,
-          "connectivity_type": "l2",
-          "port_channel_id_min": 0,
+          "asn_domain": "disabled",
           "links": [
             {
+              "tags": [],
               "link_per_switch_count": 1,
               "label": "single-link",
               "link_speed": {
@@ -399,17 +375,48 @@
               "lag_mode": null
             }
           ],
-          "ip_version": "ipv4",
+          "management_level": "unmanaged",
+          "port_channel_id_min": 0,
           "port_channel_id_max": 0,
           "logical_device": "AOS-1x10-1",
+          "loopback": "disabled",
+          "tags": [],
           "label": "single-server"
         }
-      ]
+      ],
+      "servers": [],
+      "leafs": [
+        {
+          "leaf_leaf_l3_link_speed": null,
+          "redundancy_protocol": null,
+          "leaf_leaf_link_port_channel_id": 0,
+          "leaf_leaf_l3_link_count": 0,
+          "logical_device": "slicer-7x10-1",
+          "leaf_leaf_link_speed": null,
+          "link_per_spine_count": 1,
+          "leaf_leaf_link_count": 0,
+          "tags": [],
+          "link_per_spine_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "label": "evpn-single",
+          "mlag_vlan_id": 0,
+          "leaf_leaf_l3_link_port_channel_id": 0
+        }
+      ],
+      "access_switches": [],
+      "id": "evpn-single",
+      "display_name": "evpn-single",
+      "fabric_connectivity_design": "l3clos",
+      "created_at": "1970-01-01T00:00:00.000000Z",
+      "last_modified_at": "1970-01-01T00:00:00.000000Z"
     }
   ],
+  "capability": "blueprint",
   "asn_allocation_policy": {
     "spine_asn_scheme": "distinct"
   },
   "type": "rack_based",
-  "id": "apstra-lab-evpn"
+  "id": "apstra-evpn-mlag"
 }
