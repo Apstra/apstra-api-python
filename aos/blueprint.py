@@ -8,6 +8,7 @@ import logging
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import Optional, List, Generator
+import requests
 from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
 from .design import AosConfiglets, AosPropertySets, AosTemplate
@@ -21,6 +22,12 @@ logger = logging.getLogger(__name__)
 
 class AosBPCommitError(AosAPIError):
     pass
+
+
+def response(resp: Optional[requests.Response]) -> str:
+    if resp is None:
+        return ""
+    return f"{resp.status_code} {resp.content}"
 
 
 Blueprint = namedtuple("Blueprint", ["label", "id"])
@@ -63,6 +70,7 @@ class SecurityZone:
     label: str
     id: str
     routing_policy: dict
+    routing_policy_id: str
     vni_id: str
     sz_type: str
     vrf_name: str
@@ -77,7 +85,8 @@ class SecurityZone:
         return SecurityZone(
             label=sz.get("label", ""),
             id=sz["id"],
-            routing_policy=sz.get("routing_policy", None),
+            routing_policy=sz.get("routing_policy", {}),
+            routing_policy_id=sz.get("routing_policy_id", ""),
             vni_id=sz.get("vni_id", ""),
             sz_type=sz.get("sz_type", ""),
             vrf_name=sz.get("vrf_name", ""),
@@ -91,6 +100,7 @@ NullSecurityZone = SecurityZone(
     label="",
     id="",
     routing_policy={},
+    routing_policy_id="",
     vni_id="",
     sz_type="",
     vrf_name="",
@@ -115,12 +125,14 @@ class VirtualNetwork:
     security_zone_id: str
     svi_ips: list
     virtual_mac: str
-    default_endpoint_tag_types: dict
+    default_endpoint_tag_types: {}
     endpoints: list
     bound_to: list
     vn_type: str
     rt_policy: dict
     dhcp_service: str
+    tagged_ct: bool
+    untagged_ct: bool
 
     @classmethod
     def from_json(cls, vn: Optional[dict]):
@@ -146,6 +158,8 @@ class VirtualNetwork:
             vn_type=vn["vn_type"],
             rt_policy=vn["rt_policy"],
             dhcp_service=vn["dhcp_service"],
+            tagged_ct=vn.get("create_policy_tagged", False),
+            untagged_ct=vn.get("create_policy_untagged", False),
         )
 
 
@@ -169,7 +183,36 @@ NullVirtualNetwork = VirtualNetwork(
     vn_type="",
     rt_policy={},
     dhcp_service="",
+    tagged_ct=False,
+    untagged_ct=False,
 )
+
+
+@dataclass
+class ResourceGroup:
+    type: str
+    name: str
+    group_name: str
+    pool_ids: list
+
+    @classmethod
+    def from_json(cls, rg: Optional[dict]):
+        if rg is None:
+            return NullResourceGroup
+
+        group_name = rg["name"]
+        if rg["name"].startswith("sz:"):
+            group_name = rg["name"].partition(",")[2]
+
+        return ResourceGroup(
+            type=rg["type"],
+            name=rg["name"],
+            group_name=group_name,
+            pool_ids=rg.get("pool_ids", []),
+        )
+
+
+NullResourceGroup = ResourceGroup(type="", name="", group_name="", pool_ids=[])
 
 
 class AosBlueprint(AosSubsystem):
@@ -451,17 +494,51 @@ class AosBlueprint(AosSubsystem):
         }
         self.rest.put(commit_path, data=payload)
 
+    def get_diff_status(self, bp_id: str):
+        """
+        Retrieve full diff status; useful for determining staging and deployed
+        blueprint versions
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (dict) - Diff status
+        """
+
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/diff-status")
+
+    # tasks
+    def get_tasks(self, bp_id: str, params: dict = None) -> list:
+        return self.rest.json_resp_get(
+            uri=f"/api/blueprints/{bp_id}/tasks", params=params
+        )["items"]
+
+    def get_task_by_id(self, bp_id: str, task_id: str, params: dict = None) -> dict:
+        return self.rest.json_resp_get(
+            uri=f"/api/blueprints/{bp_id}" f"/tasks/{task_id}", params=params
+        )
+
+    def get_active_tasks(self, bp_id: str) -> list:
+        params = {"filter": "status in ['in_progress', 'init']"}
+        return self.get_tasks(bp_id, params=params)
+
     # Graph Queries
-    def qe_query(self, bp_id: str, query: str):
+    def qe_query(self, bp_id: str, query: str, params: dict = None):
         """
         QE query aginst a Blueprint graphDB
 
         Parameters
         ----------
         bp_id
-            (str) ID of AOS blueprint (optional)
+            (str) (optional) ID of AOS blueprint
         query
             (str) qe query string
+        params
+            (dict) (optional) query parameters
 
         Returns
         -------
@@ -469,20 +546,22 @@ class AosBlueprint(AosSubsystem):
         """
         qe_path = f"/api/blueprints/{bp_id}/qe"
         data = {"query": query}
-        resp = self.rest.json_resp_post(uri=qe_path, data=data)
+        resp = self.rest.json_resp_post(uri=qe_path, data=data, params=params)
 
         return resp["items"]
 
-    def ql_query(self, bp_id: str, query: str):
+    def ql_query(self, bp_id: str, query: str, params: dict = None):
         """
         QL query aginst a Blueprint graphDB
 
         Parameters
         ----------
         bp_id
-            (str) ID of AOS blueprint (optional)
+            (str) (optional) ID of AOS blueprint
         query
             (str) qe query string
+        params
+            (dict) (optional) query parameters
 
         Returns
         -------
@@ -490,14 +569,33 @@ class AosBlueprint(AosSubsystem):
         """
         ql_path = f"/api/blueprints/{bp_id}/ql"
         data = {"query": query}
-        resp = self.rest.json_resp_post(uri=ql_path, data=data)
+        resp = self.rest.json_resp_post(uri=ql_path, data=data, params=params)
 
         return resp["items"]
 
     # Resources
+    def get_all_bp_resource_groups(
+        self,
+        bp_id: str,
+    ) -> List[ResourceGroup]:
+        """
+        Return all resource groups required in a given blueprint.
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        Returns
+        -------
+        List[ResourceGroup]
+        """
+        rg_path = f"/api/blueprints/{bp_id}/resource_groups"
+        resp = self.rest.json_resp_get(uri=rg_path)["items"]
+
+        return [ResourceGroup.from_json(rg) for rg in resp]
+
     def apply_resource_groups(
         self, bp_id: str, resource_type: str, group_name: str, pool_ids: list
-    ):
+    ) -> ResourceGroup:
         """
         Assign existing pools to a given resource group in an AOS Blueprint
         Parameters
@@ -533,11 +631,15 @@ class AosBlueprint(AosSubsystem):
             "pool_ids": pool_ids,
         }
 
-        return self.rest.json_resp_put(uri=rg_path, data=data)
+        self.rest.json_resp_put(uri=rg_path, data=data)
+        return ResourceGroup.from_json(self.rest.json_resp_get(rg_path))
 
-    def get_bp_resource_pools(self, bp_id: str, resource_type: str, group_name: str):
+    def get_bp_resource_group(
+        self, bp_id: str, resource_type: str, group_name: str
+    ) -> Optional[ResourceGroup]:
         """
-        Return existing pools to a given resource group in an AOS Blueprint
+        Return a given resource group in an AOS Blueprint including
+        the pools assigned.
         Parameters
         ----------
         bp_id
@@ -565,7 +667,7 @@ class AosBlueprint(AosSubsystem):
             f"{resource_type}/{group_name}"
         )
 
-        return self.rest.json_resp_get(uri=rg_path)
+        return ResourceGroup.from_json(self.rest.json_resp_get(uri=rg_path))
 
     # configlets, property-sets
     def get_configlets(self, bp_id: str):
@@ -696,9 +798,37 @@ class AosBlueprint(AosSubsystem):
 
         return self.rest.json_resp_get(n_path)["nodes"]
 
+    def get_bp_node_by_id(self, bp_id: str, node_id: str):
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/nodes/{node_id}")
+
     def get_bp_system_nodes(self, bp_id: str):
 
         return self.get_bp_nodes(bp_id, "system")
+
+    def set_bp_node_label(self, bp_id: str, node_id: str, label: str, hostname: str = "") -> None:
+        """
+        Sets a node's label (and optionally, its hostname)
+        Parameters
+        ----------
+        bp_id
+             (str) - ID of AOS Blueprint
+        node_id
+            (str) - ID of node within blueprint to update
+        label
+            (str) - Value for updating node label
+        hostname
+            (str) - Optional value to also update hostname
+
+        Returns
+        -------
+        """
+
+        data = {
+            "label" : label,
+        }
+        if hostname:
+            data["hostname"] = hostname
+        self.rest.patch(f"/api/blueprints/{bp_id}/nodes/{node_id}", data=data)
 
     def get_deployed_devices(self, bp_id: str):
         """
@@ -804,6 +934,62 @@ class AosBlueprint(AosSubsystem):
                 nodes.append(leaf["leaf"])
 
         return nodes
+
+    def create_switch_system_links(self, bp_id: str, data: dict):
+        uri = f"/api/blueprints/{bp_id}/switch-system-links"
+
+        self.rest.json_resp_post(uri, data=data)
+
+    def get_cabling_map(self, bp_id: str):
+        """
+        Retrieve a blueprint's existing cable map
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (dict) - cable map information
+        """
+
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/cabling-map"
+        )
+
+    def update_cabling_map(self, bp_id: str, links: List[dict]):
+        """
+        Update the cabling map for a blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        links
+            (str) - list of dictionaries containing new mapping. Example:
+
+                [
+                    {
+                        "id": "<link id>",
+                        "endpoints": [
+                            {
+                                "interface": {
+                                    "if_name": "xe-0/0/0/"
+                                    "id": "<interface id>"
+                                }
+                            },
+                            {
+                        ],
+                    }
+                ]
+
+        Returns
+        -------
+        """
+        self.rest.patch(f"/api/blueprints/{bp_id}/cabling-map?comment=cabling-map-update", data={
+            "links": links
+        })
 
     def assign_devices_from_json(self, bp_id: str, node_assignment: list):
         """
@@ -919,6 +1105,25 @@ class AosBlueprint(AosSubsystem):
         ]
         self.rest.patch(f"/api/blueprints/{bp_id}/nodes", data=data)
 
+    def get_rendered_config(self, bp_id: str, node_id: str, config_type: str = "deployed") -> None:
+        """
+        Retrieve the rendered configuration from a blueprint for a given node
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        node_id
+            (str) - ID of node within AOS blueprint for which to retrieve rendered configuration
+        config_type
+            (str) - type of configuration to retrieve. Options are "deployed" (default), "staging", "operation"
+
+        Returns
+        -------
+            (dict) - dictionary containing the rendered config as a key value
+        """
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/nodes/{node_id}/config-rendering?type={config_type}")
+
     # Interface maps
     def assign_interface_maps_raw(self, bp_id: str, assignments: dict):
         """
@@ -928,7 +1133,7 @@ class AosBlueprint(AosSubsystem):
         bp_id
             (str) ID of blueprint
         assignments
-            (dict) mapping of blueprint system nodes and global interface
+            (dict) mapping of blueprint system node IDs and global interface
             maps.
             {
               "assignments": {'bp-node-id': 'Cumulus_VX__AOS-7x10-Spine',
@@ -971,6 +1176,87 @@ class AosBlueprint(AosSubsystem):
         self.assign_interface_maps_raw(bp_id=bp_id, assignments=data)
 
         return data
+
+    # Connectivity Templates
+    def get_connectivity_templates_all(self, bp_id: str) -> dict:
+        r_path = f"/api/blueprints/{bp_id}/obj-policy-export"
+        return self.rest.json_resp_get(r_path)
+
+    def get_connectivity_template(self, bp_id: str, ct_id: str) -> dict:
+        r_path = f"/api/blueprints/{bp_id}/obj-policy-export/{ct_id}"
+        return self.rest.json_resp_get(r_path)
+
+    def find_connectivity_template_by_name(self, bp_id: str, ct_name: str) -> dict:
+        cts = self.get_connectivity_templates_all(bp_id)
+        for ct in cts["policies"]:
+            if ct_name in ct["label"] and ct["policy_type_name"] == "batch":
+                return ct
+        return {}
+
+    def create_connectivity_template_from_json(
+        self, bp_id: str, data: dict
+    ) -> Optional[response]:
+        ct_path = f"/api/blueprints/{bp_id}/obj-policy-import"
+        return self.rest.put(ct_path, data=data)
+
+    def update_connectivity_template(
+        self, bp_id: str, data: dict
+    ) -> Optional[response]:
+        ct_path = f"/api/blueprints/{bp_id}/obj-policy-batch-apply"
+        return self.rest.patch(ct_path, data=data)
+
+    def delete_connectivity_template(
+        self, bp_id: str, ct_id: str
+    ) -> Optional[response]:
+        r_path = f"/api/blueprints/{bp_id}/policies/{ct_id}"
+        params = {"delete_recursive": True}
+        self.rest.delete(r_path, params=params)
+
+    def get_endpoint_policy(self, bp_id: str, policy_id: str) -> dict:
+        p_path = f"/api/blueprints/{bp_id}/endpoint-policies/{policy_id}"
+        return self.rest.json_resp_get(p_path)
+
+    def get_endpoint_policies(self, bp_id: str, ptype: str = "staging"):
+        """
+        Retrieve existing endpoint policies for a given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        ptype
+            (str) - (optional) type parameter, defaults to "staging"
+
+        Returns
+        -------
+            (dict) - endpoint policies
+        """
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/experience/web/endpoint-policies?type={ptype}")
+
+    def get_endpoint_policy_app_points(
+        self, bp_id: str, policy_id: str = None
+    ) -> dict:
+        p_path = f"/api/blueprints/{bp_id}/obj-policy-application-points"
+        params = {"policy": policy_id}
+        return self.rest.json_resp_get(p_path, params=params)
+
+    def get_routing_policies(self, bp_id: str, bp_type="staging"):
+        """
+        Retrieve existing routing policies for a given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        bp_type
+            (str) - (optional) type parameter, defaults to "staging"
+
+        Returns
+        -------
+            (dict) - routing policies
+        """
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/routing-policies?type={bp_type}")
+
 
     # External Routers
     def get_external_routers_all(self, bp_id: str):
@@ -1106,6 +1392,57 @@ class AosBlueprint(AosSubsystem):
     def delete_external_router(self, bp_id: str, bp_rtr_id: str):
         r_path = f"/api/blueprints/{bp_id}/external-routers/{bp_rtr_id}"
 
+        self.rest.delete(r_path)
+
+    def create_ext_generic_systems(
+        self,
+        bp_id: str,
+        hostname: str,
+        asn: str = None,
+        loopback_ip: str = None,
+        tags: list = None,
+    ):
+        """
+        Creates external-generic blueprint node for external router usage in
+        configuration templates
+        Parameters
+        ----------
+        bp_id
+            (str) ID of blueprint
+        hostname
+            (str) Name assigned to the node and device as hostname
+        asn
+            (str) ASN number assigned to external router for BGP peering
+            with the AOS managed fabric
+        loopback_ip
+            (str) IPv4 address assigned to the external-router for bgp
+            loopback peering.
+            example: "10.10.11.11/32"
+        tags:
+            (list) Blueprint tags associated with the node.
+
+        Returns
+        -------
+        dict
+        """
+        n_path = f"/api/blueprints/{bp_id}/external-generic-systems"
+
+        data = {"hostname": hostname, "label": hostname, "tags": tags}
+
+        ext_rtr = self.rest.json_resp_post(n_path, data=data)
+
+        n_asn_path = f"/api/blueprints/{bp_id}/systems/{ext_rtr['id']}/domain"
+        n_lo_path = f"/api/blueprints/{bp_id}/systems/{ext_rtr['id']}/loopback/0"
+
+        self.rest.patch(n_asn_path, data={"domain_id": asn})
+        self.rest.patch(n_lo_path, data={"ipv4_addr": loopback_ip})
+
+        return self.get_bp_node_by_id(bp_id, ext_rtr["id"])
+
+    def delete_external_generic_system(
+        self, bp_id: str, node_id: str
+    ) -> Optional[response]:
+        r_path = f"/api/blueprints/{bp_id}/external-generic-systems/{node_id}"
         self.rest.delete(r_path)
 
     # IBA probes and dashboards
@@ -1252,7 +1589,7 @@ class AosBlueprint(AosSubsystem):
 
     def apply_security_zone_dhcp(self, bp_id: str, sz_id: str, dhcp_servers: dict):
 
-        self.rest.json_resp_put(
+        self.rest.put(
             uri=f"/api/blueprints/{bp_id}/security-zones/{sz_id}/dhcp-servers",
             data=dhcp_servers,
         )
@@ -1563,9 +1900,7 @@ class AosBlueprint(AosSubsystem):
         return self.rest.json_resp_put(uri=p_path, data=data)
 
     # Virtual Networks
-    def create_virtual_network_from_json(
-        self, bp_id: str, virtual_network: dict
-    ) -> VirtualNetwork:
+    def create_virtual_network_from_json(self, bp_id: str, virtual_network: dict):
         """
         Create new virtual-network (VLAN) in a given blueprint
         Parameters
@@ -1591,12 +1926,14 @@ class AosBlueprint(AosSubsystem):
         sz_name: str = None,
         vn_type: VNType = VNType.vxlan,
         vn_id: str = None,
-        tag_type: VNTagType = VNTagType.vlan_tagged,
+        tag_type: VNTagType = None,
         ipv4_subnet: str = None,
         ipv4_gateway: str = None,
         ipv6_enabled: bool = False,
         ipv6_subnet: str = None,
         ipv6_gateway: str = None,
+        tagged_ct: bool = False,
+        untagged_ct: bool = False,
         timeout: int = 60,
     ):
         """
@@ -1623,7 +1960,7 @@ class AosBlueprint(AosSubsystem):
         tag_type
             (VNTagType) - (Optional) Default tag type.
             ['vlan_tagged', 'untagged', ''unassigned]
-            Default: 'vlan_tagged'
+            Default: None
         ipv4_subnet
             (str) - (optional) IPV4 subnet assigned to virtual-network. If none
             given the subnet will be assigned from resource pool
@@ -1639,9 +1976,15 @@ class AosBlueprint(AosSubsystem):
             given the subnet will be assigned from resource pool
             default: None
         ipv6_gateway
-            (str) - (optional) IPV4 gatewau address assigned to virtual-network.
+            (str) - (optional) IPV4 gateway address assigned to virtual-network.
             If none given the subnet will be assigned from resource pool
             default: None
+        tagged_ct
+            (bool) - (optional) Create tagged connectivity template for the given
+            virtual-network.
+        untagged_ct
+            (bool) - (optional) Create untagged connectivity template for the given
+            virtual-network.
         timeout
             (int) - time (seconds) to wait for creation
 
@@ -1661,10 +2004,6 @@ class AosBlueprint(AosSubsystem):
             "security_zone_id": sz_id,
             "vn_type": vn_type.value,
             "vn_id": vn_id,
-            "default_endpoint_tag_types": {
-                "single-link": tag_type.value,
-                "dual-link": tag_type.value,
-            },
             "bound_to": bound_to,
             "ipv4_enabled": True,
             "dhcp_service": "dhcpServiceEnabled",
@@ -1675,6 +2014,16 @@ class AosBlueprint(AosSubsystem):
         if ipv6_enabled:
             virt_net["ipv6_subnet"] = ipv6_subnet
             virt_net["ipv6_gateway"] = ipv6_gateway
+
+        if tag_type:
+            virt_net["default_endpoint_tag_types"] = {
+                "single-link": tag_type.value,
+                "dual-link": tag_type.value,
+            }
+        if tagged_ct:
+            virt_net["create_policy_tagged"] = tagged_ct
+        if untagged_ct:
+            virt_net["create_policy_untagged"] = untagged_ct
 
         vn = self.create_virtual_network_from_json(bp_id, virt_net)
         logger.info(f"Creating virtual-network '{name}' in blueprint '{bp_id}'")

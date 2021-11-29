@@ -43,7 +43,7 @@ class ExternalRouter(AosResource):
             id=d["id"],
             display_name=d.get("display_name", ""),
             asn=d.get("asn"),
-            address=d.get("address")
+            address=d.get("address"),
         )
 
 
@@ -54,11 +54,11 @@ class AosExternalRouter(AosSubsystem):
             "id": name,
             "asn": asn,
             "address": address,
-
         }
 
-        created = self.rest.json_resp_post("/api/resources/external-routers",
-                                           data=ext_rtr)
+        created = self.rest.json_resp_post(
+            "/api/resources/external-routers", data=ext_rtr
+        )
         return self.get(created["id"])
 
     def delete(self, ext_rtr_id: str) -> None:

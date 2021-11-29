@@ -5,18 +5,121 @@
 import logging
 import time
 from collections import namedtuple
-from typing import List, Generator
+from dataclasses import dataclass
+from typing import List, Generator, Optional
 from .aos import AosSubsystem, AosAPIError
 
 logger = logging.getLogger(__name__)
 
-SystemAgent = namedtuple("SystemAgent", ["id", "fqdn", "operation_mode",
-                                         "vendor", "user_config"])
-Anomaly = namedtuple("Anomaly", ["type", "id", "agent_id", "severity"])
+
+@dataclass
+class Anomaly:
+    type: str
+    id: str
+    system_id: str
+    severity: str
+
+    @classmethod
+    def from_json(cls, anomaly: dict):
+        if anomaly is None:
+            return NullAnomaly
+        return Anomaly(
+            type=anomaly["anomaly_type"],
+            id=anomaly["id"],
+            system_id=anomaly.get("identity", {}).get("system_id"),
+            severity=anomaly["severity"],
+        )
+
+
+NullAnomaly = Anomaly(type="", id="", system_id="", severity="")
+
+
 DevicePackage = namedtuple("Package", ["name", "version"])
 DeviceOSImage = namedtuple(
     "DeviceOsImage",
     ["description", "checksum", "image_name", "platform", "image_url", "type", "id"],
+)
+
+
+@dataclass
+class System:
+    id: str
+    container_status: dict
+    device_key: str
+    facts: dict
+    services: list
+    status: dict
+    user_config: dict
+
+    @classmethod
+    def from_json(cls, d: Optional[dict]):
+        if d is None:
+            return NullSystem
+        return System(
+            id=d["id"],
+            container_status=d.get("container_status", {}),
+            device_key=d["device_key"],
+            facts=d["facts"],
+            services=d.get("services", []),
+            status=d["status"],
+            user_config=d["user_config"],
+        )
+
+
+NullSystem = System(
+    id="",
+    container_status={},
+    device_key="",
+    facts={},
+    services=[],
+    status={},
+    user_config={},
+)
+
+
+@dataclass
+class SystemAgent:
+    agent_uuid: str
+    management_ip: str
+    operation_mode: str
+    platform: str
+    system_id: str
+    hostname: str = None
+    username: str = None
+    password: str = None
+    is_offbox: bool = False
+
+    @classmethod
+    def from_json(cls, s: dict):
+        if s is None:
+            return NullSystemAgent
+        config = s.get("config", {})
+        device_facts = s.get("device_facts", {})
+        status = s.get("status", {})
+
+        return SystemAgent(
+            agent_uuid=s["id"],
+            hostname=device_facts.get("hostname"),
+            is_offbox=config.get("agent_type", "onbox") == "offbox",
+            management_ip=config.get("management_ip"),
+            operation_mode=status.get("operation_mode"),
+            # AOS 3.2.1 keeps platform in "status", while 3.3.0+ - in config
+            platform=config.get("platform") or status.get("platform"),
+            system_id=status.get("system_id"),
+        )
+
+    def telemetry_only(self) -> bool:
+        return self.operation_mode == "telemetry_only"
+
+
+NullSystemAgent = SystemAgent(
+    agent_uuid="",
+    hostname="",
+    is_offbox=False,
+    management_ip="",
+    operation_mode="",
+    platform="",
+    system_id="",
 )
 
 
@@ -36,107 +139,42 @@ class AosDevices(AosSubsystem):
 
 class AosManagedDevices(AosSubsystem):
     """
-    Management of system-agent for AOS controlled devices
+    Management of AOS controlled devices
     """
 
-    def get_all(self) -> List[SystemAgent]:
-        """
-        Return all system-agents configured in AOS
-        Returns
-        -------
-            (obj) "SystemAgent", ["id", "fqdn", "operation_mode", "vendor"]
-        """
-        systems = self.rest.json_resp_get("/api/systems")
-        if systems is None:
-            return []
-
-        return [
-            SystemAgent(
-                id=s["id"],
-                fqdn=s.get("status", {}).get("fqdn"),
-                operation_mode=s.get("status", {}).get("operation_mode"),
-                vendor=s.get("facts", {}).get("vendor"),
-                user_config=s.get("user_config", None)
-            )
-            for s in systems["items"]
-        ]
-
-    def accept_running_config_as_golden(self, system_agent_id: str):
-        """
-        Accept current running configuration of device as AOS golden config
-        Parameters
-        ----------
-        system_agent_id
-            (str) ID of system_agent
-
-        Returns
-        -------
-
-        """
+    def accept_running_config_as_golden(self, system_id: str):
         self.rest.json_resp_post(
-            f"/api/systems/{system_agent_id}/accept-running-config-as-golden"
+            f"/api/systems/{system_id}/accept-running-config-as-golden"
         )
 
-    def _iter_anomalies(
-        self, system_agent_id: str
-    ) -> Generator[Anomaly, None, None]:
-        anomalies = self.rest.json_resp_get(
-            f"api/systems/{system_agent_id}/anomalies"
-        )
+    def get_all(self) -> List[System]:
+        return list(self.iter_all())
+
+    def iter_all(self) -> Generator[System, None, None]:
+        systems = self.rest.json_resp_get("/api/systems")
+
+        for s in systems.get("items", []):
+            yield System.from_json(s)
+
+    def get_system_by_id(self, system_id: str) -> Optional[System]:
+        return System.from_json(self.rest.json_resp_get(f"/api/systems/{system_id}"))
+
+    def iter_anomalies(self, system_id: str) -> Generator[Anomaly, None, None]:
+        anomalies = self.rest.json_resp_get(f"api/systems/{system_id}/anomalies")
         if anomalies is None:
             return
 
         for anomaly in anomalies["items"]:
-            yield Anomaly(
-                type=anomaly["anomaly_type"],
-                id=anomaly["id"],
-                agent_id=anomaly.get("identity", {}).get("system_id"),
-                severity=anomaly["severity"],
-            )
+            yield Anomaly.from_json(anomaly)
 
-    def get_anomalies(self, system_agent_id: str) -> List[Anomaly]:
-        """
-        Return list of all anomalies and errors for a specific device
-        Parameters
-        ----------
-        system_agent_id
-            (str) ID of system_agent
+    def get_anomalies(self, system_id: str) -> List[Anomaly]:
+        return list(self.iter_anomalies(system_id))
 
-        Returns
-        -------
-            (obj) ["Anomaly", ["type", "id", "agent_id", "severity"], ...]
-        """
-        return list(self._iter_anomalies(system_agent_id))
+    def has_anomalies(self, system_id: str) -> bool:
+        return self.get_anomalies(system_id) != []
 
-    def has_anomalies(self, system_agent_id: str) -> bool:
-        """
-        Returns True if given device has anomalies or errors.
-        False if none are returned
-        Parameters
-        ----------
-        system_agent_id
-            (str) ID of system_agent
-        Returns
-        -------
-            (bool) True or False
-        """
-        return self.get_anomalies(system_agent_id) != []
-
-    def has_anomalies_of_type(self, system_agent_id: str, anomaly_type: str) -> bool:
-        """
-        Returns True if an anomaly of a specific type is returned for the
-        specified device. False if none are returned
-        Parameters
-        ----------
-        system_agent_id
-            (str) ID of system_agent
-        anomaly_type
-            (str) Type of anomaly to filter on
-        Returns
-        -------
-            (bool) True or False
-        """
-        for anomaly in self._iter_anomalies(system_agent_id):
+    def has_anomalies_of_type(self, system_id: str, anomaly_type: str) -> bool:
+        for anomaly in self.iter_anomalies(system_id):
             if anomaly.type == anomaly_type:
                 return True
         return False
@@ -145,20 +183,57 @@ class AosManagedDevices(AosSubsystem):
         batch = {
             d.id: {
                 "user_config": {
-                    "aos_hcl_model": d.model,
                     "admin_state": "normal",
+                    "aos_hcl_model": d.aos_hcl_model,
                 }
             }
             for d in self.get_all()
         }
 
-        self.rest.post("/api/systems-batch-update", data=batch)
+        self.rest.json_resp_post("/api/systems-batch-update", data=batch)
+
+    def find_system_with_ip(self, ip_addr: str) -> Optional[System]:
+        for system in self.iter_all():
+            if system.facts["mgmt_ipaddr"] == ip_addr:
+                return system
+            return NullSystem
+
+    def delete(self, agent_uuid: str) -> None:
+        self.rest.delete(f"/api/system-agents/{agent_uuid}")
+
+    def get_by_id(self, agent_uuid: str) -> Optional[SystemAgent]:
+        resp = self.rest.json_resp_get(f"/api/system-agents/{agent_uuid}")
+        if resp:
+            return SystemAgent.from_json(resp)
 
 
 class AosSystemAgents(AosSubsystem):
     """
     Management of system-agent for AOS controlled devices
     """
+
+    def create_system_agent(self, data) -> bool:
+        return self.rest.json_resp_post("/api/system-agents", data=data)
+
+    def get_all(self) -> List[SystemAgent]:
+        return list(self.iter_all())
+
+    def iter_all(self) -> Generator[SystemAgent, None, None]:
+        system_agents = self.rest.json_resp_get("/api/system-agents")
+
+        for s in system_agents.get("items", []):
+            yield SystemAgent.from_json(s)
+
+    def get_agent_by_id(self, system_id: str) -> Optional[System]:
+        return System.from_json(
+            self.rest.json_resp_get(f"/api/system-agents/{system_id}")
+        )
+
+    def find_agent_with_ip(self, ip_addr: str) -> Optional[SystemAgent]:
+        for agent in self.iter_all():
+            if agent.management_ip == ip_addr:
+                return agent
+            return NullSystemAgent
 
     def get_packages(self):
         """
@@ -193,6 +268,63 @@ class AosSystemAgents(AosSubsystem):
             )
             for image in resp["items"]
         ]
+
+    def create(
+        self,
+        management_ip: str,
+        label: str,
+        username: str,
+        password: str,
+        platform: Optional[str] = None,
+        telemetry_only: bool = False,
+        is_offbox: bool = False,
+    ) -> str:
+        """
+        Creates system agent in AOS.
+        Parameters
+        ----------
+        management_ip
+            (str) management IP address for system
+        label
+            (str) unique device identifier or name
+        username
+            (str) username for authentication on target device
+        password
+            (str) password for authentication on target device
+        platform
+            (str) (optional) system platform of target device can be one of:
+            [junos, nxos, eos]
+            Only applicable to offbox agents, ignored for onbox agents.
+            default: None
+        telemetry_only
+            (bool) (optional) AOS agent operation mode, Default sets agent
+            to full_control
+            default: False
+        is_offbox
+            (bool) (optional) setup offbox agent instead of directly on target device
+            default: False
+        Return
+        ------
+        UUID of created system agent
+        """
+        sys_agent = {
+            "agent_type": "offbox" if is_offbox else "onbox",
+            "job_on_create": "check",
+            "management_ip": management_ip,
+            "label": label,
+            "open_options": {},
+            "operation_mode": (
+                "telemetry_only" if telemetry_only else "full_control"
+            ),
+            "password": password,
+            "username": username,
+        }
+
+        if is_offbox:
+            sys_agent["platform"] = platform
+
+        resp = self.rest.json_resp_post("/api/system-agents", data=sys_agent)
+        return resp["id"]
 
 
 class AosDeviceProfiles(AosSubsystem):

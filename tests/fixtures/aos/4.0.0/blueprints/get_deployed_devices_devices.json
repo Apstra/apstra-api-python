@@ -1,0 +1,21 @@
+{
+  "count": 1,
+  "items": [
+    {
+      "system": {
+        "tags": null,
+        "position_data": null,
+        "property_set": null,
+        "hostname": "leaf3",
+        "group_label": "evpn-single",
+        "label": "leaf3",
+        "role": "leaf",
+        "system_type": "switch",
+        "deploy_mode": "deploy",
+        "system_id": "50540095F422",
+        "type": "system",
+        "id": "84819c8a-a402-424e-94fd-90c459f046d9"
+      }
+    }
+  ]
+}

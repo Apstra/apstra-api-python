@@ -1,37 +1,6 @@
 {
-  "display_name": "apstra-mlag",
   "description": "",
-  "leafs": [
-    {
-      "external_router_links": [
-        {
-          "count": 1,
-          "speed": {
-            "unit": "G",
-            "value": 10
-          }
-        }
-      ],
-      "external_router_facing": true,
-      "leaf_leaf_l3_link_speed": null,
-      "redundancy_protocol": "mlag",
-      "leaf_leaf_link_port_channel_id": 0,
-      "leaf_leaf_l3_link_count": 0,
-      "logical_device": "AOS-7x10-1",
-      "leaf_leaf_link_speed": {
-        "unit": "G",
-        "value": 10
-      },
-      "link_per_spine_count": 1,
-      "leaf_leaf_link_count": 2,
-      "link_per_spine_speed": {
-        "unit": "G",
-        "value": 10
-      },
-      "label": "evpn-mlag",
-      "leaf_leaf_l3_link_port_channel_id": 0
-    }
-  ],
+  "tags": [],
   "logical_devices": [
     {
       "panels": [
@@ -55,19 +24,17 @@
               "roles": [
                 "superspine",
                 "leaf",
+                "generic",
                 "peer",
-                "l2_server",
                 "access",
-                "l3_server",
-                "spine",
-                "external_router"
+                "spine"
               ]
             }
           ]
         }
       ],
-      "display_name": "AOS-7x10-1",
-      "id": "AOS-7x10-1"
+      "display_name": "slicer-7x10-1",
+      "id": "slicer-7x10-1"
     },
     {
       "panels": [
@@ -130,37 +97,38 @@
       "id": "AOS-1x10-1"
     }
   ],
-  "access_switches": [],
-  "id": "apstra-mlag",
-  "servers": [
+  "generic_systems": [
     {
       "count": 1,
-      "connectivity_type": "l2",
-      "port_channel_id_min": 0,
+      "asn_domain": "disabled",
       "links": [
         {
+          "tags": [],
           "link_per_switch_count": 1,
           "label": "dual-link",
           "link_speed": {
             "unit": "G",
             "value": 10
           },
-          "target_switch_label": "evpn-mlag",
+          "target_switch_label": "apstra-mlag",
           "attachment_type": "dualAttached",
           "lag_mode": "lacp_active"
         }
       ],
-      "ip_version": "ipv4",
+      "management_level": "unmanaged",
+      "port_channel_id_min": 0,
       "port_channel_id_max": 0,
       "logical_device": "AOS-2x10-1",
+      "loopback": "disabled",
+      "tags": [],
       "label": "dual-server"
     },
     {
       "count": 1,
-      "connectivity_type": "l2",
-      "port_channel_id_min": 0,
+      "asn_domain": "disabled",
       "links": [
         {
+          "tags": [],
           "link_per_switch_count": 1,
           "leaf_peer": "first",
           "label": "single-link",
@@ -168,22 +136,25 @@
             "unit": "G",
             "value": 10
           },
-          "target_switch_label": "evpn-mlag",
+          "target_switch_label": "apstra-mlag",
           "attachment_type": "singleAttached",
           "lag_mode": null
         }
       ],
-      "ip_version": "ipv4",
+      "management_level": "unmanaged",
+      "port_channel_id_min": 0,
       "port_channel_id_max": 0,
       "logical_device": "AOS-1x10-1",
+      "loopback": "disabled",
+      "tags": [],
       "label": "single-server-1"
     },
     {
       "count": 1,
-      "connectivity_type": "l2",
-      "port_channel_id_min": 0,
+      "asn_domain": "disabled",
       "links": [
         {
+          "tags": [],
           "link_per_switch_count": 1,
           "leaf_peer": "second",
           "label": "single-link",
@@ -191,15 +162,51 @@
             "unit": "G",
             "value": 10
           },
-          "target_switch_label": "evpn-mlag",
+          "target_switch_label": "apstra-mlag",
           "attachment_type": "singleAttached",
           "lag_mode": null
         }
       ],
-      "ip_version": "ipv4",
+      "management_level": "unmanaged",
+      "port_channel_id_min": 0,
       "port_channel_id_max": 0,
       "logical_device": "AOS-1x10-1",
+      "loopback": "disabled",
+      "tags": [],
       "label": "single-server-2"
     }
-  ]
+  ],
+  "servers": [],
+  "leafs": [
+    {
+      "leaf_leaf_l3_link_speed": {
+        "unit": "G",
+        "value": 10
+      },
+      "redundancy_protocol": "mlag",
+      "leaf_leaf_link_port_channel_id": 0,
+      "leaf_leaf_l3_link_count": 0,
+      "logical_device": "slicer-7x10-1",
+      "leaf_leaf_link_speed": {
+        "unit": "G",
+        "value": 10
+      },
+      "link_per_spine_count": 1,
+      "leaf_leaf_link_count": 2,
+      "tags": [],
+      "link_per_spine_speed": {
+        "unit": "G",
+        "value": 10
+      },
+      "label": "apstra-mlag",
+      "mlag_vlan_id": 2999,
+      "leaf_leaf_l3_link_port_channel_id": 0
+    }
+  ],
+  "access_switches": [],
+  "id": "apstra-mlag",
+  "display_name": "apstra-mlag",
+  "fabric_connectivity_design": "l3clos",
+  "created_at": "2021-07-01T19:40:13.916698Z",
+  "last_modified_at": "2021-07-01T19:40:13.916698Z"
 }

@@ -19,13 +19,14 @@ from aos.blueprint import (
     Anomaly,
     SecurityZone,
     VirtualNetwork,
+    ResourceGroup
 )
 
 from requests.utils import requote_uri
 from tests.util import make_session, read_fixture, deserialize_fixture
 
 
-@pytest.fixture(params=["3.3.0"])
+@pytest.fixture(params=["3.3.0", "4.0.0"])
 def aos_api_version(request):
     return request.param
 
@@ -342,6 +343,16 @@ def test_assign_asn_pool_to_bp(
         status=202,
         resp=json.dumps(""),
     )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/{resource_type}"
+        f"/{group_name}",
+        status=200,
+        resp=json.dumps({"type": "asn",
+                         "name": "spine_asns",
+                         "pool_ids": [asn_pool_id]}
+                        ),
+    )
 
     assert (
         aos_logged_in.blueprint.apply_resource_groups(
@@ -350,21 +361,32 @@ def test_assign_asn_pool_to_bp(
             group_name=group_name,
             pool_ids=[asn_pool_id],
         )
-        == ""
+        == ResourceGroup(type=resource_type,
+                         name=group_name,
+                         group_name=group_name,
+                         pool_ids=[asn_pool_id])
     )
 
     rg_body = {
         "pool_ids": [asn_pool_id],
     }
 
-    aos_session.request.assert_called_once_with(
-        "PUT",
-        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
-        f"{resource_type}/{group_name}",
-        params=None,
-        json=rg_body,
-        headers=expected_auth_headers,
-    )
+    aos_session.request.assert_has_calls([
+        call(
+            "PUT",
+            f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+            f"{resource_type}/{group_name}",
+            params=None,
+            json=rg_body,
+            headers=expected_auth_headers),
+        call(
+            "GET",
+            f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+            f"{resource_type}/{group_name}",
+            json=None,
+            params=None,
+            headers=expected_auth_headers)
+    ])
 
 
 def test_commit_staging_errors(
@@ -492,7 +514,8 @@ def test_get_security_zone_id(
     ) == SecurityZone(
         label=sz_dict["label"],
         id=sz_id,
-        routing_policy=sz_dict["routing_policy"],
+        routing_policy=mock.ANY,
+        routing_policy_id=mock.ANY,
         vni_id=sz_dict["vni_id"],
         sz_type=sz_dict["sz_type"],
         vrf_name=sz_dict["vrf_name"],
@@ -532,7 +555,8 @@ def test_get_security_zone_name(
     ) == SecurityZone(
         label=sz_name,
         id=sz_dict["id"],
-        routing_policy=sz_dict["routing_policy"],
+        routing_policy=mock.ANY,
+        routing_policy_id=mock.ANY,
         vni_id=sz_dict["vni_id"],
         sz_type=sz_dict["sz_type"],
         vrf_name=sz_dict["vrf_name"],
@@ -594,6 +618,16 @@ def test_create_security_zone(
         status=204,
         resp=json.dumps(""),
     )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+        f"{resource_type}/{group_path}",
+        status=200,
+        resp=json.dumps(
+            {"type": "ip",
+             "name": f"sz:{sz_id},{group_name}",
+             "pool_ids": [pool_id]}),
+    )
 
     resp = aos_logged_in.blueprint.create_security_zone(
         bp_id=bp_id,
@@ -608,7 +642,8 @@ def test_create_security_zone(
     assert resp == SecurityZone(
         label=sz_name,
         id=sz_dict["id"],
-        routing_policy=sz_dict["routing_policy"],
+        routing_policy=mock.ANY,
+        routing_policy_id=mock.ANY,
         vni_id=sz_dict["vni_id"],
         sz_type=sz_dict["sz_type"],
         vrf_name=sz_dict["vrf_name"],
@@ -657,6 +692,8 @@ def test_get_virtual_network_id(
         vn_type=vn_dict["vn_type"],
         rt_policy=vn_dict["rt_policy"],
         dhcp_service=vn_dict["dhcp_service"],
+        tagged_ct=False,
+        untagged_ct=False
     )
     aos_session.request.assert_called_once_with(
         "GET",
@@ -699,14 +736,16 @@ def test_get_virtual_network_name(
         virtual_gateway_ipv6=None,
         vn_id=vn_dict["vn_id"],
         security_zone_id=vn_dict["security_zone_id"],
-        svi_ips=vn_dict["svi_ips"],
+        svi_ips=mock.ANY,
         virtual_mac=vn_dict["virtual_mac"],
         default_endpoint_tag_types={},
-        endpoints=vn_dict["endpoints"],
+        endpoints=mock.ANY,
         bound_to=vn_dict["bound_to"],
         vn_type=vn_dict["vn_type"],
         rt_policy=vn_dict["rt_policy"],
         dhcp_service=vn_dict["dhcp_service"],
+        tagged_ct=False,
+        untagged_ct=False
     )
 
     aos_session.request.assert_called_once_with(
@@ -760,10 +799,6 @@ def test_create_virtual_network(
         "security_zone_id": sz_id,
         "vn_type": "vxlan",
         "vn_id": None,
-        "default_endpoint_tag_types": {
-            "single-link": "vlan_tagged",
-            "dual-link": "vlan_tagged",
-        },
         "bound_to": bound_to,
         "ipv4_enabled": True,
         "dhcp_service": "dhcpServiceEnabled",
@@ -1078,6 +1113,9 @@ def test_assign_interface_map_by_name(
 def test_apply_external_router_name(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
+    if aos_api_version != "3.3.0":
+        pytest.skip("External Router not present in 4.0.0+")
+
     bp_id = "evpn-cvx-virtual"
     bp_rtr_name = "example_router1"
     bp_rtr_id = "92797c82-ff36-4575-9fe2-9e84d998c7b7"
@@ -1281,3 +1319,44 @@ def test_get_all_tor_nodes(
             ),
         ]
     )
+
+
+def test_get_active_tasks_none(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/tasks",
+        params={"filter": "status in ['in_progress', 'init']"},
+        status=200,
+        resp=json.dumps({"items": []}),
+    )
+
+    resp = aos_logged_in.blueprint.get_active_tasks(bp_id=bp_id)
+
+    assert resp == []
+
+
+def test_get_active_tasks(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/tasks",
+        params={"filter": "status in ['in_progress', 'init']"},
+        status=200,
+        resp=read_fixture(f"aos/{aos_api_version}/blueprints/"
+                          f"get_bp_active_tasks.json"),
+    )
+
+    resp = aos_logged_in.blueprint.get_active_tasks(bp_id=bp_id)
+
+    assert resp is not None
+    for i in resp:
+        assert i["status"] in ["in_progress", "init"]

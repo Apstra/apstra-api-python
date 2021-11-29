@@ -85,9 +85,13 @@ class AosLogicalDevices(AosSubsystem):
 
         return self.rest.json_resp_get(f"/api/design/logical-devices/{ld_id}")
 
+    # TODO - create vs add?
+    # TODO - also, this will allow you to create duplicate display names silently. Resource pools don't work this
+    # way - what other primitives in AOS work this way vs the resource pool way? Maybe add logic to error if another
+    # LD with the same display name is found?
     def add_logical_device(self, ld_list: list):
         """
-        Add one or more vni pools to AOS
+        Add one or more logical devices to AOS
 
         Parameters
         ----------
@@ -153,6 +157,18 @@ class InterfaceMap(Design):
 
 
 class AosInterfaceMap(AosSubsystem):
+    def get_all(self):
+        """
+        Return all interface maps configured from AOS
+
+        Returns
+        -------
+            (obj) json response
+        """
+        t_path = "/api/design/interface-maps"
+        resp = self.rest.json_resp_get(t_path)
+        return resp["items"]
+
     def create(self, interface_map: dict) -> InterfaceMap:
 
         im_data = {
@@ -192,6 +208,7 @@ class RackType(Design):
     leafs: list
     logical_devices: list
     access_switches: list
+    generic_systems: list
     servers: list
 
     @classmethod
@@ -205,20 +222,48 @@ class RackType(Design):
             leafs=d.get("leafs"),
             logical_devices=d.get("logical_devices"),
             access_switches=d.get("access_switches"),
+            generic_systems=d.get("generic_systems"),
             servers=d.get("servers"),
         )
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "display_name": self.display_name,
+            "description": self.description,
+            "leafs": self.leafs,
+            "logical_devices": self.logical_devices,
+            "access_switches": self.access_switches,
+            "generic_systems": self.generic_systems,
+            "servers": self.servers,
+        }
+
 
 class AosRackType(AosSubsystem):
+
+    def get_all(self):
+        """
+        Return all rack types configured from AOS
+
+        Returns
+        -------
+            (obj) json response
+        """
+        t_path = "/api/design/rack-types"
+        resp = self.rest.json_resp_get(t_path)
+        return resp["items"]
+
     def create(self, rack_type: dict) -> RackType:
         rt_data = {
             "display_name": rack_type["display_name"],
             "id": rack_type.get("id", None),
             "description": rack_type["description"],
             "leafs": rack_type["leafs"],
+            "tags": rack_type["tags"],
             "logical_devices": rack_type["logical_devices"],
             "access_switches": rack_type["access_switches"],
-            "servers": rack_type["servers"],
+            "generic_systems": rack_type["generic_systems"],
+            "fabric_connectivity_design": rack_type["fabric_connectivity_design"],
         }
 
         created = self.rest.json_resp_post("/api/design/rack-types", data=rt_data)

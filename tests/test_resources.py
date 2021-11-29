@@ -14,7 +14,7 @@ from aos.resources import Range, PoolSubnet, AsnPool, IPPool, VniPool
 from tests.util import make_session, read_fixture
 
 
-@pytest.fixture(params=["3.3.0"])
+@pytest.fixture(params=["3.3.0", "4.0.0"])
 def aos_api_version(request):
     return request.param
 

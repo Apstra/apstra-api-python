@@ -1,0 +1,111 @@
+{
+  "items": [
+    {
+      "ref_archs": [
+        "two_stage_l3clos"
+      ],
+      "generators": [
+        {
+          "config_style": "nxos",
+          "section": "system",
+          "template_text": "banner login #\n--------------------------------------------------------\nUNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED\nYou must have explicit, authorized permission to access\nor configure this device. Unauthorized attempts and\nactions to access or use this system may result in civil\nand/or criminal penalties. All activities performed on\nthis device are logged and monitored.\n--------------------------------------------------------\n#\n",
+          "negation_template_text": "no banner login\n",
+          "filename": ""
+        },
+        {
+          "config_style": "eos",
+          "section": "system",
+          "template_text": "banner motd\n--------------------------------------------------------\nUNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED\nYou must have explicit, authorized permission to access\nor configure this device. Unauthorized attempts and\nactions to access or use this system may result in civil\nand/or criminal penalties. All activities performed on\nthis device are logged and monitored.\n--------------------------------------------------------\nEOF\n",
+          "negation_template_text": "no banner motd\n",
+          "filename": ""
+        }
+      ],
+      "created_at": "2020-10-26T18:22:50.061201Z",
+      "id": "US-MOTD",
+      "last_modified_at": "2020-10-26T18:22:50.061201Z",
+      "display_name": "US-MOTD"
+    },
+    {
+      "ref_archs": [
+        "two_stage_l3clos"
+      ],
+      "generators": [
+        {
+          "config_style": "nxos",
+          "section": "system",
+          "template_text": "ntp server {{ntp_server}} use-vrf {{mgmt_vrf}}",
+          "negation_template_text": "no ntp server {{ntp_server}} use-vrf {{mgmt_vrf}}",
+          "filename": ""
+        },
+        {
+          "config_style": "eos",
+          "section": "system",
+          "template_text": "ntp server vrf {{mgmt_vrf}} {{ntp_server}}",
+          "negation_template_text": "no ntp server vrf {{mgmt_vrf}} {{ntp_server}}",
+          "filename": ""
+        },
+        {
+          "config_style": "cumulus",
+          "section": "system",
+          "template_text": "net add time ntp server {{ntp_server}} iburst\nsystemctl enable ntp\nsystemctl restart ntp\nnet commit",
+          "negation_template_text": "net del time ntp server {{ntp_server}}\nsystemctl disable ntp",
+          "filename": ""
+        }
+      ],
+      "created_at": "2020-10-26T18:28:37.011487Z",
+      "id": "ntp_configlet",
+      "last_modified_at": "2020-10-26T18:28:37.011487Z",
+      "display_name": "NTP-server"
+    },
+    {
+      "ref_archs": [
+        "two_stage_l3clos"
+      ],
+      "generators": [
+        {
+          "config_style": "nxos",
+          "section": "system",
+          "template_text": "ntp server {{ntp_server}} use-vrf MGMT\nntp server 10.10.100.2 use-vrf MGMT\n",
+          "negation_template_text": "no ntp server {{ntp_server}} use-vrf MGMT\nno ntp server 10.10.100.2 use-vrf MGMT\n",
+          "filename": ""
+        },
+        {
+          "config_style": "eos",
+          "section": "system",
+          "template_text": "ntp server vrf MGMT {{ntp_server}}\nntp server vrf MGMT 10.10.100.2\n",
+          "negation_template_text": "no ntp server vrf MGMT {{ntp_server}}\nno ntp server vrf MGMT 10.10.100.2\n",
+          "filename": ""
+        }
+      ],
+      "created_at": "2020-10-26T18:22:49.990031Z",
+      "id": "US-EAST-NTP",
+      "last_modified_at": "2020-10-26T18:22:49.990031Z",
+      "display_name": "US-EAST-NTP"
+    },
+    {
+      "ref_archs": [
+        "two_stage_l3clos"
+      ],
+      "generators": [
+        {
+          "config_style": "nxos",
+          "section": "system",
+          "template_text": "mac-address-table aging-time {{timer}}\n",
+          "negation_template_text": "no mac-address-table aging-time {{timer}}\n",
+          "filename": ""
+        },
+        {
+          "config_style": "eos",
+          "section": "system",
+          "template_text": "mac address-table aging-time {{timer}}\n",
+          "negation_template_text": "no mac address-table aging-time {{timer}}\n",
+          "filename": ""
+        }
+      ],
+      "created_at": "2020-10-26T18:22:50.116588Z",
+      "id": "US-DC-MAC-AGING",
+      "last_modified_at": "2020-10-26T18:22:50.116588Z",
+      "display_name": "US-DC-MAC-AGING"
+    }
+  ]
+}

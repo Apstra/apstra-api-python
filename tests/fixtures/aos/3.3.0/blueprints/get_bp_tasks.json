@@ -1,0 +1,612 @@
+{
+  "items": [
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:56:56.368133+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints?async=partial",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:56:58.748647+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:56:56.363446+0000",
+      "config_last_updated_at": "2021-08-17T19:56:56.363446+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.create",
+      "id": "d55c9a4e-0681-4d02-9832-1f7a66190449"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:56:59.124754+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/asn/leaf_asns",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:56:59.562052+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:56:59.123099+0000",
+      "config_last_updated_at": "2021-08-17T19:56:59.123099+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "830976b5-8490-43d9-94c7-c28f4e05d7c6"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:56:59.582946+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/asn/spine_asns",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:56:59.750800+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:56:59.581194+0000",
+      "config_last_updated_at": "2021-08-17T19:56:59.581194+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "c2c5e193-35cd-4883-a296-7a07f85eeb8d"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:56:59.771730+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/leaf_loopback_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:00.120446+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:56:59.768143+0000",
+      "config_last_updated_at": "2021-08-17T19:56:59.768143+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "6fb8a08d-1332-4c9d-971f-bd676701cd90"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:00.176878+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/spine_leaf_link_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:00.346378+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:00.139143+0000",
+      "config_last_updated_at": "2021-08-17T19:57:00.139143+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "30cb1884-8f16-4a32-a230-8bc01a8bca6c"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:00.360210+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/spine_loopback_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:00.707651+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:00.358401+0000",
+      "config_last_updated_at": "2021-08-17T19:57:00.358401+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "51de9f9c-0e1c-49cc-9266-9539fba21149"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:00.735612+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/interface-map-assignments",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:01.460866+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:00.733962+0000",
+      "config_last_updated_at": "2021-08-17T19:57:00.733962+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./interface-map-assignments",
+      "id": "9c44ae6b-32f5-4fb2-9757-3b67ef430225"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:01.461469+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/nodes",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:02.066772+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:00.951581+0000",
+      "config_last_updated_at": "2021-08-17T19:57:00.951581+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.PATCH./nodes",
+      "id": "fd8149a0-9b9b-49f6-8199-daa867b4e542"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:02.067403+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/external-generic-systems",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:02.391025+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:01.844279+0000",
+      "config_last_updated_at": "2021-08-17T19:57:01.844279+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./external-generic-systems",
+      "id": "490f0cc7-1d60-44cc-b9bc-6fe77d2d6e88"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:02.391739+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/systems/d942db81-1dca-405a-baca-7487ea00dead/domain",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:02.752233+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:02.315277+0000",
+      "config_last_updated_at": "2021-08-17T19:57:02.315277+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./systems/<system_id>/domain",
+      "id": "4fe1e5eb-f7fe-4fa8-b52f-259f1f9df62c"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:02.752794+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/systems/d942db81-1dca-405a-baca-7487ea00dead/loopback/0",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:02.938327+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:02.715736+0000",
+      "config_last_updated_at": "2021-08-17T19:57:02.715736+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./systems/<system_id>/loopback/<loopback_id>",
+      "id": "e5abc781-ff1d-4fc4-aa92-4af78bf1a741"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:02.962101+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/switch-system-links",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:03.479525+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:02.959239+0000",
+      "config_last_updated_at": "2021-08-17T19:57:02.959239+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./switch-system-links",
+      "id": "bc440e47-a554-45f5-b431-67d28cd80167"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:03.480117+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-import",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:03.651920+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:03.377469+0000",
+      "config_last_updated_at": "2021-08-17T19:57:03.377469+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./obj-policy-import",
+      "id": "3189b664-22bf-4b9c-a461-dd75ca487fdd"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:03.684823+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-batch-apply",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:04.403810+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:03.682181+0000",
+      "config_last_updated_at": "2021-08-17T19:57:03.682181+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./obj-policy-batch-apply",
+      "id": "701d3aad-9c4a-4b28-af74-4bae819e47eb"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:04.473596+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/to_generic_link_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:04.780544+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:04.467350+0000",
+      "config_last_updated_at": "2021-08-17T19:57:04.467350+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "374c77e5-a246-48de-a55e-f6f82347660e"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:04.782234+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/to_generic_link_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:04.924217+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:04.779940+0000",
+      "config_last_updated_at": "2021-08-17T19:57:04.779940+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "4dec569f-250a-4b8b-b327-378f4e535c1a"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:04.988740+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/deploy",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:05.435298+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:04.985895+0000",
+      "config_last_updated_at": "2021-08-17T19:57:04.985895+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.deploy",
+      "id": "6e469612-13f3-4f45-b12f-b52a74e7c8d5"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:05.435878+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/security-zones",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:06.360754+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:05.093660+0000",
+      "config_last_updated_at": "2021-08-17T19:57:05.093660+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./security-zones",
+      "id": "e1720ea2-fd54-4bc1-8355-949692c37643"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:06.361363+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/sz:1fff5051-f7a2-480c-8d68-c02bb3c518eb,leaf_loopback_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:06.799658+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:06.343541+0000",
+      "config_last_updated_at": "2021-08-17T19:57:06.343541+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "4fe811aa-3d2a-4515-a5f6-b696f7a03c73"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:06.800283+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/security-zones/1fff5051-f7a2-480c-8d68-c02bb3c518eb/dhcp-servers",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:07.395580+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:06.696432+0000",
+      "config_last_updated_at": "2021-08-17T19:57:06.696432+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./security-zones/<security_zone_id>/dhcp-servers",
+      "id": "2c3a00f0-1a10-4da5-abfd-b97feb6edb45"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:07.437234+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-import",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:08.353305+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:07.434410+0000",
+      "config_last_updated_at": "2021-08-17T19:57:07.434410+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./obj-policy-import",
+      "id": "3d30c64e-abb0-4c35-8f5b-a5f07798d031"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:08.353900+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-batch-apply",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:08.741238+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:08.032130+0000",
+      "config_last_updated_at": "2021-08-17T19:57:08.032130+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./obj-policy-batch-apply",
+      "id": "cb857bbf-a386-44c1-97aa-9064c4ab6837"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:08.806174+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/virtual-networks",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:09.434640+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:08.804241+0000",
+      "config_last_updated_at": "2021-08-17T19:57:08.804241+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./virtual-networks",
+      "id": "4f25f2f3-1233-4929-aaf1-5518434b7e1a"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:09.435263+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/virtual-networks",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:09.983878+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:09.103853+0000",
+      "config_last_updated_at": "2021-08-17T19:57:09.103853+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./virtual-networks",
+      "id": "a4b9e9ed-ef6f-440d-8132-1c8b18036c2d"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:10.007489+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/virtual-networks",
+        "method": "POST"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:10.529033+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:10.002172+0000",
+      "config_last_updated_at": "2021-08-17T19:57:10.002172+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.POST./virtual-networks",
+      "id": "589a575d-e8f3-4a15-8b3c-61cf7b8db9bf"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:10.529629+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-batch-apply",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:10.977346+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:10.382192+0000",
+      "config_last_updated_at": "2021-08-17T19:57:10.382192+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./obj-policy-batch-apply",
+      "id": "86b59159-f633-4e4b-bdce-8c09a563c920"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:11.002470+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-batch-apply",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:11.251605+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:11.000026+0000",
+      "config_last_updated_at": "2021-08-17T19:57:11.000026+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./obj-policy-batch-apply",
+      "id": "a673fe04-3098-4f31-a0c2-6e7f97040fd2"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:11.277371+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/obj-policy-batch-apply",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:11.705737+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:11.275334+0000",
+      "config_last_updated_at": "2021-08-17T19:57:11.275334+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PATCH./obj-policy-batch-apply",
+      "id": "85130284-596f-4f54-9f09-515acb383f01"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:11.780561+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/sz:1fff5051-f7a2-480c-8d68-c02bb3c518eb,to_generic_link_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:11.938834+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:11.778619+0000",
+      "config_last_updated_at": "2021-08-17T19:57:11.778619+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "edd29f02-3e85-47ed-89f2-7ca0db330dbc"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:11.954839+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/ip/sz:1fff5051-f7a2-480c-8d68-c02bb3c518eb,to_generic_link_ips",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:12.282271+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:11.952966+0000",
+      "config_last_updated_at": "2021-08-17T19:57:11.952966+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "90b10c3f-e985-4f12-8a50-f904c027d6dd"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:12.313232+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/vni/evpn_l3_vnis",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:12.515881+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:12.311579+0000",
+      "config_last_updated_at": "2021-08-17T19:57:12.311579+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "d893cce4-73d4-4352-b9a3-ba46c8f21b5f"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:12.516558+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/resource_groups/vni/vxlan_vn_ids",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:12.877192+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:12.469704+0000",
+      "config_last_updated_at": "2021-08-17T19:57:12.469704+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.facade.PUT./resource_groups/<resource_type>/<group_name>",
+      "id": "2c973052-7604-44b9-8aad-161ea9a54c45"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:57:13.036963+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/deploy",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:57:13.468933+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:57:13.035080+0000",
+      "config_last_updated_at": "2021-08-17T19:57:13.035080+0000",
+      "user_ip": "34.213.124.179",
+      "type": "blueprint.deploy",
+      "id": "f88add69-5d9a-4013-8fab-c69d9720b600"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:59:17.044815+0000",
+      "request_data": {
+        "url": "http://172.20.20.3/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/nodes/8aec0884-c2cc-42da-a577-9b51de497201",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:59:17.527626+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:59:17.039661+0000",
+      "config_last_updated_at": "2021-08-17T19:59:17.039661+0000",
+      "user_ip": "172.20.20.1",
+      "type": "blueprint.PATCH./nodes/<node_id>",
+      "id": "9c4f357e-871c-4ff3-bbeb-3cd1eb40e469"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:59:17.528458+0000",
+      "request_data": {
+        "url": "http://172.20.20.3/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/nodes/669d20fd-76bd-4904-9a1f-59e24d9adbc9",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:59:18.160264+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:59:17.254644+0000",
+      "config_last_updated_at": "2021-08-17T19:59:17.254644+0000",
+      "user_ip": "172.20.20.1",
+      "type": "blueprint.PATCH./nodes/<node_id>",
+      "id": "b4f0cf72-9674-4892-9053-94c2fa6dade7"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:59:18.160933+0000",
+      "request_data": {
+        "url": "http://172.20.20.3/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/nodes/321e6063-4768-4dfe-89d2-46fc2740bb1b",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:59:18.556487+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:59:17.962266+0000",
+      "config_last_updated_at": "2021-08-17T19:59:17.962266+0000",
+      "user_ip": "172.20.20.1",
+      "type": "blueprint.PATCH./nodes/<node_id>",
+      "id": "e51809e6-8937-457f-98e0-c5f6e04d1564"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T19:59:18.633078+0000",
+      "request_data": {
+        "url": "http://172.20.20.3/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/deploy?async=full",
+        "method": "PUT"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T19:59:18.863550+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T19:59:18.629529+0000",
+      "config_last_updated_at": "2021-08-17T19:59:18.629529+0000",
+      "user_ip": "172.20.20.1",
+      "type": "blueprint.deploy",
+      "id": "079c3d6a-6f00-4741-bf7b-3ddcf8da69c6"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2021-08-17T20:47:14.454617+0000",
+      "request_data": {
+        "url": "http://52.24.111.6:23009/api/blueprints/7234a266-0fd5-4acc-8c1f-f6efc394658a/systems/external-router_as/domain",
+        "method": "PATCH"
+      },
+      "user_id": "de35dcda-8311-4c17-a4b6-f8cbbbbd456b",
+      "last_updated_at": "2021-08-17T20:47:14.955517+0000",
+      "user_name": "admin",
+      "created_at": "2021-08-17T20:47:14.449229+0000",
+      "config_last_updated_at": "2021-08-17T20:47:14.449229+0000",
+      "user_ip": "50.26.97.118",
+      "type": "blueprint.facade.PATCH./systems/<system_id>/domain",
+      "id": "cfa74486-3838-4ddf-92ee-9dbb5b88c429"
+    }
+  ]
+}

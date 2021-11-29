@@ -15,7 +15,7 @@ from aos.design import RackType, Template, InterfaceMap
 from tests.util import make_session, read_fixture, deserialize_fixture
 
 
-@pytest.fixture(params=["3.3.0"])
+@pytest.fixture(params=["3.3.0", "4.0.0"])
 def aos_api_version(request):
     return request.param
 

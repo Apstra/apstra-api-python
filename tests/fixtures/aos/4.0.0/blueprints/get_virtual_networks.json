@@ -1,0 +1,103 @@
+{
+  "virtual_networks": {
+    "307944e0-8aa5-4108-9253-0c453a653bde": {
+      "route_target": "5003:1",
+      "virtual_gateway_ipv4_enabled": true,
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "141e7ea7-144f-4773-a84f-ef0ba637f4a3",
+          "vlan_id": 3
+        },
+        {
+          "access_switch_node_ids": [],
+          "system_id": "8aec0884-c2cc-42da-a577-9b51de497201",
+          "vlan_id": 3
+        }
+      ],
+      "description": null,
+      "virtual_gateway_ipv4": "10.30.42.1",
+      "vn_id": "5003",
+      "virtual_gateway_ipv6": null,
+      "virtual_gateway_ipv6_enabled": false,
+      "virtual_mac": null,
+      "label": "test-blue15",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "10.30.42.0/24",
+      "ipv6_enabled": false,
+      "id": "307944e0-8aa5-4108-9253-0c453a653bde",
+      "ipv4_enabled": true,
+      "security_zone_id": "1fff5051-f7a2-480c-8d68-c02bb3c518eb",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "b8579e81-55ad-4855-b060-d277d895227e": {
+      "route_target": "5002:1",
+      "virtual_gateway_ipv4_enabled": true,
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "141e7ea7-144f-4773-a84f-ef0ba637f4a3",
+          "vlan_id": 4
+        },
+        {
+          "access_switch_node_ids": [],
+          "system_id": "8aec0884-c2cc-42da-a577-9b51de497201",
+          "vlan_id": 4
+        }
+      ],
+      "description": null,
+      "virtual_gateway_ipv4": "10.30.43.1",
+      "vn_id": "5002",
+      "virtual_gateway_ipv6": null,
+      "virtual_gateway_ipv6_enabled": false,
+      "virtual_mac": null,
+      "label": "finance-app",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "10.30.43.0/24",
+      "ipv6_enabled": false,
+      "id": "b8579e81-55ad-4855-b060-d277d895227e",
+      "ipv4_enabled": true,
+      "security_zone_id": "1fff5051-f7a2-480c-8d68-c02bb3c518eb",
+      "dhcp_service": "dhcpServiceEnabled"
+    },
+    "a4637e77-a55a-4379-98d5-5e5c34f5d936": {
+      "route_target": "5001:1",
+      "virtual_gateway_ipv4_enabled": true,
+      "bound_to": [
+        {
+          "access_switch_node_ids": [],
+          "system_id": "141e7ea7-144f-4773-a84f-ef0ba637f4a3",
+          "vlan_id": 5
+        },
+        {
+          "access_switch_node_ids": [],
+          "system_id": "8aec0884-c2cc-42da-a577-9b51de497201",
+          "vlan_id": 5
+        }
+      ],
+      "description": null,
+      "virtual_gateway_ipv4": "10.30.44.1",
+      "vn_id": "5001",
+      "virtual_gateway_ipv6": null,
+      "virtual_gateway_ipv6_enabled": false,
+      "virtual_mac": null,
+      "label": "finance-db",
+      "l3_connectivity": "l3Enabled",
+      "ipv6_subnet": null,
+      "vn_type": "vxlan",
+      "rt_policy": null,
+      "ipv4_subnet": "10.30.44.0/24",
+      "ipv6_enabled": false,
+      "id": "a4637e77-a55a-4379-98d5-5e5c34f5d936",
+      "ipv4_enabled": true,
+      "security_zone_id": "1fff5051-f7a2-480c-8d68-c02bb3c518eb",
+      "dhcp_service": "dhcpServiceEnabled"
+    }
+  }
+}
