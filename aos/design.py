@@ -85,10 +85,6 @@ class AosLogicalDevices(AosSubsystem):
 
         return self.rest.json_resp_get(f"/api/design/logical-devices/{ld_id}")
 
-    # TODO - create vs add?
-    # TODO - also, this will allow you to create duplicate display names silently. Resource pools don't work this
-    # way - what other primitives in AOS work this way vs the resource pool way? Maybe add logic to error if another
-    # LD with the same display name is found?
     def add_logical_device(self, ld_list: list):
         """
         Add one or more logical devices to AOS

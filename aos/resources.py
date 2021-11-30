@@ -37,12 +37,6 @@ class AosResource:
 class PoolSubnet:
     network: str
 
-    def to_json(self):
-        return {
-            "network": self.network,
-        }
-
-
     @classmethod
     def from_json(cls, d: dict):
         return PoolSubnet(
@@ -53,13 +47,6 @@ class PoolSubnet:
 @dataclass
 class IPPool(AosResource):
     subnets: List[PoolSubnet]
-
-    def to_json(self):
-        return {
-            "display_name": self.display_name,
-            "subnets": self.subnets,
-            "id": self.id,
-        }
 
     @classmethod
     def from_json(cls, d: dict):
