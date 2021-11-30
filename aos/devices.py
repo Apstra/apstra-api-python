@@ -179,19 +179,6 @@ class AosManagedDevices(AosSubsystem):
                 return True
         return False
 
-    def acknowledge_all(self):
-        batch = {
-            d.id: {
-                "user_config": {
-                    "admin_state": "normal",
-                    "aos_hcl_model": d.aos_hcl_model,
-                }
-            }
-            for d in self.get_all()
-        }
-
-        self.rest.json_resp_post("/api/systems-batch-update", data=batch)
-
     def find_system_with_ip(self, ip_addr: str) -> Optional[System]:
         for system in self.iter_all():
             if system.facts["mgmt_ipaddr"] == ip_addr:
@@ -211,6 +198,7 @@ class AosSystemAgents(AosSubsystem):
     """
     Management of system-agent for AOS controlled devices
     """
+
     def create_system_agent(self, data) -> bool:
         return self.rest.json_resp_post("/api/system-agents", data=data)
 

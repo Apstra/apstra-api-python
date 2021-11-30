@@ -19,7 +19,7 @@ from aos.blueprint import (
     Anomaly,
     SecurityZone,
     VirtualNetwork,
-    ResourceGroup
+    ResourceGroup,
 )
 
 from requests.utils import requote_uri
@@ -348,45 +348,47 @@ def test_assign_asn_pool_to_bp(
         f"http://aos:80/api/blueprints/{bp_id}/resource_groups/{resource_type}"
         f"/{group_name}",
         status=200,
-        resp=json.dumps({"type": "asn",
-                         "name": "spine_asns",
-                         "pool_ids": [asn_pool_id]}
-                        ),
+        resp=json.dumps(
+            {"type": "asn", "name": "spine_asns", "pool_ids": [asn_pool_id]}
+        ),
     )
 
-    assert (
-        aos_logged_in.blueprint.apply_resource_groups(
-            bp_id=bp_id,
-            resource_type=resource_type,
-            group_name=group_name,
-            pool_ids=[asn_pool_id],
-        )
-        == ResourceGroup(type=resource_type,
-                         name=group_name,
-                         group_name=group_name,
-                         pool_ids=[asn_pool_id])
+    assert aos_logged_in.blueprint.apply_resource_groups(
+        bp_id=bp_id,
+        resource_type=resource_type,
+        group_name=group_name,
+        pool_ids=[asn_pool_id],
+    ) == ResourceGroup(
+        type=resource_type,
+        name=group_name,
+        group_name=group_name,
+        pool_ids=[asn_pool_id],
     )
 
     rg_body = {
         "pool_ids": [asn_pool_id],
     }
 
-    aos_session.request.assert_has_calls([
-        call(
-            "PUT",
-            f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
-            f"{resource_type}/{group_name}",
-            params=None,
-            json=rg_body,
-            headers=expected_auth_headers),
-        call(
-            "GET",
-            f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
-            f"{resource_type}/{group_name}",
-            json=None,
-            params=None,
-            headers=expected_auth_headers)
-    ])
+    aos_session.request.assert_has_calls(
+        [
+            call(
+                "PUT",
+                f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+                f"{resource_type}/{group_name}",
+                params=None,
+                json=rg_body,
+                headers=expected_auth_headers,
+            ),
+            call(
+                "GET",
+                f"http://aos:80/api/blueprints/{bp_id}/resource_groups/"
+                f"{resource_type}/{group_name}",
+                json=None,
+                params=None,
+                headers=expected_auth_headers,
+            ),
+        ]
+    )
 
 
 def test_commit_staging_errors(
@@ -624,9 +626,8 @@ def test_create_security_zone(
         f"{resource_type}/{group_path}",
         status=200,
         resp=json.dumps(
-            {"type": "ip",
-             "name": f"sz:{sz_id},{group_name}",
-             "pool_ids": [pool_id]}),
+            {"type": "ip", "name": f"sz:{sz_id},{group_name}", "pool_ids": [pool_id]}
+        ),
     )
 
     resp = aos_logged_in.blueprint.create_security_zone(
@@ -693,7 +694,7 @@ def test_get_virtual_network_id(
         rt_policy=vn_dict["rt_policy"],
         dhcp_service=vn_dict["dhcp_service"],
         tagged_ct=False,
-        untagged_ct=False
+        untagged_ct=False,
     )
     aos_session.request.assert_called_once_with(
         "GET",
@@ -745,7 +746,7 @@ def test_get_virtual_network_name(
         rt_policy=vn_dict["rt_policy"],
         dhcp_service=vn_dict["dhcp_service"],
         tagged_ct=False,
-        untagged_ct=False
+        untagged_ct=False,
     )
 
     aos_session.request.assert_called_once_with(
@@ -1351,8 +1352,9 @@ def test_get_active_tasks(
         f"http://aos:80/api/blueprints/{bp_id}/tasks",
         params={"filter": "status in ['in_progress', 'init']"},
         status=200,
-        resp=read_fixture(f"aos/{aos_api_version}/blueprints/"
-                          f"get_bp_active_tasks.json"),
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_bp_active_tasks.json"
+        ),
     )
 
     resp = aos_logged_in.blueprint.get_active_tasks(bp_id=bp_id)
@@ -1360,3 +1362,197 @@ def test_get_active_tasks(
     assert resp is not None
     for i in resp:
         assert i["status"] in ["in_progress", "init"]
+
+
+def test_get_diff_status(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/diff-status",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_diff_status.json"
+        ),
+    )
+
+    assert aos_logged_in.blueprint.get_diff_status(bp_id=bp_id) == {
+        "status": "undeployed",
+        "logical_diff_supported": True,
+        "deployed_version": 0,
+        "staging_version": 1,
+        "cache_diff_supported": True,
+        "deploy_config_version": 0,
+        "deploy_status_version": 0,
+        "operation_version": 0,
+        "deploy_status": "success",
+        "deploy_error": None,
+    }
+
+
+def test_set_bp_node_label(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+    node_id = "node_1"
+
+    aos_session.add_response(
+        "PATCH", f"http://aos:80/api/blueprints/{bp_id}/nodes/{node_id}", status=202
+    )
+
+    assert not aos_logged_in.blueprint.set_bp_node_label(
+        bp_id=bp_id, node_id=node_id, label="newlabel"
+    )
+
+    aos_session.request.assert_called_once_with(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/nodes/{node_id}",
+        json={"label": "newlabel"},
+        params=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_set_bp_node_label_with_hostname(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+    node_id = "node_1"
+
+    aos_session.add_response(
+        "PATCH", f"http://aos:80/api/blueprints/{bp_id}/nodes/{node_id}", status=202
+    )
+
+    assert not aos_logged_in.blueprint.set_bp_node_label(
+        bp_id=bp_id, node_id=node_id, label="newlabel", hostname="newhostname"
+    )
+
+    aos_session.request.assert_called_once_with(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/nodes/{node_id}",
+        json={"label": "newlabel", "hostname": "newhostname"},
+        params=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_cable_map(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/cabling-map",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_cabling_map.json"
+        ),
+    )
+
+    resp = aos_logged_in.blueprint.get_cabling_map(bp_id=bp_id)
+    assert resp["version"] == 2
+    assert len(resp["links"]) == 7
+
+
+def test_update_cabling_map(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+
+    aos_session.add_response(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/cabling-map"
+        "?comment=cabling-map-update",
+        status=202,
+    )
+
+    assert not aos_logged_in.blueprint.update_cabling_map(bp_id=bp_id, links=[])
+
+    aos_session.request.assert_called_once_with(
+        "PATCH",
+        f"http://aos:80/api/blueprints/{bp_id}/cabling-map"
+        "?comment=cabling-map-update",
+        json={"links": []},
+        params=None,
+        headers=expected_auth_headers,
+    )
+
+
+def test_get_rendered_config(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+    node_id = "node-1"
+    config_type = "staging"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/nodes/{node_id}/"
+        f"config-rendering?type={config_type}",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_rendered_config.json"
+        ),
+    )
+
+    assert aos_logged_in.blueprint.get_rendered_config(
+        bp_id=bp_id, node_id=node_id, config_type=config_type
+    ) == {"config": "thisistheconfiguration"}
+
+
+def test_get_endpoint_policies(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+    ptype = "staging"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/"
+        f"experience/web/endpoint-policies?type={ptype}",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_endpoint_policies.json"
+        ),
+    )
+
+    resp = aos_logged_in.blueprint.get_endpoint_policies(bp_id=bp_id)
+    assert resp["version"] == 1
+    assert len(resp["endpoint_policies"]) == 0
+
+
+def test_get_routing_policies(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+
+    bp_id = "test-bp-1"
+    bp_type = "staging"
+
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/routing-policies?type={bp_type}",
+        status=200,
+        resp=read_fixture(
+            f"aos/{aos_api_version}/blueprints/" f"get_routing_policies.json"
+        ),
+    )
+
+    resp = aos_logged_in.blueprint.get_routing_policies(bp_id=bp_id)
+    assert len(resp["items"]) == 1
+    assert resp["items"][0]["export_policy"] == {
+        "spine_leaf_links": True,
+        "loopbacks": True,
+        "l2edge_subnets": True,
+        "static_routes": False,
+        "l3edge_server_links": True,
+    }

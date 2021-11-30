@@ -805,7 +805,9 @@ class AosBlueprint(AosSubsystem):
 
         return self.get_bp_nodes(bp_id, "system")
 
-    def set_bp_node_label(self, bp_id: str, node_id: str, label: str, hostname: str = "") -> None:
+    def set_bp_node_label(
+        self, bp_id: str, node_id: str, label: str, hostname: str = ""
+    ) -> None:
         """
         Sets a node's label (and optionally, its hostname)
         Parameters
@@ -824,7 +826,7 @@ class AosBlueprint(AosSubsystem):
         """
 
         data = {
-            "label" : label,
+            "label": label,
         }
         if hostname:
             data["hostname"] = hostname
@@ -953,10 +955,7 @@ class AosBlueprint(AosSubsystem):
         -------
             (dict) - cable map information
         """
-
-        return self.rest.json_resp_get(
-            f"/api/blueprints/{bp_id}/cabling-map"
-        )
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/cabling-map")
 
     def update_cabling_map(self, bp_id: str, links: List[dict]):
         """
@@ -987,9 +986,10 @@ class AosBlueprint(AosSubsystem):
         Returns
         -------
         """
-        self.rest.patch(f"/api/blueprints/{bp_id}/cabling-map?comment=cabling-map-update", data={
-            "links": links
-        })
+        self.rest.patch(
+            f"/api/blueprints/{bp_id}/cabling-map?comment=cabling-map-update",
+            data={"links": links},
+        )
 
     def assign_devices_from_json(self, bp_id: str, node_assignment: list):
         """
@@ -1105,7 +1105,9 @@ class AosBlueprint(AosSubsystem):
         ]
         self.rest.patch(f"/api/blueprints/{bp_id}/nodes", data=data)
 
-    def get_rendered_config(self, bp_id: str, node_id: str, config_type: str = "deployed") -> None:
+    def get_rendered_config(
+        self, bp_id: str, node_id: str, config_type: str = "deployed"
+    ) -> None:
         """
         Retrieve the rendered configuration from a blueprint for a given node
 
@@ -1114,15 +1116,20 @@ class AosBlueprint(AosSubsystem):
         bp_id
             (str) - ID of AOS blueprint
         node_id
-            (str) - ID of node within AOS blueprint for which to retrieve rendered configuration
+            (str) - ID of node within AOS blueprint for which to retrieve
+                    rendered configuration
         config_type
-            (str) - type of configuration to retrieve. Options are "deployed" (default), "staging", "operation"
+            (str) - type of configuration to retrieve. Options are
+                    "deployed" (default), "staging", "operation"
 
         Returns
         -------
             (dict) - dictionary containing the rendered config as a key value
         """
-        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/nodes/{node_id}/config-rendering?type={config_type}")
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/nodes/{node_id}/"
+            f"config-rendering?type={config_type}"
+        )
 
     # Interface maps
     def assign_interface_maps_raw(self, bp_id: str, assignments: dict):
@@ -1231,7 +1238,9 @@ class AosBlueprint(AosSubsystem):
         -------
             (dict) - endpoint policies
         """
-        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/experience/web/endpoint-policies?type={ptype}")
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/experience/web/endpoint-policies?type={ptype}"
+        )
 
     def get_endpoint_policy_app_points(
         self, bp_id: str, policy_id: str = None
@@ -1255,8 +1264,9 @@ class AosBlueprint(AosSubsystem):
         -------
             (dict) - routing policies
         """
-        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/routing-policies?type={bp_type}")
-
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/routing-policies?type={bp_type}"
+        )
 
     # External Routers
     def get_external_routers_all(self, bp_id: str):

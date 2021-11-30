@@ -153,18 +153,6 @@ class InterfaceMap(Design):
 
 
 class AosInterfaceMap(AosSubsystem):
-    def get_all(self):
-        """
-        Return all interface maps configured from AOS
-
-        Returns
-        -------
-            (obj) json response
-        """
-        t_path = "/api/design/interface-maps"
-        resp = self.rest.json_resp_get(t_path)
-        return resp["items"]
-
     def create(self, interface_map: dict) -> InterfaceMap:
 
         im_data = {
@@ -236,7 +224,6 @@ class RackType(Design):
 
 
 class AosRackType(AosSubsystem):
-
     def get_all(self):
         """
         Return all rack types configured from AOS
@@ -255,11 +242,13 @@ class AosRackType(AosSubsystem):
             "id": rack_type.get("id", None),
             "description": rack_type["description"],
             "leafs": rack_type["leafs"],
-            "tags": rack_type["tags"],
             "logical_devices": rack_type["logical_devices"],
             "access_switches": rack_type["access_switches"],
-            "generic_systems": rack_type["generic_systems"],
-            "fabric_connectivity_design": rack_type["fabric_connectivity_design"],
+            # New in 4.4.0
+            "generic_systems": rack_type.get("generic_systems"),
+            "fabric_connectivity_design": rack_type.get(
+                "fabric_connectivity_design"
+            ),
         }
 
         created = self.rest.json_resp_post("/api/design/rack-types", data=rt_data)

@@ -93,6 +93,7 @@
   "access_switches": [],
   "id": "evpn-single",
   "last_modified_at": "2020-10-26T18:22:49.539074Z",
+  "fabric_connectivity_design": "l3clos",
   "servers": [
     {
       "count": 1,
@@ -115,6 +116,33 @@
       "port_channel_id_max": 0,
       "logical_device": "AOS-1x10-1",
       "label": "single-server"
+    }
+  ],
+  "generic_systems": [
+    {
+      "count": 1,
+      "asn_domain": "disabled",
+      "links": [
+        {
+          "tags": [],
+          "link_per_switch_count": 1,
+          "label": "logical_link_1",
+          "link_speed": {
+            "unit": "G",
+            "value": 10
+          },
+          "target_switch_label": "leaf1",
+          "attachment_type": "singleAttached",
+          "lag_mode": null
+        }
+      ],
+      "management_level": "unmanaged",
+      "port_channel_id_min": 0,
+      "port_channel_id_max": 0,
+      "logical_device": "c41fbbc4-5207-4d89-98fa-67da4c420229",
+      "loopback": "disabled",
+      "tags": [],
+      "label": "gs_group_1"
     }
   ]
 }

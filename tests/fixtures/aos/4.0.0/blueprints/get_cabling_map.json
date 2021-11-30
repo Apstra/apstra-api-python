@@ -1,0 +1,321 @@
+{
+    "version": 2,
+    "links": [
+      {
+        "group_label": null,
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "spine2<->rt_fabric1_rack2_001_leaf1[1]",
+        "role": "spine_leaf",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "9112910c-b327-411b-a71d-660ecceda0a7",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "spine",
+              "id": "dd64cb80-3943-424f-b0ca-1bdf2df90a10",
+              "label": "spine2"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "17441a2e-325e-4795-96f6-1243ef4987f8",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "fcf3391d-041f-4da0-af59-5d72f541c5ee",
+              "label": "rt_fabric1_rack2_001_leaf1"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "spine2<->rt_fabric1_rack2_001_leaf1[1]"
+      },
+      {
+        "group_label": null,
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "spine1<->rt_fabric1_rack1_001_leaf1[1]",
+        "role": "spine_leaf",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "9d5b62d4-bcdf-471c-860a-daa9062181b9",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "spine",
+              "id": "58e13d6e-f410-494a-ba6a-6e230ebe7125",
+              "label": "poop"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "039736f1-b907-48e7-a47c-89cd76b84527",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "25f373ad-d08e-4d30-94d0-4d450b12bc3d",
+              "label": "rt_fabric1_rack1_001_leaf1"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "spine1<->rt_fabric1_rack1_001_leaf1[1]"
+      },
+      {
+        "group_label": null,
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "spine1<->rt_fabric1_rack2_001_leaf1[1]",
+        "role": "spine_leaf",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "e5d794bd-5d00-4ab4-9e6a-729f8673396a",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "spine",
+              "id": "58e13d6e-f410-494a-ba6a-6e230ebe7125",
+              "label": "poop"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "4238caca-6301-4ea7-8f67-30bd50efbbbd",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "fcf3391d-041f-4da0-af59-5d72f541c5ee",
+              "label": "rt_fabric1_rack2_001_leaf1"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "spine1<->rt_fabric1_rack2_001_leaf1[1]"
+      },
+      {
+        "group_label": null,
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "spine2<->rt_fabric1_rack1_001_leaf1[1]",
+        "role": "spine_leaf",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "accf3e9b-66ef-4714-9369-e21b1fe4675c",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "spine",
+              "id": "dd64cb80-3943-424f-b0ca-1bdf2df90a10",
+              "label": "spine2"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ip",
+              "ipv6_enabled": false,
+              "id": "82824f5f-9124-4548-a526-2ae8ae490ace",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "25f373ad-d08e-4d30-94d0-4d450b12bc3d",
+              "label": "rt_fabric1_rack1_001_leaf1"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "spine2<->rt_fabric1_rack1_001_leaf1[1]"
+      },
+      {
+        "group_label": "logical_link_1",
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "rt_fabric1_rack2_001_leaf1<->rt_fabric1_rack2_001_sys001(logical_link_1)[1]",
+        "role": "to_generic",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "8a4a753f-4a48-41eb-a466-f7b45f5cadd0",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "fcf3391d-041f-4da0-af59-5d72f541c5ee",
+              "label": "rt_fabric1_rack2_001_leaf1"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "625cd6e6-6d56-4acb-b925-622ac513d765",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "generic",
+              "id": "20a87549-ab23-4f2a-908d-b41dd91acb1e",
+              "label": "rt_fabric1_rack2_001_sys001"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "rt_fabric1_rack2_001_leaf1<->rt_fabric1_rack2_001_sys001(logical_link_1)[1]"
+      },
+      {
+        "group_label": "logical_link_1",
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "rt_fabric1_rack1_001_leaf1<->rt_fabric1_rack1_001_sys001(logical_link_1)[1]",
+        "role": "to_generic",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "4b51856c-94ab-468b-8fe6-5f2dac752b4b",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "25f373ad-d08e-4d30-94d0-4d450b12bc3d",
+              "label": "rt_fabric1_rack1_001_leaf1"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "d0ac99b2-ecb3-44cf-b203-de33bdef165e",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "generic",
+              "id": "f069ef1e-c218-462d-b731-43866cc36eb7",
+              "label": "rt_fabric1_rack1_001_sys001"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "rt_fabric1_rack1_001_leaf1<->rt_fabric1_rack1_001_sys001(logical_link_1)[1]"
+      },
+      {
+        "group_label": "logical_link_1",
+        "type": "ethernet",
+        "assigned_tag_ids": [],
+        "aggregate_link_id": null,
+        "label": "rt_fabric1_rack2_001_leaf1<->rt_fabric1_rack2_001_sys002(logical_link_1)[1]",
+        "role": "to_generic",
+        "endpoints": [
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "a70aa61a-9ed0-4c56-9a1d-b7bc16ba0424",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "leaf",
+              "id": "fcf3391d-041f-4da0-af59-5d72f541c5ee",
+              "label": "rt_fabric1_rack2_001_leaf1"
+            }
+          },
+          {
+            "interface": {
+              "ipv6_addr": null,
+              "if_name": null,
+              "port_channel_id": null,
+              "ipv4_addr": null,
+              "if_type": "ethernet",
+              "id": "b20ab53e-077b-4063-8377-f70bcfa15372",
+              "lag_mode": null
+            },
+            "system": {
+              "role": "generic",
+              "id": "2ca317b3-2aed-42aa-8b4f-f5efe6edf376",
+              "label": "rt_fabric1_rack2_001_sys002"
+            }
+          }
+        ],
+        "speed": "10G",
+        "id": "rt_fabric1_rack2_001_leaf1<->rt_fabric1_rack2_001_sys002(logical_link_1)[1]"
+      }
+    ]
+  }
