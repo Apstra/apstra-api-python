@@ -7,7 +7,7 @@ import json
 import logging
 from collections import namedtuple
 from dataclasses import dataclass
-from typing import Optional, List, Generator
+from typing import Dict, Optional, List, Generator
 import requests
 from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
@@ -494,7 +494,7 @@ class AosBlueprint(AosSubsystem):
         }
         self.rest.put(commit_path, data=payload)
 
-    def get_diff_status(self, bp_id: str):
+    def get_diff_status(self, bp_id: str) -> Dict:
         """
         Retrieve full diff status; useful for determining staging and deployed
         blueprint versions
@@ -942,7 +942,7 @@ class AosBlueprint(AosSubsystem):
 
         self.rest.json_resp_post(uri, data=data)
 
-    def get_cabling_map(self, bp_id: str):
+    def get_cabling_map(self, bp_id: str) -> Dict:
         """
         Retrieve a blueprint's existing cable map
 
@@ -1107,7 +1107,7 @@ class AosBlueprint(AosSubsystem):
 
     def get_rendered_config(
         self, bp_id: str, node_id: str, config_type: str = "deployed"
-    ) -> None:
+    ) -> Dict:
         """
         Retrieve the rendered configuration from a blueprint for a given node
 
@@ -1223,7 +1223,7 @@ class AosBlueprint(AosSubsystem):
         p_path = f"/api/blueprints/{bp_id}/endpoint-policies/{policy_id}"
         return self.rest.json_resp_get(p_path)
 
-    def get_endpoint_policies(self, bp_id: str, ptype: str = "staging"):
+    def get_endpoint_policies(self, bp_id: str, ptype: str = "staging") -> Dict:
         """
         Retrieve existing endpoint policies for a given blueprint
 
@@ -1249,7 +1249,7 @@ class AosBlueprint(AosSubsystem):
         params = {"policy": policy_id}
         return self.rest.json_resp_get(p_path, params=params)
 
-    def get_routing_policies(self, bp_id: str, bp_type="staging"):
+    def get_routing_policies(self, bp_id: str, bp_type="staging") -> Dict:
         """
         Retrieve existing routing policies for a given blueprint
 

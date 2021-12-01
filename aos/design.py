@@ -4,7 +4,7 @@
 # LICENSE file at http://www.apstra.com/eula
 import logging
 from dataclasses import dataclass
-from typing import Optional, List, Generator
+from typing import Optional, List, Generator, Dict
 
 from .aos import AosSubsystem, AosAPIError
 from aos.repeat import repeat_until
@@ -224,13 +224,13 @@ class RackType(Design):
 
 
 class AosRackType(AosSubsystem):
-    def get_all(self):
+    def get_all(self) -> Dict:
         """
         Return all rack types configured from AOS
 
         Returns
         -------
-            (obj) json response
+            (dict) json response
         """
         t_path = "/api/design/rack-types"
         resp = self.rest.json_resp_get(t_path)
