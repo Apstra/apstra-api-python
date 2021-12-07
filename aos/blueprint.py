@@ -7,7 +7,7 @@ import json
 import logging
 from collections import namedtuple
 from dataclasses import dataclass
-from typing import Optional, List, Generator
+from typing import Dict, Optional, List, Generator
 import requests
 from requests.utils import requote_uri
 from .aos import AosSubsystem, AosAPIError, AosInputError, AosAPIResourceNotFound
@@ -494,6 +494,23 @@ class AosBlueprint(AosSubsystem):
         }
         self.rest.put(commit_path, data=payload)
 
+    def get_diff_status(self, bp_id: str) -> Dict:
+        """
+        Retrieve full diff status; useful for determining staging and deployed
+        blueprint versions
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (dict) - Diff status
+        """
+
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/diff-status")
+
     # tasks
     def get_tasks(self, bp_id: str, params: dict = None) -> list:
         return self.rest.json_resp_get(
@@ -788,6 +805,33 @@ class AosBlueprint(AosSubsystem):
 
         return self.get_bp_nodes(bp_id, "system")
 
+    def set_bp_node_label(
+        self, bp_id: str, node_id: str, label: str, hostname: str = ""
+    ) -> None:
+        """
+        Sets a node's label (and optionally, its hostname)
+        Parameters
+        ----------
+        bp_id
+             (str) - ID of AOS Blueprint
+        node_id
+            (str) - ID of node within blueprint to update
+        label
+            (str) - Value for updating node label
+        hostname
+            (str) - Optional value to also update hostname
+
+        Returns
+        -------
+        """
+
+        data = {
+            "label": label,
+        }
+        if hostname:
+            data["hostname"] = hostname
+        self.rest.patch(f"/api/blueprints/{bp_id}/nodes/{node_id}", data=data)
+
     def get_deployed_devices(self, bp_id: str):
         """
         Return all AOS managed devices deployed in the given blueprint
@@ -897,6 +941,55 @@ class AosBlueprint(AosSubsystem):
         uri = f"/api/blueprints/{bp_id}/switch-system-links"
 
         self.rest.json_resp_post(uri, data=data)
+
+    def get_cabling_map(self, bp_id: str) -> Dict:
+        """
+        Retrieve a blueprint's existing cable map
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+
+        Returns
+        -------
+            (dict) - cable map information
+        """
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/cabling-map")
+
+    def update_cabling_map(self, bp_id: str, links: List[dict]):
+        """
+        Update the cabling map for a blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        links
+            (str) - list of dictionaries containing new mapping. Example:
+
+                [
+                    {
+                        "id": "<link id>",
+                        "endpoints": [
+                            {
+                                "interface": {
+                                    "if_name": "xe-0/0/0/"
+                                    "id": "<interface id>"
+                                }
+                            },
+                            {
+                        ],
+                    }
+                ]
+
+        Returns
+        -------
+        """
+        self.rest.patch(
+            f"/api/blueprints/{bp_id}/cabling-map?comment=cabling-map-update",
+            data={"links": links},
+        )
 
     def assign_devices_from_json(self, bp_id: str, node_assignment: list):
         """
@@ -1012,6 +1105,32 @@ class AosBlueprint(AosSubsystem):
         ]
         self.rest.patch(f"/api/blueprints/{bp_id}/nodes", data=data)
 
+    def get_rendered_config(
+        self, bp_id: str, node_id: str, config_type: str = "deployed"
+    ) -> Dict:
+        """
+        Retrieve the rendered configuration from a blueprint for a given node
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        node_id
+            (str) - ID of node within AOS blueprint for which to retrieve
+                    rendered configuration
+        config_type
+            (str) - type of configuration to retrieve. Options are
+                    "deployed" (default), "staging", "operation"
+
+        Returns
+        -------
+            (dict) - dictionary containing the rendered config as a key value
+        """
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/nodes/{node_id}/"
+            f"config-rendering?type={config_type}"
+        )
+
     # Interface maps
     def assign_interface_maps_raw(self, bp_id: str, assignments: dict):
         """
@@ -1021,7 +1140,7 @@ class AosBlueprint(AosSubsystem):
         bp_id
             (str) ID of blueprint
         assignments
-            (dict) mapping of blueprint system nodes and global interface
+            (dict) mapping of blueprint system node IDs and global interface
             maps.
             {
               "assignments": {'bp-node-id': 'Cumulus_VX__AOS-7x10-Spine',
@@ -1104,12 +1223,50 @@ class AosBlueprint(AosSubsystem):
         p_path = f"/api/blueprints/{bp_id}/endpoint-policies/{policy_id}"
         return self.rest.json_resp_get(p_path)
 
+    def get_endpoint_policies(self, bp_id: str, ptype: str = "staging") -> Dict:
+        """
+        Retrieve existing endpoint policies for a given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        ptype
+            (str) - (optional) type parameter, defaults to "staging"
+
+        Returns
+        -------
+            (dict) - endpoint policies
+        """
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/experience/web/endpoint-policies?type={ptype}"
+        )
+
     def get_endpoint_policy_app_points(
         self, bp_id: str, policy_id: str = None
     ) -> dict:
         p_path = f"/api/blueprints/{bp_id}/obj-policy-application-points"
         params = {"policy": policy_id}
         return self.rest.json_resp_get(p_path, params=params)
+
+    def get_routing_policies(self, bp_id: str, bp_type="staging") -> Dict:
+        """
+        Retrieve existing routing policies for a given blueprint
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS blueprint
+        bp_type
+            (str) - (optional) type parameter, defaults to "staging"
+
+        Returns
+        -------
+            (dict) - routing policies
+        """
+        return self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/routing-policies?type={bp_type}"
+        )
 
     # External Routers
     def get_external_routers_all(self, bp_id: str):

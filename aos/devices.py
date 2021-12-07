@@ -199,6 +199,9 @@ class AosSystemAgents(AosSubsystem):
     Management of system-agent for AOS controlled devices
     """
 
+    def create_system_agent(self, data) -> bool:
+        return self.rest.json_resp_post("/api/system-agents", data=data)
+
     def get_all(self) -> List[SystemAgent]:
         return list(self.iter_all())
 

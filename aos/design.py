@@ -4,7 +4,7 @@
 # LICENSE file at http://www.apstra.com/eula
 import logging
 from dataclasses import dataclass
-from typing import Optional, List, Generator
+from typing import Optional, List, Generator, Dict
 
 from .aos import AosSubsystem, AosAPIError
 from aos.repeat import repeat_until
@@ -87,7 +87,7 @@ class AosLogicalDevices(AosSubsystem):
 
     def add_logical_device(self, ld_list: list):
         """
-        Add one or more vni pools to AOS
+        Add one or more logical devices to AOS
 
         Parameters
         ----------
@@ -192,6 +192,7 @@ class RackType(Design):
     leafs: list
     logical_devices: list
     access_switches: list
+    generic_systems: list
     servers: list
 
     @classmethod
@@ -205,11 +206,36 @@ class RackType(Design):
             leafs=d.get("leafs"),
             logical_devices=d.get("logical_devices"),
             access_switches=d.get("access_switches"),
+            generic_systems=d.get("generic_systems"),
             servers=d.get("servers"),
         )
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "display_name": self.display_name,
+            "description": self.description,
+            "leafs": self.leafs,
+            "logical_devices": self.logical_devices,
+            "access_switches": self.access_switches,
+            "generic_systems": self.generic_systems,
+            "servers": self.servers,
+        }
+
 
 class AosRackType(AosSubsystem):
+    def get_all(self) -> Dict:
+        """
+        Return all rack types configured from AOS
+
+        Returns
+        -------
+            (dict) json response
+        """
+        t_path = "/api/design/rack-types"
+        resp = self.rest.json_resp_get(t_path)
+        return resp["items"]
+
     def create(self, rack_type: dict) -> RackType:
         rt_data = {
             "display_name": rack_type["display_name"],
@@ -218,7 +244,11 @@ class AosRackType(AosSubsystem):
             "leafs": rack_type["leafs"],
             "logical_devices": rack_type["logical_devices"],
             "access_switches": rack_type["access_switches"],
-            "servers": rack_type["servers"],
+            # New in 4.4.0
+            "generic_systems": rack_type.get("generic_systems"),
+            "fabric_connectivity_design": rack_type.get(
+                "fabric_connectivity_design"
+            ),
         }
 
         created = self.rest.json_resp_post("/api/design/rack-types", data=rt_data)

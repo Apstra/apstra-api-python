@@ -1,0 +1,23 @@
+{
+    "items": [
+      {
+        "export_policy": {
+          "spine_leaf_links": true,
+          "loopbacks": true,
+          "l2edge_subnets": true,
+          "static_routes": false,
+          "l3edge_server_links": true
+        },
+        "description": "Associated with routing zones by default, cannot be updated or deleted.",
+        "expect_default_ipv4_route": true,
+        "extra_export_routes": [],
+        "aggregate_prefixes": [],
+        "label": "Default_immutable",
+        "policy_type": "default_immutable",
+        "expect_default_ipv6_route": true,
+        "extra_import_routes": [],
+        "id": "d1406cf5-582b-475b-92a0-058180c495ff",
+        "import_policy": "default_only"
+      }
+    ]
+}

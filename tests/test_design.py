@@ -77,6 +77,7 @@ def test_rack_type_iter_all(
             leafs=mock.ANY,
             logical_devices=mock.ANY,
             access_switches=mock.ANY,
+            generic_systems=mock.ANY,
             servers=mock.ANY,
         ),
         RackType(
@@ -86,6 +87,7 @@ def test_rack_type_iter_all(
             leafs=mock.ANY,
             logical_devices=mock.ANY,
             access_switches=mock.ANY,
+            generic_systems=mock.ANY,
             servers=mock.ANY,
         ),
     ]
@@ -119,6 +121,7 @@ def test_find_rack_type_by_name(
             leafs=mock.ANY,
             logical_devices=mock.ANY,
             access_switches=mock.ANY,
+            generic_systems=mock.ANY,
             servers=mock.ANY,
         ),
     ]
@@ -154,6 +157,11 @@ def test_rack_type_create(
 
     created = aos_logged_in.design.rack_types.create(rt)
 
+    if aos_api_version.startswith("4"):
+        gs = rt["generic_systems"]
+    else:
+        gs = None
+
     assert created == RackType(
         id="evpn-single",
         display_name="evpn-single",
@@ -161,6 +169,7 @@ def test_rack_type_create(
         leafs=rt["leafs"],
         logical_devices=rt["logical_devices"],
         access_switches=rt["access_switches"],
+        generic_systems=gs,
         servers=rt["servers"],
     )
 

@@ -143,8 +143,7 @@ def test_asn_pool_create(
     )
 
     created = aos_logged_in.resources.asn_pools.create(
-        "test",
-        [Range(1000, 2000), Range(5000, 6000)]
+        "test", [Range(1000, 2000), Range(5000, 6000)]
     )
 
     assert created == AsnPool(
@@ -169,13 +168,15 @@ def test_vni_pool_iter_all(
 
     assert list(aos_logged_in.resources.vni_pools.iter_all()) == [
         VniPool(
-            display_name='Default-10000-20000',
-            id='Default-10000-20000',
-            ranges=[Range(first=10000, last=20000)]),
+            display_name="Default-10000-20000",
+            id="Default-10000-20000",
+            ranges=[Range(first=10000, last=20000)],
+        ),
         VniPool(
-            display_name='evpn-vni',
-            id='evpn-vni',
-            ranges=[Range(first=5000, last=5500)])
+            display_name="evpn-vni",
+            id="evpn-vni",
+            ranges=[Range(first=5000, last=5500)],
+        ),
     ]
 
     aos_session.request.assert_called_once_with(
@@ -201,9 +202,10 @@ def test_find_vni_pool_by_name(
 
     assert aos_logged_in.resources.vni_pools.find_by_name("evpn-vni") == [
         VniPool(
-            display_name='evpn-vni',
+            display_name="evpn-vni",
             id="evpn-vni",
-            ranges=[Range(first=5000, last=5500)])
+            ranges=[Range(first=5000, last=5500)],
+        )
     ]
 
     aos_session.request.assert_called_once_with(
@@ -234,8 +236,7 @@ def test_vni_pool_create(
     )
 
     created = aos_logged_in.resources.vni_pools.create(
-        "test-pool",
-        [Range(10000, 20000)]
+        "test-pool", [Range(10000, 20000)]
     )
 
     assert created == VniPool(
@@ -260,17 +261,20 @@ def test_ipv4_pool_iter_all(
 
     assert list(aos_logged_in.resources.ipv4_pools.iter_all()) == [
         IPPool(
-            display_name='spine-leaf',
-            id='adb5641b-3182-4092-bcc4-85c49befe122',
-            subnets=[PoolSubnet(network='10.10.0.0/22')]),
+            display_name="spine-leaf",
+            id="adb5641b-3182-4092-bcc4-85c49befe122",
+            subnets=[PoolSubnet(network="10.10.0.0/22")],
+        ),
         IPPool(
-            display_name='virtual-networks',
-            id='e772e121-594c-48dc-a801-5a17f643c237',
-            subnets=[PoolSubnet(network='10.30.40.0/21')]),
+            display_name="virtual-networks",
+            id="e772e121-594c-48dc-a801-5a17f643c237",
+            subnets=[PoolSubnet(network="10.30.40.0/21")],
+        ),
         IPPool(
-            display_name='leaf-loopback',
-            id='2f278c1b-78bd-4b6f-8aef-052e984a9fa7',
-            subnets=[PoolSubnet(network='10.20.30.0/24')]),
+            display_name="leaf-loopback",
+            id="2f278c1b-78bd-4b6f-8aef-052e984a9fa7",
+            subnets=[PoolSubnet(network="10.20.30.0/24")],
+        ),
     ]
 
     aos_session.request.assert_called_once_with(
@@ -296,9 +300,10 @@ def test_find_ipv4_pool_by_name(
 
     assert aos_logged_in.resources.ipv4_pools.find_by_name("spine-leaf") == [
         IPPool(
-            display_name='spine-leaf',
-            id='adb5641b-3182-4092-bcc4-85c49befe122',
-            subnets=[PoolSubnet(network='10.10.0.0/22')])
+            display_name="spine-leaf",
+            id="adb5641b-3182-4092-bcc4-85c49befe122",
+            subnets=[PoolSubnet(network="10.10.0.0/22")],
+        )
     ]
 
     aos_session.request.assert_called_once_with(
@@ -329,14 +334,14 @@ def test_ipv4_pool_create(
     )
 
     created = aos_logged_in.resources.ipv4_pools.create(
-        "spine-leaf",
-        ["10.10.0.0/22"]
+        "spine-leaf", ["10.10.0.0/22"]
     )
 
     assert created == IPPool(
-        display_name='spine-leaf',
+        display_name="spine-leaf",
         id=pool_id,
-        subnets=[PoolSubnet(network='10.10.0.0/22')])
+        subnets=[PoolSubnet(network="10.10.0.0/22")],
+    )
 
 
 # IPv6 Pools
@@ -354,13 +359,15 @@ def test_ipv6_pool_iter_all(
 
     assert list(aos_logged_in.resources.ipv6_pools.iter_all()) == [
         IPPool(
-            display_name='Private-fc01:a05:fab::/48',
-            id='Private-fc01-a05-fab-48',
-            subnets=[PoolSubnet(network='fc01:a05:fab::/48')]),
+            display_name="Private-fc01:a05:fab::/48",
+            id="Private-fc01-a05-fab-48",
+            subnets=[PoolSubnet(network="fc01:a05:fab::/48")],
+        ),
         IPPool(
-            display_name='evpn-ipv6-pool',
-            id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
-            subnets=[PoolSubnet(network='fc01:a11:abc::/48')]),
+            display_name="evpn-ipv6-pool",
+            id="580d287c-b0c6-49a8-89b6-fce94f69dfc1",
+            subnets=[PoolSubnet(network="fc01:a11:abc::/48")],
+        ),
     ]
 
     aos_session.request.assert_called_once_with(
@@ -386,9 +393,10 @@ def test_find_ipv6_pool_by_name(
 
     assert aos_logged_in.resources.ipv6_pools.find_by_name("evpn-ipv6-pool") == [
         IPPool(
-            display_name='evpn-ipv6-pool',
-            id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
-            subnets=[PoolSubnet(network='fc01:a11:abc::/48')])
+            display_name="evpn-ipv6-pool",
+            id="580d287c-b0c6-49a8-89b6-fce94f69dfc1",
+            subnets=[PoolSubnet(network="fc01:a11:abc::/48")],
+        )
     ]
 
     aos_session.request.assert_called_once_with(
@@ -419,11 +427,11 @@ def test_ipv6_pool_create(
     )
 
     created = aos_logged_in.resources.ipv6_pools.create(
-        "evpn-ipv6-pool",
-        ["fc01:a11:abc::/48"]
+        "evpn-ipv6-pool", ["fc01:a11:abc::/48"]
     )
 
     assert created == IPPool(
-        display_name='evpn-ipv6-pool',
-        id='580d287c-b0c6-49a8-89b6-fce94f69dfc1',
-        subnets=[PoolSubnet(network='fc01:a11:abc::/48')])
+        display_name="evpn-ipv6-pool",
+        id="580d287c-b0c6-49a8-89b6-fce94f69dfc1",
+        subnets=[PoolSubnet(network="fc01:a11:abc::/48")],
+    )

@@ -69,15 +69,17 @@ def test_external_router_iter_all(
 
     assert list(aos_logged_in.external_systems.external_router.iter_all()) == [
         ExternalRouter(
-            display_name='example_router1',
-            id='example_router1',
+            display_name="example_router1",
+            id="example_router1",
             asn=65534,
-            address='198.51.100.1'),
+            address="198.51.100.1",
+        ),
         ExternalRouter(
-            display_name='dualstack_example_router2',
-            id='dualstack_example_router2',
+            display_name="dualstack_example_router2",
+            id="dualstack_example_router2",
             asn=65533,
-            address='198.51.100.2')
+            address="198.51.100.2",
+        ),
     ]
 
     aos_session.request.assert_called_once_with(
@@ -102,12 +104,14 @@ def test_find_external_router_by_name(
     )
 
     assert aos_logged_in.external_systems.external_router.find_by_name(
-        "example_router1") == [
+        "example_router1"
+    ) == [
         ExternalRouter(
-            display_name='example_router1',
-            id='example_router1',
+            display_name="example_router1",
+            id="example_router1",
             asn=65534,
-            address='198.51.100.1'),
+            address="198.51.100.1",
+        ),
     ]
 
     aos_session.request.assert_called_once_with(
@@ -138,13 +142,12 @@ def test_external_router_create(
     )
 
     created = aos_logged_in.external_systems.external_router.create(
-        name="example_router1",
-        address="198.51.100.1",
-        asn=65534
+        name="example_router1", address="198.51.100.1", asn=65534
     )
 
     assert created == ExternalRouter(
-            display_name='example_router1',
-            id='example_router1',
-            asn=65534,
-            address='198.51.100.1')
+        display_name="example_router1",
+        id="example_router1",
+        asn=65534,
+        address="198.51.100.1",
+    )
