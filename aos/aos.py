@@ -122,6 +122,8 @@ class AosRestAPI:
         try:
             if method == "GET" and resp.status_code == 404:
                 return None
+            if method == "PUT" and resp.status_code == 204:
+                return None
             if resp.ok:
                 return resp.json()
         except (TypeError, ValueError) as e:
