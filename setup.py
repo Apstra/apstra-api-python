@@ -9,7 +9,8 @@ from setuptools import setup, find_packages
 
 NAME = "aos-api-client"
 
-VERSION = '0.1.9'
+from aos._version import __version__
+VERSION = __version__
 
 
 REQUIRES = (["requests==2.24.0"],)
