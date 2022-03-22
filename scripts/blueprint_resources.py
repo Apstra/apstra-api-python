@@ -39,14 +39,18 @@ aos.blueprint.apply_resource_groups(
 )
 
 
-# Assign All Avialable Resources in Blueprint
-# Not all resources are available in a Blueprint from the begging
+# Assign All Available Resources in Blueprint
+# Not all resources are available in a Blueprint after creation.
 # As you add elements (VNs, routing-zones, etc) additional resources
-# will be required.
+# will be added and require assignment.
+#
 # This code sample looks up all resources available in a Blueprint,
-# and assigns the given pools configured in the file.
+# and assigns the given pools configured in the file "bp_resources.json".
 # Running this multiple times through out your blueprint build
-# will ensure all resources get assigned as they come available.
+# will ensure all resources get assigned as they become available and
+# saving you the steps of having to know when to assign resources
+# throughout the build.
+
 assignments = deserialize_fixture("bp_resources.json")
 resources = aos.blueprint.get_all_bp_resource_groups(bp.id)
 

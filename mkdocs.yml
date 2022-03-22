@@ -1,0 +1,22 @@
+site_name: aos-api-python
+site_dir: aos-api-python/project-static/docs
+site_url: https://aos-api-python.readthedocs.io/
+repo_name: aos-api-python
+repo_url: https://github.com/apstra/aos-api-python
+theme:
+  name: 'material'
+  icon:
+    repo: fontawesome/brands/github
+plugins:
+  - search
+  - mkdocstrings
+nav:
+  - Home: 'index.md'
+  - Getting Started: 'getstarted.md'
+  - Solutions and Examples: 'examples.md'
+  - Code Reference:
+      - AOS: aos-reference.md
+      - Blueprint: blueprint-reference.md
+      - Client: client-reference.md
+      - Design: design-reference.md
+      - Devices: devices-reference.md
