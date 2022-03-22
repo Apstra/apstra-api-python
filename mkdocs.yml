@@ -1,19 +1,37 @@
 site_name: aos-api-python
 site_dir: aos-api-python/project-static/docs
 site_url: https://aos-api-python.readthedocs.io/
-repo_name: aos-api-python
+repo_name: apstra/aos-api-python
 repo_url: https://github.com/apstra/aos-api-python
+edit_uri: ""
 theme:
   name: 'material'
   icon:
-    repo: fontawesome/brands/github
+    repo: fontawesome/brands/github-square
 plugins:
   - search
   - mkdocstrings
 nav:
   - Home: 'index.md'
   - Getting Started: 'getstarted.md'
-  - Solutions and Examples: 'examples.md'
+  - Solutions and Examples:
+      - Login to Apstra: 'example-scripts/apstra_login.md'
+      - Managed Devices: 'example-scripts/managed_devices.md'
+      - Resources: 'example-scripts/resource_pools.md'
+      - Design:
+        - Rack Types: 'example-scripts/design/rack_types.md'
+        - Templates: 'example-scripts/design/templates.md'
+      - Blueprint:
+        - Create: 'example-scripts/blueprint/create.md'
+        - Graph Queries: 'example-scripts/blueprint/graph_queries.md'
+        - Assign Interface Maps: 'example-scripts/blueprint/assign_interface_maps.md'
+        - Assign Devices: 'example-scripts/blueprint/assign_devices.md'
+        - Assign Resources: 'example-scripts/blueprint/resources.md'
+        - Virtual Networks: 'example-scripts/blueprint/virtual_network.md'
+        - Routing Zone: 'example-scripts/blueprint/routing_zone.md'
+        - Connectivity Template: 'example-scripts/blueprint/connectivity_template.md'
+        - External Generic System: 'example-scripts/blueprint/external_generic_system.md'
+        - Commit Changes: 'example-scripts/blueprint/commit.md'
   - Code Reference:
       - AOS: aos-reference.md
       - Blueprint: blueprint-reference.md

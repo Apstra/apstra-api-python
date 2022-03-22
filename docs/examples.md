@@ -12,35 +12,35 @@ possible API endpoints and elements needed to build the solution.
 > following code samples and solutions scripts.
 
 ## Login to Apstra
-[Apstra Login](/scripts/apstra_login.py)
+[Apstra Login](/scripts/apstra_login.md)
 
 ## Managed Devices
-[Managed Devices](/scripts/managed_devices.py)
+[Managed Devices](/scripts/managed_devices.md)
 
 ## Resources
-[Resource Pools](/scripts/resource_pools.py)
+[Resource Pools](/scripts/resource_pools.md)
 
 ## Design
-[Rack Types](/scripts/rack_types.py)
-[Templates](/scripts/templates.py)
+[Rack Types](/scripts/design/rack_types.md)
+[Templates](/scripts/design/templates.md)
 
 ## Blueprints
-[Blueprint Create](/scripts/blueprint_create.py)
+[Blueprint Create](/scripts/blueprint/create.md)
 
-[Graph Queries](/scripts/blueprint_graph_queries.py)
+[Graph Queries](/scripts/blueprint/graph_queries.md)
 
-[Assign Interface Maps](/scripts/blueprint_assing_interface_maps.py)
+[Assign Interface Maps](/scripts/blueprint/assign_interface_maps.md)
 
-[Assign Devices](/scripts/blueprint_assing_devices.py)
+[Assign Devices](/scripts/blueprint/assign_devices.md)
 
-[Assign Resources](/scripts/blueprint_resources.py)
+[Assign Resources](/scripts/blueprint/resources.md)
 
-[Virtual Networks](/scripts/blueprint_virtual_network.py)
+[Virtual Networks](/scripts/blueprint/virtual_network.md)
 
-[Routing Zone](/scripts/blueprint_routing_zone.py)
+[Routing Zone](/scripts/blueprint/routing_zone.md)
 
-[Connectivity Templates](/scripts/blueprint_connectivity_template.py)
+[Connectivity Templates](/scripts/blueprint/connectivity_template.md)
 
-[External Generic System](/scripts/blueprint_external_generic_system.py)
+[External Generic System](/scripts/blueprint/external_generic_system.md)
 
-[Commit Changes](/scripts/blueprint_commit.py)
+[Commit Changes](/scripts/blueprint/commit.md)
