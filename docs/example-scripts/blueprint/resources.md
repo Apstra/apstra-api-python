@@ -1,56 +1,60 @@
-# Copyright 2020-present, Apstra, Inc. All rights reserved.
-#
-# This source code is licensed under End User License Agreement found in the
-# LICENSE file at http://www.apstra.com/eula
+# Assign Resources
+## Imports
+```python
 from aos.client import AosClient
 from scripts.utils import deserialize_fixture
 import urllib3
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+```
 
-
-# You will need to update the connection details below with your
-# specific AOS instance
+You will need to update the connection details below with your
+specific AOS instance
+```python
 AOS_IP = "<aos-IP>"
 AOS_PORT = 443
 AOS_USER = "admin"
 AOS_PW = "aos-aos"
+```
 
-# Login
+## Login
+```python
 aos = AosClient(protocol="https", host=AOS_IP, port=AOS_PORT)
 aos.auth.login(AOS_USER, AOS_PW)
+```
 
-
-# Find Blueprint by Name
+## Find Blueprint by Name
+```python
 bp_name = "apstra-pod1"
 bp = aos.blueprint.get_id_by_name(label=bp_name)
+```
 
-
-# Find Resource pool IDs
+## Find Resource pool IDs
+```python
 spine_asn_pool = aos.resources.asn_pools.find_by_name("asn-pool").pop()
+```
 
-
-# Assign resource pools to Blueprint
+## Assign resource pools to Blueprint
+```python
 aos.blueprint.apply_resource_groups(
     bp_id=bp.id,
     resource_type="asn",
     group_name="spine-asns",
     pool_ids=[spine_asn_pool.id],
 )
+```
 
+## Assign All Available Resources in Blueprint
+Not all resources are available in a Blueprint after creation.
+As you add elements (VNs, routing-zones, etc) additional resources
+will be added and require assignment.
 
-# Assign All Available Resources in Blueprint
-# Not all resources are available in a Blueprint after creation.
-# As you add elements (VNs, routing-zones, etc) additional resources
-# will be added and require assignment.
-#
-# This code sample looks up all resources available in a Blueprint,
-# and assigns the given pools configured in the file "bp_resources.json".
-# Running this multiple times through out your blueprint build
-# will ensure all resources get assigned as they become available and
-# saving you the steps of having to know when to assign resources
-# throughout the build.
-
+This code sample looks up all resources available in a Blueprint,
+and assigns the given pools configured in the file "bp_resources.json".
+Running this multiple times through out your blueprint build
+will ensure all resources get assigned as they become available and
+saving you the steps of having to know when to assign resources
+throughout the build.
+```python
 assignments = deserialize_fixture("bp_resources.json")
 resources = aos.blueprint.get_all_bp_resource_groups(bp.id)
 
@@ -90,3 +94,4 @@ for r in resources:
                         group_name=r.name,
                         pool_ids=[pool.id],
                     )
+```

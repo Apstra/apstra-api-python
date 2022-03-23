@@ -23,9 +23,6 @@ Documentation is currently found in [/docs](./docs/_build/html).
 Standalone scripts along with a number of end-to-end examples can be
 found in [/scripts](./scripts). Make sure to check out the [Readme](./scripts/README.md)
 
-### Generating documentation:
-Docs Readme located in docs/
-
 
 ## Testing
 ### Setup Development Environment
