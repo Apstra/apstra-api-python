@@ -1,4 +1,4 @@
-# AOS RestAPI Python Library
+# Apstra (AOS) RestAPI Python Library
 
 Python library used to programmatically interact with AOS and integrate the AOS 
 RestAPI.
@@ -27,10 +27,10 @@ found in [/scripts](./scripts). Make sure to check out the [Readme](./scripts/RE
 ## Testing
 ### Setup Development Environment
 
-Create a virtual environment and install aos-api:
+Create a virtual environment and install aos-api-python:
 
 ```
-$ cd aos-api
+$ cd apstra-api-python
 $ python3.8 -m venv .venv
 $ source .venv/bin/activate
 $ python setup.py install

@@ -1,22 +1,22 @@
-# Welcome to aos-api-python's documentation!
+# Welcome to apstra-api-python's documentation!
 
-## What is aos-api-python?
-The aos-api-python library is an example python library built for
+## What is apstra-api-python?
+The apstra-api-python library is an example python library built for
 learning how to integrate with the Apsta API programmatically. This
 library also includes examples to common solutions faced when building and
 managing an Apstra managed fabric.
 
-## What aos-api-python is not
-While the aos-api-python library can be used to build integrations with
+## What apstra-api-python is not
+While the apstra-api-python library can be used to build integrations with
 Apstra, it is not intended to be a production-ready solution.
-aos-api-python does not include 100% coverage of the Apstra API and all
+apstra-api-python does not include 100% coverage of the Apstra API and all
 use-cases available.
 
 Our hope is to provide enough working examples and documentation to get a
 developer started with building client libraries based on the Apstra API.
 
 ## Organization and Structure
-The aos-api-python library is structured and organized in the same manor
+The apstra-api-python library is structured and organized in the same manor
 as the Apstra User-Interface (UI). This is done to allow easy and
 intuitive navigation of the library code in relation to the UI. You will
 notice sub-modules within the 'aos' module line up with the Apstra UI menu

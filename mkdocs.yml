@@ -1,8 +1,8 @@
-site_name: aos-api-python
-site_dir: aos-api-python/project-static/docs
-site_url: https://aos-api-python.readthedocs.io/
-repo_name: apstra/aos-api-python
-repo_url: https://github.com/apstra/aos-api-python
+site_name: apstra-api-python
+site_dir: apstra-api-python/project-static/docs
+site_url: https://apstra-api-python.readthedocs.io/
+repo_name: apstra/apstra-api-python
+repo_url: https://github.com/apstra/apstra-api-python
 edit_uri: ""
 theme:
   name: 'material'
