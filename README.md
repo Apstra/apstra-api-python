@@ -1,29 +1,15 @@
 # Apstra (AOS) RestAPI Python Library
 
-Python library used to programmatically interact with AOS and integrate the AOS 
-RestAPI.
+Educational Python library with the goal to teach users how to 
+programmatically interact with apstra and integrate the Apstra 
+Rest API.
 
-## Getting started
-```
->>> from aos.client import AosClient
->>> 
->>> AOS_IP = '192.168.100.1'
->>> AOS_PORT = '443'
->>> AOS_USER = 'admin'
->>> AOS_PW = 'admin'
->>> 
->>> aos = AosClient(protocol="https", host=AOS_IP, port=AOS_PORT)
->>> aos.auth.login(AOS_USER, AOS_PW)
-
-```
 ## Documentation
-Documentation is currently found in [/docs](./docs/_build/html). 
+If you are new to Apstra, this library or looking to get a better understanding of 
+the apstra Rest API please start with the 
+[documentation](https://apstra-api-python.readthedocs.io/en/latest/api-introduction/).
 
-### Scripts and Examples
-Standalone scripts along with a number of end-to-end examples can be
-found in [/scripts](./scripts). Make sure to check out the [Readme](./scripts/README.md)
-
-
+# Developers
 ## Testing
 ### Setup Development Environment
 
@@ -33,7 +19,6 @@ Create a virtual environment and install aos-api-python:
 $ cd apstra-api-python
 $ python3.8 -m venv .venv
 $ source .venv/bin/activate
-$ python setup.py install
 $ pip install -r dev-requirements.txt
 ```
 
@@ -41,13 +26,11 @@ $ pip install -r dev-requirements.txt
 - Run full test suite
 ```
 $ tox
-``` 
-
+```
  - Run unit tests:
 ```
 $ tox -e py38
 ```
-
  - Run linters:
 ```
 $ tox -e flake8
