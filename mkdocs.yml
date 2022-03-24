@@ -17,9 +17,11 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - def_list
 nav:
   - Home: 'index.md'
   - Getting Started: 'getstarted.md'
+  - API Introduction: 'api-introduction.md'
   - Solutions and Examples:
       - Login to Apstra: 'example-scripts/apstra_login.md'
       - Managed Devices: 'example-scripts/managed_devices.md'
@@ -37,7 +39,9 @@ nav:
         - Routing Zone: 'example-scripts/blueprint/routing_zone.md'
         - Connectivity Template: 'example-scripts/blueprint/connectivity_template.md'
         - External Generic System: 'example-scripts/blueprint/external_generic_system.md'
+        - Anomalies: 'example-scripts/blueprint/anomalies.md'
         - Commit Changes: 'example-scripts/blueprint/commit.md'
+        - Mac and ARP Lookups: 'example-scripts/blueprint/mac_arp_lookup.md'
   - Code Reference:
       - AOS: aos-reference.md
       - Blueprint: blueprint-reference.md
