@@ -1,11 +1,6 @@
 # Mac address and ARP Queries
 A common scenario for Network Engineers is to find the location details of 
-a specific MAC address or a known IP address. 
-
-  > This library has the ability to pass in api endpoints directly for 
-  > features that have not been implemented yet. We will use this method
-  > here to highlight its use and flexability so you can explore other 
-  > endpoints on your own.
+a specific MAC address or a known IP address.
 
 ## Imports
 ```python
@@ -34,6 +29,11 @@ aos.auth.login(AOS_USER, AOS_PW)
 bp_name = "apstra-pod1"
 bp = aos.blueprint.get_id_by_name(label=bp_name)
 ```
+
+  > This library has the ability to pass in api endpoints directly for 
+  > features that have not been implemented yet. We will use this method
+  > here to highlight its use and flexability so you can explore other 
+  > endpoints on your own.
 
 ## Find all devices and location details
 ```python
