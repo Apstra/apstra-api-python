@@ -70,4 +70,4 @@ Graph Explorer provides a live document of the Blueprint Graph model. It
 is also a good way to visually explore and get familar with graph queries. 
 
 Graph Querys including examples are covered in the Solutions and Examples 
-section under Blueprints [here](/example-scripts/blueprint/graph_queries.md)
+section under Blueprints [here](/example-scripts/blueprint/graph_queries/)
