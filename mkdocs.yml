@@ -17,9 +17,13 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 nav:
   - Home: 'index.md'
   - Getting Started: 'getstarted.md'
+  - API Introduction: 'api-introduction.md'
   - Solutions and Examples:
       - Login to Apstra: 'example-scripts/apstra_login.md'
       - Managed Devices: 'example-scripts/managed_devices.md'
