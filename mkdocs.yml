@@ -31,17 +31,17 @@ nav:
         - Templates: 'example-scripts/design/templates.md'
       - Blueprint:
         - Create: 'example-scripts/blueprint/create.md'
-        - Graph Queries: 'example-scripts/blueprint/graph_queries.md'
         - Assign Interface Maps: 'example-scripts/blueprint/assign_interface_maps.md'
         - Assign Devices: 'example-scripts/blueprint/assign_devices.md'
         - Assign Resources: 'example-scripts/blueprint/resources.md'
         - Virtual Networks: 'example-scripts/blueprint/virtual_network.md'
         - Routing Zone: 'example-scripts/blueprint/routing_zone.md'
-        - Connectivity Template: 'example-scripts/blueprint/connectivity_template.md'
         - External Generic System: 'example-scripts/blueprint/external_generic_system.md'
+        - Connectivity Template: 'example-scripts/blueprint/connectivity_template.md'
         - Anomalies: 'example-scripts/blueprint/anomalies.md'
         - Commit Changes: 'example-scripts/blueprint/commit.md'
         - Mac and ARP Lookups: 'example-scripts/blueprint/mac_arp_lookup.md'
+        - Graph Queries: 'example-scripts/blueprint/graph_queries.md'
   - Code Reference:
       - AOS: aos-reference.md
       - Blueprint: blueprint-reference.md
