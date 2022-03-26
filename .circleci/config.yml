@@ -1,0 +1,26 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.5.0
+
+jobs:
+  run-tox-testing:
+    docker:
+      - image: cimg/python:3.8
+    resource_class: small
+    steps:
+      - checkout
+      - run:
+          name: install tox
+          command: pip install tox
+      - run:
+          name: run tox
+          command: tox
+      - store_artifacts:
+          path: ./log
+          destination: logs-file
+
+workflows:
+  test-and-build:
+    jobs:
+      - run-tox-testing
