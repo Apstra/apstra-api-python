@@ -5,6 +5,7 @@
 from enum import Enum
 import json
 import logging
+import time
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import Dict, Optional, List, Generator
@@ -1686,6 +1687,8 @@ class AosBlueprint(AosSubsystem):
         sz = self.create_security_zone_from_json(bp_id, sec_zone)
         logger.info(f"Creating Security-zone '{name}' in blueprint '{bp_id}'")
 
+        time.sleep(0.5)
+        
         repeat_until(
             lambda: self.get_security_zone(bp_id, sz["id"]) != NullSecurityZone,
             timeout=timeout,
