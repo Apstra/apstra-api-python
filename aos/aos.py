@@ -111,7 +111,7 @@ class AosRestAPI:
             raise AosAuthenticationError(
                 f"Authentication failed: {err_message(resp)}"
             )
-        elif resp.status_code >= 400:
+        elif resp.status_code >= 400 and resp.status_code != 404:
             raise AosAPIError(err_message(resp))
 
         return resp
