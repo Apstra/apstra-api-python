@@ -1,5 +1,4 @@
 # Apstra (AOS) RestAPI Python Library
-[![CircleCI](https://circleci.com/gh/Apstra/apstra-api-python/tree/main.svg?style=svg)](https://circleci.com/gh/Apstra/apstra-api-python/tree/main)
 
 Educational Python library with the goal to teach users how to 
 programmatically interact with apstra and integrate the Apstra 
