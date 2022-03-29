@@ -54,6 +54,14 @@ class CommitStatus(Enum):
     initializing = "initializing"
 
 
+class TaskStatus(Enum):
+    in_progress = "in_progress"
+    initializing = "init"
+    failed = "failed"
+    succeeded = "succeeded"
+    timeout = "timeout"
+
+
 class VNType(Enum):
     vlan = "vlan"
     vxlan = "vxlan"
@@ -523,8 +531,32 @@ class AosBlueprint(AosSubsystem):
         )
 
     def get_active_tasks(self, bp_id: str) -> list:
-        params = {"filter": "status in ['in_progress', 'init']"}
-        return self.get_tasks(bp_id, params=params)
+        resp = self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/tasks",
+            params={"filter": "status in ['init', 'in_progress']"},
+        )
+        if resp:
+            return resp["items"]
+        return []
+
+    def has_active_tasks(self, bp_id: str) -> bool:
+        if self.get_active_tasks(bp_id):
+            return True
+        return False
+
+    def is_task_active(self, bp_id: str, task_id: str) -> bool:
+        task = self.get_task_by_id(bp_id, task_id)
+        if task:
+            if task["status"] in [
+                TaskStatus.in_progress.value,
+                TaskStatus.initializing.value,
+            ]:
+                return True
+            else:
+                return False
+
+        else:
+            raise AosAPIResourceNotFound(f"Task {task} does not exist")
 
     # Graph Queries
     def qe_query(self, bp_id: str, query: str, params: dict = None):
@@ -1577,7 +1609,9 @@ class AosBlueprint(AosSubsystem):
             if sz.vrf_name == name:
                 return sz
 
-    def create_security_zone_from_json(self, bp_id: str, payload: dict):
+    def create_security_zone_from_json(
+        self, bp_id: str, payload: dict, params: dict = None
+    ):
         """
         Create a security-zone in the given blueprint using a
         preformatted json object.
@@ -1588,14 +1622,15 @@ class AosBlueprint(AosSubsystem):
             (str) - ID of AOS blueprint
         payload
             (str) - json object for payload
-
+        params
+            (dict) - supported endpoint paramaters. Most common is
+            {'async': 'full'} which returns created task ID for tracking
         Returns
         -------
             (obj) - security-zone ID
         """
         sz_path = f"/api/blueprints/{bp_id}/security-zones"
-
-        return self.rest.json_resp_post(uri=sz_path, data=payload)
+        return self.rest.json_resp_post(uri=sz_path, data=payload, params=params)
 
     def apply_security_zone_dhcp(self, bp_id: str, sz_id: str, dhcp_servers: dict):
 
@@ -1683,18 +1718,21 @@ class AosBlueprint(AosSubsystem):
             "vlan_id": vlan_id,
         }
 
-        sz = self.create_security_zone_from_json(bp_id, sec_zone)
+        sz_task = self.create_security_zone_from_json(
+            bp_id, sec_zone, params={"async": "full"}
+        )
         logger.info(f"Creating Security-zone '{name}' in blueprint '{bp_id}'")
 
         repeat_until(
-            lambda: self.get_security_zone(bp_id, sz["id"]) != NullSecurityZone,
+            lambda: self.is_task_active(bp_id, sz_task["task_id"]) is False,
             timeout=timeout,
         )
+        sz = self.find_sz_by_name(bp_id, name)
 
         # SZ leaf loopback pool
         if leaf_loopback_ip_pools:
             group_name = "leaf_loopback_ips"
-            group_path = requote_uri(f"sz:{sz['id']} {group_name}")
+            group_path = requote_uri(f"sz:{sz.id} {group_name}")
             self.apply_resource_groups(
                 bp_id=bp_id,
                 resource_type="ip",
@@ -1710,14 +1748,14 @@ class AosBlueprint(AosSubsystem):
         if dhcp_servers:
             dhcp = {"items": dhcp_servers}
             self.apply_security_zone_dhcp(
-                bp_id=bp_id, sz_id=sz["id"], dhcp_servers=dhcp
+                bp_id=bp_id, sz_id=sz.id, dhcp_servers=dhcp
             )
             logger.info(
                 f"Applying dhcp servers '{dhcp_servers}' to Security-zone "
                 f"'{name}' in blueprint '{bp_id}'"
             )
 
-        return self.get_security_zone(bp_id, sz["id"])
+        return self.get_security_zone(bp_id, sz.id)
 
     def update_security_zone(self, bp_id: str, sz_id: str, payload: str):
         """
