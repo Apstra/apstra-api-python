@@ -580,9 +580,12 @@ def test_create_security_zone(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     sz_fixture = f"aos/{aos_api_version}/blueprints/get_security_zone_id.json"
+    tasks_fixture = f"aos/{aos_api_version}/blueprints/get_bp_tasks_complete.json"
+    task_id_fixture = f"aos/{aos_api_version}/blueprints/get_bp_task_id.json"
     all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
     bp_id = "evpn-cvx-virtual"
     sz_name = "blue"
+    create_task_id = "d20a8a52-d311-4df7-a8ec-271d8e2325d1"
     sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
     resource_type = "ip"
     group_name = "leaf_loopback_ips"
@@ -593,7 +596,20 @@ def test_create_security_zone(
         "POST",
         f"http://aos:80/api/blueprints/{bp_id}/security-zones",
         status=200,
-        resp=json.dumps({"id": sz_id}),
+        params={"async": "full"},
+        resp=json.dumps({"task_id": create_task_id}),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/tasks",
+        status=200,
+        resp=read_fixture(tasks_fixture),
+    )
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/tasks/{create_task_id}",
+        status=200,
+        resp=read_fixture(task_id_fixture),
     )
     aos_session.add_response(
         "GET",
@@ -1331,7 +1347,7 @@ def test_get_active_tasks_none(
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/blueprints/{bp_id}/tasks",
-        params={"filter": "status in ['in_progress', 'init']"},
+        params={"filter": "status in ['init', 'in_progress']"},
         status=200,
         resp=json.dumps({"items": []}),
     )
@@ -1350,7 +1366,7 @@ def test_get_active_tasks(
     aos_session.add_response(
         "GET",
         f"http://aos:80/api/blueprints/{bp_id}/tasks",
-        params={"filter": "status in ['in_progress', 'init']"},
+        params={"filter": "status in ['init', 'in_progress']"},
         status=200,
         resp=read_fixture(
             f"aos/{aos_api_version}/blueprints/" f"get_bp_active_tasks.json"
