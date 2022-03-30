@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "status": "succeeded",
+      "begin_at": "2022-03-29T15:09:48.645359+0000",
+      "request_data": {
+        "url": "http://34.214.213.43:27809/api/blueprints?async=full",
+        "method": "POST"
+      },
+      "user_id": "d3b4c28b-3e57-4638-ae21-7eb217b437c6",
+      "last_updated_at": "2022-03-29T15:09:51.459999+0000",
+      "user_name": "admin",
+      "created_at": "2022-03-29T15:09:48.634456+0000",
+      "config_last_updated_at": "2022-03-29T15:09:48.634456+0000",
+      "user_ip": "74.195.108.29",
+      "type": "blueprint.create",
+      "id": "4e65bfc1-c249-435d-9a8f-3cb7f79949f7"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2022-03-29T15:14:34.407180+0000",
+      "request_data": {
+        "url": "http://34.214.213.43:27809/api/blueprints/1347ebbd-8576-4223-a24b-f3e5c65d1124/security-zones?async=full",
+        "method": "POST"
+      },
+      "user_id": "d3b4c28b-3e57-4638-ae21-7eb217b437c6",
+      "last_updated_at": "2022-03-29T15:14:34.725654+0000",
+      "user_name": "admin",
+      "created_at": "2022-03-29T15:14:34.401080+0000",
+      "config_last_updated_at": "2022-03-29T15:14:34.401080+0000",
+      "user_ip": "74.195.108.29",
+      "type": "blueprint.facade.POST./security-zones",
+      "id": "d20a8a52-d311-4df7-a8ec-271d8e2325d1"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2022-03-29T15:16:25.485219+0000",
+      "request_data": {
+        "url": "http://34.214.213.43:27809/api/blueprints/1347ebbd-8576-4223-a24b-f3e5c65d1124/security-zones/9f57f81e-0ab6-4d1c-bbbc-1fe4fe3c58cf?async=full",
+        "method": "DELETE"
+      },
+      "user_id": "d3b4c28b-3e57-4638-ae21-7eb217b437c6",
+      "last_updated_at": "2022-03-29T15:16:25.920313+0000",
+      "user_name": "admin",
+      "created_at": "2022-03-29T15:16:25.481576+0000",
+      "config_last_updated_at": "2022-03-29T15:16:25.481576+0000",
+      "user_ip": "74.195.108.29",
+      "type": "blueprint.facade.DELETE./security-zones/<security_zone_id>",
+      "id": "4d167bd3-06d5-490d-9f85-4c742b9196e1"
+    }
+  ]
+}
