@@ -603,7 +603,7 @@ class AosBlueprint(AosSubsystem):
         data = {"query": query}
         resp = self.rest.json_resp_post(uri=ql_path, data=data, params=params)
 
-        return resp["items"]
+        return resp["data"]
 
     # Resources
     def get_all_bp_resource_groups(

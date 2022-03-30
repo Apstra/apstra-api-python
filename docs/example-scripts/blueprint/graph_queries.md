@@ -96,4 +96,27 @@ resp = aos.blueprint.qe_query(bp.id, query=link_query)
 ```
 
 # QL Queries
-:(
+
+Query the blueprint for all system nodes and their current interface 
+details and connected links. 
+```python
+node_query = (
+                "{"
+                    "system_nodes {"
+                        "role," 
+                        "id," 
+                        "hostname,"
+                        "hosted_interfaces_targets {"
+                            "ipv4_addr,"
+                            "if_name,"
+                            "link_targets {"
+                                "link_type,"
+                                "id,"
+                                "speed,"
+                                "tags,"
+                            "}"
+                        "}"
+                    "}"
+                "}"
+)
+```
