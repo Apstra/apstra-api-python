@@ -62,7 +62,7 @@ class System:
             facts=d["facts"],
             services=d.get("services", []),
             status=d["status"],
-            user_config=d["user_config"],
+            user_config=d.get("user_config", {}),
         )
 
 
