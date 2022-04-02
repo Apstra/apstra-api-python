@@ -589,7 +589,7 @@ def test_create_security_zone(
     sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
     resource_type = "ip"
     group_name = "leaf_loopback_ips"
-    group_path = requote_uri(f"sz:{sz_id} {group_name}")
+    group_path = requote_uri(f"sz:{sz_id},{group_name}")
     pool_id = "leaf-loopback-pool-id"
 
     aos_session.add_response(
