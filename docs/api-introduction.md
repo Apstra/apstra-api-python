@@ -4,9 +4,10 @@ organizational standpoint. The goal is to help you better understand how
 the API is organized. We will also cover how to navigate and use the
 documentation built into the Apstra system.
 
-All Apstra usage and features are exposed with the Rest API. The User
-Interface (UI) is also 100% built using the exposed API. So any workflow
-you want to automate can be built with the API.
+The Apstra API is a first class citizen, exposing all functionality of the
+Apstra platform. Therefore, the User Interface (UI) relies 100% on the 
+REST API and any automation or integration you create, will use the same 
+programmatic interface.
 
 ## API Organization
 The Apstra API is broken down into two separate APIs, the Platform API and
@@ -59,8 +60,8 @@ Each endpoint provides a basic description and usage along with required
 fields and payload model requirements. Standard return codes are also 
 provided in the responses section.
 
-### APIStraw and Rest API Explorer
-You will see links for both APIStraw and Rest API Explorer under the tools
+### APIStraw and REST API Explorer
+You will see links for both APIStraw and REST API Explorer under the tools
 section. Both of these tools are included as an alternative way to search 
 and navigate the Apstra api-specs.
 
