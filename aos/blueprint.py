@@ -1648,6 +1648,7 @@ class AosBlueprint(AosSubsystem):
         routing_policy: dict = None,
         import_policy: str = None,
         vlan_id: int = None,
+        vni_id: int = None,
         leaf_loopback_ip_pools: list = None,
         dhcp_servers: list = None,
         timeout: int = 60,
@@ -1677,6 +1678,8 @@ class AosBlueprint(AosSubsystem):
             (str) - change the route import policy. Default is
                     "default_only
                     ["default_only", "all", "extra_only"]
+        vni_id
+            (int) - VxLAN VNI assosiated with the routing zone
         vlan_id
             (int) - VLAN ID use for sub-interface tagging with external system
                     connections. Must be unique across all security zones
@@ -1716,6 +1719,7 @@ class AosBlueprint(AosSubsystem):
             "label": name,
             "vrf_name": name,
             "vlan_id": vlan_id,
+            "vni_id": vni_id
         }
 
         sz_task = self.create_security_zone_from_json(
@@ -1732,7 +1736,7 @@ class AosBlueprint(AosSubsystem):
         # SZ leaf loopback pool
         if leaf_loopback_ip_pools:
             group_name = "leaf_loopback_ips"
-            group_path = requote_uri(f"sz:{sz.id} {group_name}")
+            group_path = requote_uri(f"sz:{sz.id},{group_name}")
             self.apply_resource_groups(
                 bp_id=bp_id,
                 resource_type="ip",
