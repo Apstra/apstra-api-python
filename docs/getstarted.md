@@ -3,6 +3,7 @@
 ## Setup
 setup python 3.8 virtual environment and install library with pip
 ```shell
+$ git clone https://github.com/Apstra/apstra-api-python.git
 $ cd apstra-api-python
 $ python3.8 -m venv .venv
 $ source .venv/bin/activate

@@ -23,7 +23,7 @@ notice sub-modules within the 'aos' module line up with the Apstra UI menu
 for each specific area.
 
 The client.py module is used to build and organize the actual client. The
-aos.py module defines how rest API requests are built and used along with
+aos.py module defines how REST API requests are built and used along with
 handling authentication and session setup.
 
 Doc-Strings are used as much as possible within each module to document
