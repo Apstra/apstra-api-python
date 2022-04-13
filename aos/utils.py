@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def redacted(d):
-    if d is None or d == '':
+    if d is None or d == "":
         return d
 
     h = d.copy()
