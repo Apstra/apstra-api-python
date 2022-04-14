@@ -47,6 +47,22 @@
       "user_ip": "74.195.108.29",
       "type": "blueprint.facade.DELETE./security-zones/<security_zone_id>",
       "id": "4d167bd3-06d5-490d-9f85-4c742b9196e1"
+    },
+    {
+      "status": "succeeded",
+      "begin_at": "2022-03-29T15:14:34.407180+0000",
+      "request_data": {
+        "url": "http://34.214.213.43:27809/api/blueprints/1347ebbd-8576-4223-a24b-f3e5c65d1124/virtual-networks?async=full",
+        "method": "POST"
+      },
+      "user_id": "d3b4c28b-3e57-4638-ae21-7eb217b437c6",
+      "last_updated_at": "2022-03-29T15:14:34.725654+0000",
+      "user_name": "admin",
+      "created_at": "2022-03-29T15:14:34.401080+0000",
+      "config_last_updated_at": "2022-03-29T15:14:34.401080+0000",
+      "user_ip": "74.195.108.29",
+      "type": "blueprint.facade.POST./virtual-networks",
+      "id": "d20a8a56-d312-4df7-a8ec-271d8e2325d1"
     }
   ]
 }

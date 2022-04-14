@@ -1,4 +1,3 @@
-
 # Copyright 2020-present, Apstra, Inc. All rights reserved.
 #
 # This source code is licensed under End User License Agreement found in the
@@ -13,16 +12,16 @@ def test_redacted_null():
 
 
 def test_redacted_empty():
-    assert redacted('') == ''
+    assert redacted("") == ""
 
 
 def test_redacted_sensitive():
     for sensitive in ["password", "token", "AuthToken"]:
         d = {
-            'usual': 'usual data',
-            sensitive: '{sensitive} data',
+            "usual": "usual data",
+            sensitive: "{sensitive} data",
         }
         assert redacted(d) == {
-                'usual': 'usual data',
-                sensitive: '<REDACTED>',
-            }
+            "usual": "usual data",
+            sensitive: "<REDACTED>",
+        }

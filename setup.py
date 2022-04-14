@@ -7,9 +7,9 @@
 import os
 from setuptools import setup, find_packages
 
-NAME = "apstra-api-client"
+NAME = "aos-api-client"
 
-VERSION = '0.2.0'
+VERSION = '0.1.17'
 
 
 REQUIRES = (["requests==2.24.0"],)
@@ -17,7 +17,7 @@ REQUIRES = (["requests==2.24.0"],)
 setup(
     name=NAME,
     version=VERSION,
-    description="Apstra API Client",
+    description="Apstra AOS API Client",
     url="https://github.com/Apstra/apstra-api-python",
     author="Apstra Inc",
     author_email="support@apstra.com",
@@ -26,5 +26,5 @@ setup(
     python_requires=">=3.6",
     install_requires=REQUIRES,
     license="Proprietary",
-    keywords="apstra",
+    keywords="aos apstra",
 )
