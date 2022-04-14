@@ -778,11 +778,13 @@ def test_create_virtual_network(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
     vn_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_network_id.json"
+    all_fixture = f"aos/{aos_api_version}/blueprints/get_virtual_networks.json"
     sz_all_fixture = f"aos/{aos_api_version}/blueprints/get_security_zones.json"
+    task_id_fixture = f"aos/{aos_api_version}/blueprints/get_bp_task_id.json"
+    task_id = "d20a8a56-d312-4df7-a8ec-271d8e2325d1"
     bp_id = "evpn-cvx-virtual"
     sz_name = "blue"
-    sz_id = "78eff7d7-e936-4e6e-a9f7-079b9aa45f98"
-    vn_id = "307944e0-8aa5-4108-9253-0c453a653bde"
+    vn_name = "test-blue15"
 
     aos_session.add_response(
         "GET",
@@ -794,73 +796,53 @@ def test_create_virtual_network(
         "POST",
         f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
         status=202,
-        params=None,
-        resp=json.dumps({"id": vn_id}),
+        params={"async": "full"},
+        resp=json.dumps({"task_id": task_id}),
     )
     aos_session.add_response(
         "GET",
-        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
+        f"http://aos:80/api/blueprints/{bp_id}/tasks/{task_id}",
         status=200,
-        resp=read_fixture(vn_fixture),
+        resp=read_fixture(task_id_fixture),
     )
-    aos_logged_in.blueprint.create_virtual_network(
+    aos_session.add_response(
+        "GET",
+        f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
+        status=200,
+        resp=read_fixture(all_fixture),
+    )
+    bound_to = deserialize_fixture(vn_fixture)["bound_to"]
+    resp = aos_logged_in.blueprint.create_virtual_network(
         bp_id=bp_id,
-        name="blue-test1",
-        bound_to=mock.ANY,
+        name=vn_name,
+        bound_to=bound_to,
         sz_name=sz_name,
     )
 
-    bound_to = deserialize_fixture(vn_fixture)["bound_to"]
-    expected_body = {
-        "label": "blue-test1",
-        "security_zone_id": sz_id,
-        "vn_type": "vxlan",
-        "vn_id": None,
-        "bound_to": bound_to,
-        "ipv4_enabled": True,
-        "dhcp_service": "dhcpServiceEnabled",
-        "ipv4_subnet": None,
-        "ipv4_gateway": None,
-    }
+    vn_dict = deserialize_fixture(vn_fixture)
 
-    aos_session.request.assert_has_calls(
-        [
-            call(
-                "POST",
-                "http://aos:80/api/aaa/login",
-                json=mock.ANY,
-                params=None,
-                headers=mock.ANY,
-            ),
-            call(
-                "GET",
-                f"http://aos:80/api/blueprints/{bp_id}/security-zones",
-                params=None,
-                json=None,
-                headers=mock.ANY,
-            ),
-            call(
-                "POST",
-                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks",
-                params=None,
-                json=expected_body,
-                headers=mock.ANY,
-            ),
-            call(
-                "GET",
-                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
-                params=None,
-                json=None,
-                headers=mock.ANY,
-            ),
-            call(
-                "GET",
-                f"http://aos:80/api/blueprints/{bp_id}/virtual-networks/{vn_id}",
-                params=None,
-                json=None,
-                headers=mock.ANY,
-            ),
-        ]
+    assert resp == VirtualNetwork(
+        label=vn_name,
+        id=vn_dict["id"],
+        description=vn_dict["description"],
+        ipv4_enabled=vn_dict["ipv4_enabled"],
+        ipv4_subnet=vn_dict["ipv4_subnet"],
+        virtual_gateway_ipv4=vn_dict["virtual_gateway_ipv4"],
+        ipv6_enabled=vn_dict["ipv6_enabled"],
+        ipv6_subnet=vn_dict["ipv6_subnet"],
+        virtual_gateway_ipv6=vn_dict["virtual_gateway_ipv6"],
+        vn_id=vn_dict["vn_id"],
+        security_zone_id=vn_dict["security_zone_id"],
+        svi_ips=mock.ANY,
+        virtual_mac=vn_dict["virtual_mac"],
+        default_endpoint_tag_types={},
+        endpoints=mock.ANY,
+        bound_to=vn_dict["bound_to"],
+        vn_type=vn_dict["vn_type"],
+        rt_policy=vn_dict["rt_policy"],
+        dhcp_service=vn_dict["dhcp_service"],
+        tagged_ct=False,
+        untagged_ct=False,
     )
 
 

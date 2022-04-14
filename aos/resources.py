@@ -71,7 +71,7 @@ class AosIPPool(AosSubsystem):
             "subnets": [{"network": net} for net in subnets],
             "tags": tags,
             "display_name": name,
-            "id": name.replace(' ', '-'),
+            "id": name.replace(" ", "-"),
         }
 
         created = self.rest.json_resp_post("/api/resources/ip-pools", data=ip_pool)

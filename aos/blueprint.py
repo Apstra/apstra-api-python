@@ -1719,7 +1719,7 @@ class AosBlueprint(AosSubsystem):
             "label": name,
             "vrf_name": name,
             "vlan_id": vlan_id,
-            "vni_id": vni_id
+            "vni_id": vni_id,
         }
 
         sz_task = self.create_security_zone_from_json(
@@ -1952,7 +1952,9 @@ class AosBlueprint(AosSubsystem):
         return self.rest.json_resp_put(uri=p_path, data=data)
 
     # Virtual Networks
-    def create_virtual_network_from_json(self, bp_id: str, virtual_network: dict):
+    def create_virtual_network_from_json(
+        self, bp_id: str, virtual_network: dict, params: dict = None
+    ):
         """
         Create new virtual-network (VLAN) in a given blueprint
         Parameters
@@ -1961,13 +1963,16 @@ class AosBlueprint(AosSubsystem):
             (str) - ID of blueprint
         virtual_network
             (dict) - VirtualNetwork object
-
+        params
+            (dict) - endpoint parameters. Default None
         Returns
         -------
 
         """
         vn_path = f"/api/blueprints/{bp_id}/virtual-networks"
-        return self.rest.json_resp_post(uri=vn_path, data=virtual_network)
+        return self.rest.json_resp_post(
+            uri=vn_path, data=virtual_network, params=params
+        )
 
     def create_virtual_network(
         self,
@@ -2077,15 +2082,17 @@ class AosBlueprint(AosSubsystem):
         if untagged_ct:
             virt_net["create_policy_untagged"] = untagged_ct
 
-        vn = self.create_virtual_network_from_json(bp_id, virt_net)
+        vn_task = self.create_virtual_network_from_json(
+            bp_id, virt_net, params={"async": "full"}
+        )
         logger.info(f"Creating virtual-network '{name}' in blueprint '{bp_id}'")
 
         repeat_until(
-            lambda: self.get_virtual_network(bp_id, vn["id"]) != NullVirtualNetwork,
+            lambda: self.is_task_active(bp_id, vn_task["task_id"]) is False,
             timeout=timeout,
         )
 
-        return self.get_virtual_network(bp_id, vn["id"])
+        return self.find_vn_by_name(bp_id, name)
 
     def get_all_virtual_networks(self, bp_id: str) -> List[VirtualNetwork]:
         """
