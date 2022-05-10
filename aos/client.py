@@ -12,7 +12,7 @@ from .devices import AosDevices
 from .design import AosDesign
 from .resources import AosResources
 from .external_systems import AosExternalSystems
-
+from .telemetry import AosTelemetryManager
 logger = logging.getLogger(__name__)
 
 
