@@ -14,9 +14,9 @@ AOS_PW = "admin"
 
 # Where is the listener listening?
 LISTENER_IP = "100.123.0.8"
-ALERTS_PORT = 64429
-EVENTS_PORT = 64428
-PERFMON_PORT = 64427
+ALERTS_PORT = 64420
+EVENTS_PORT = 64421
+PERFMON_PORT = 64422
 
 # Login
 aos = AosClient(protocol="https", host=AOS_IP, port=AOS_PORT)
