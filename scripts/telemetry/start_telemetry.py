@@ -7,13 +7,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # You will need to update the connection details below with your
 # specific AOS instance
-AOS_IP = "66.129.234.206"
-AOS_PORT = 37000 
-AOS_USER = "admin"
-AOS_PW = "admin"
+AOS_IP = ""
+AOS_PORT =  0
+AOS_USER = ""
+AOS_PW = ""
 
 # Where is the listener listening?
-LISTENER_IP = "100.123.0.8"
+LISTENER_IP = ""
 ALERTS_PORT = 64420
 EVENTS_PORT = 64421
 PERFMON_PORT = 64422
