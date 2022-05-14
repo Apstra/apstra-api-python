@@ -1,20 +1,4 @@
-import json
-from telnetlib import AO
-
-import pytest
-from unittest import mock
-from unittest.mock import call
-
-from aos.telemetry import AosTelemetryManager
-from tests.util import make_session, read_fixture
-mock_rest = mock.Mock()
-mgr = AosTelemetryManager(mock_rest)
-@pytest.fixture(params=["4.0.0"])
-def aos_api_version(request):
-    return request.param
-
-
-mock_rest.json_resp_get.return_value = {
+{
   "items": [
     {
       "status": {
@@ -32,7 +16,7 @@ mock_rest.json_resp_get.return_value = {
             "message": "Eof encountered"
           }
         ],
-        "connectionTime": None,
+        "connectionTime": null,
         "lastTransmittedTime": "2022-05-09T15:54:35.121503+00:00",
         "epoch": "2022-05-09T15:54:34.909126+00:00",
         "connectionResetCount": 3,
@@ -42,7 +26,7 @@ mock_rest.json_resp_get.return_value = {
           "port": 64429
         },
         "dnsLog": [],
-        "connected": False,
+        "connected": false,
         "disconnectionTime": "2022-05-09T15:54:44.910995+00:00"
       },
       "streaming_type": "alerts",
@@ -68,7 +52,7 @@ mock_rest.json_resp_get.return_value = {
             "message": "Eof encountered"
           }
         ],
-        "connectionTime": None,
+        "connectionTime": null,
         "lastTransmittedTime": "2022-05-09T15:54:41.128922+00:00",
         "epoch": "2022-05-09T15:54:35.121228+00:00",
         "connectionResetCount": 3,
@@ -78,7 +62,7 @@ mock_rest.json_resp_get.return_value = {
           "port": 64427
         },
         "dnsLog": [],
-        "connected": False,
+        "connected": false,
         "disconnectionTime": "2022-05-09T15:54:45.122685+00:00"
       },
       "streaming_type": "perfmon",
@@ -104,7 +88,7 @@ mock_rest.json_resp_get.return_value = {
             "message": "Eof encountered"
           }
         ],
-        "connectionTime": None,
+        "connectionTime": null,
         "lastTransmittedTime": "2022-05-09T15:54:45.122669+00:00",
         "epoch": "2022-05-09T15:54:35.012796+00:00",
         "connectionResetCount": 3,
@@ -114,7 +98,7 @@ mock_rest.json_resp_get.return_value = {
           "port": 64428
         },
         "dnsLog": [],
-        "connected": False,
+        "connected": false,
         "disconnectionTime": "2022-05-09T15:54:45.014146+00:00"
       },
       "streaming_type": "events",
@@ -126,19 +110,4 @@ mock_rest.json_resp_get.return_value = {
     }
   ]
 }
-
-def test_add_endpoint():
-    mgr.add_endpoint("fakehost", "fakeport", "faketype")
-    mock_rest.json_resp_post.assert_called_with(uri='/api/streaming-config', data={'hostname': 'fakehost', 'port': 'fakeport', 'streaming_type': 'faketype', 'sequencing_mode': 'sequenced', 'protocol': 'protoBufOverTcp'})
-
-def test_delete_endpoints():
-    mgr.delete_all_endpoints()
-    mock_rest.delete.assert_called()
-
-def test_get_endpoints(aos_api_version):
-    fixture_path = f"aos/{aos_api_version}/telemetry/endpoints.json"
-    mock_rest.json_resp_get.return_value = json.loads(read_fixture(fixture_path))
-    r = mgr.get_endpoints()
-    assert len(r) == 3
-    mock_rest.json_resp_get.assert_called()
 
