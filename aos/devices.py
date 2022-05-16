@@ -211,8 +211,8 @@ class AosSystemAgents(AosSubsystem):
         for s in system_agents.get("items", []):
             yield SystemAgent.from_json(s)
 
-    def get_agent_by_id(self, system_id: str) -> Optional[System]:
-        return System.from_json(
+    def get_agent_by_id(self, system_id: str) -> Optional[SystemAgent]:
+        return SystemAgent.from_json(
             self.rest.json_resp_get(f"/api/system-agents/{system_id}")
         )
 
