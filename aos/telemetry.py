@@ -26,7 +26,7 @@ class AosTelemetryEndpointStatus:
     disconnection_time: str
 
     @classmethod
-    def from_json(cls, d: dict) -> 'AosTelemetryEndpointStatus':
+    def from_json(cls, d: dict) -> "AosTelemetryEndpointStatus":
         return AosTelemetryEndpointStatus(
             connected=d.get("connected"),
             connection_log=d.get("connectionLog"),
@@ -54,7 +54,7 @@ class AosTelemetryEndpoint:
     ep_status: AosTelemetryEndpointStatus
 
     @classmethod
-    def from_json(cls, d: dict) -> 'AosTelemetryEndpoint':
+    def from_json(cls, d: dict) -> "AosTelemetryEndpoint":
         return AosTelemetryEndpoint(
             id=d.get("id"),
             host=d.get("host"),
@@ -72,7 +72,12 @@ class AosTelemetryManager(AosSubsystem):
     """
 
     def add_endpoint(
-        self, host, port, streaming_type, protocol="protoBufOverTcp", mode="sequenced"
+        self,
+        host: str,
+        port: int,
+        streaming_type: str,
+        protocol: str = "protoBufOverTcp",
+        mode: str = "sequenced",
     ) -> Response:
         """
         Parameters
@@ -98,14 +103,14 @@ class AosTelemetryManager(AosSubsystem):
         }
         return self.rest.json_resp_post(uri="/api/streaming-config", data=body)
 
-    def get_endpoints(self) -> List[AosTelemetryEndpoint] :
+    def get_endpoints(self) -> List[AosTelemetryEndpoint]:
         """
         Get the existing streaming endpoints as AosTelemetryEndpoint objects
         """
         r = self.rest.json_resp_get(uri="/api/streaming-config")
-        return [AosTelemetryEndpoint.from_json(i) for i in r.get('items')]
+        return [AosTelemetryEndpoint.from_json(i) for i in r.get("items")]
 
-    def delete_endpoint(self, id) -> Response:
+    def delete_endpoint(self, id: str) -> Response:
         """
         Delete a single endpoint
         Parameters
