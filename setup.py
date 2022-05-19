@@ -17,7 +17,7 @@ REQUIRES = (["requests==2.24.0"],)
 setup(
     name=NAME,
     version=VERSION,
-    description="Apstra AOS API Client",
+    description="Apstra API Client",
     url="https://github.com/Apstra/apstra-api-python",
     author="Apstra Inc",
     author_email="support@apstra.com",
@@ -26,5 +26,5 @@ setup(
     python_requires=">=3.6",
     install_requires=REQUIRES,
     license="Proprietary",
-    keywords="aos apstra",
+    keywords="apstra",
 )
