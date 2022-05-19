@@ -4,12 +4,14 @@
 # LICENSE file at http://www.apstra.com/eula
 import logging
 import requests
+
 from .aos import AosRestAPI, AosAuth
 from .blueprint import AosBlueprint
 from .devices import AosDevices
 from .design import AosDesign
 from .resources import AosResources
 from .external_systems import AosExternalSystems
+from .telemetry import AosTelemetryManager
 
 logger = logging.getLogger(__name__)
 
@@ -53,3 +55,4 @@ class AosClient:
         self.design = AosDesign(self.rest)
         self.resources = AosResources(self.rest)
         self.external_systems = AosExternalSystems(self.rest)
+        self.telemetry_mgr = AosTelemetryManager(self.rest)
