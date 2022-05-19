@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-NAME = "aos-api-client"
+NAME = "apstra-api-python"
 
 VERSION = '0.1.18'
 
