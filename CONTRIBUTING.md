@@ -8,6 +8,8 @@ Please report bugs as issues here on GitLab!
 Submit your code as a new branch based off `main` and submit a Pull 
 Request (PR). All tests and approvals of a PR must be meet before merge.
 
+Dont forget to update the version number in [setup.py](./setup.py)
+
 ### Developers
 ### Setup Development Environment
 Create a virtual environment and install apstra-api-python:
@@ -38,4 +40,3 @@ Black is used to format code pre-commit
 black aos/
 black tests/
 ```
-

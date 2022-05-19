@@ -1,4 +1,6 @@
 # Apstra Rest API Python Library
+![Testing](https://github.com/Apstra/apstra-api-python/actions/workflows/tox-testing.yml/badge.svg)
+
 ## What is apstra-api-python?
 The apstra-api-python library is an example python library built for
 learning how to integrate with the Apsta API programmatically. This
