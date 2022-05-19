@@ -40,4 +40,3 @@ Black is used to format code pre-commit
 black aos/
 black tests/
 ```
-

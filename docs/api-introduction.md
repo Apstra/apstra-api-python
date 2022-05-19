@@ -60,8 +60,8 @@ Each endpoint provides a basic description and usage along with required
 fields and payload model requirements. Standard return codes are also 
 provided in the responses section.
 
-### APIStraw and REST API Explorer
-You will see links for both APIStraw and REST API Explorer under the tools
+### APIStraw and Rest API Explorer
+You will see links for both APIStraw and Rest API Explorer under the tools
 section. Both of these tools are included as an alternative way to search 
 and navigate the Apstra api-specs.
 
