@@ -7,9 +7,9 @@
 import os
 from setuptools import setup, find_packages
 
-NAME = "aos-api-client"
+NAME = "apstra-api-python"
 
-VERSION = '0.1.18'
+VERSION = '0.1.19'
 
 
 REQUIRES = (["requests==2.24.0"],)
