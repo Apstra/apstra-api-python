@@ -3,12 +3,9 @@
 ## Setup
 setup python 3.8 virtual environment and install library with pip
 ```shell
-$ git clone https://github.com/Apstra/apstra-api-python.git
-$ cd apstra-api-python
 $ python3.8 -m venv .venv
 $ source .venv/bin/activate
-$ python setup.py install
-$ pip install -f /path-to-package-file/aos-api-python.whl
+$ pip install apstra-api-python
 ```
 
 Working with the apstra-api-python library
