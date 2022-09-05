@@ -183,7 +183,7 @@ class AosManagedDevices(AosSubsystem):
         for system in self.iter_all():
             if system.facts["mgmt_ipaddr"] == ip_addr:
                 return system
-            return NullSystem
+        return NullSystem
 
     def delete(self, agent_uuid: str) -> None:
         self.rest.delete(f"/api/system-agents/{agent_uuid}")
@@ -220,7 +220,7 @@ class AosSystemAgents(AosSubsystem):
         for agent in self.iter_all():
             if agent.management_ip == ip_addr:
                 return agent
-            return NullSystemAgent
+        return NullSystemAgent
 
     def get_packages(self):
         """
