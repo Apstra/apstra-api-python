@@ -752,7 +752,7 @@ class AosBlueprint(AosSubsystem):
         id_in = f"id in {system_id}"
 
         if role and system_id:
-            condition = f"{role_in} and {id_in}"
+            condition = f"{role_in} and {id_in}".replace("'",'"')
         elif role:
             condition = role_in
         elif system_id:
