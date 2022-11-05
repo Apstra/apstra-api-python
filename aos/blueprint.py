@@ -2208,7 +2208,12 @@ class AosBlueprint(AosSubsystem):
         path = f'/api/blueprints/{bp_id}/fabric-addressing-policy'
         return self.rest.json_resp_get(path)
 
-    def update_fabric_addressing_policy(self, bp_id, ipv6_enabled=None, esi_mac_msb=None):
+    def update_fabric_addressing_policy(
+        self,
+        bp_id,
+        ipv6_enabled=None,
+        esi_mac_msb=None
+    ):
         """
         Sets a fabric addressing policy for a given blueprint.
 
@@ -2217,7 +2222,8 @@ class AosBlueprint(AosSubsystem):
         bp_id
             (str) - ID of AOS Blueprint
             (bool) - (optional) enable or disable support for IPv6 virtual networks
-            (int)  - (optional) Most Significant Byte (MSB) value used for ESI MAC addresses
+            (int)  - (optional) Most Significant Byte (MSB) value used for
+            ESI MAC addresses
         Returns
         -------
         """

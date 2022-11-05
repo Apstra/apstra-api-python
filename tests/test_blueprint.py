@@ -1573,6 +1573,7 @@ def test_get_fabric_addressing_policy(
     assert not resp['ipv6_enabled']
     assert resp['esi_mac_msb'] % 2 == 0
 
+
 def test_update_fabric_addressing_policy(
     aos_logged_in, aos_session, expected_auth_headers, aos_api_version
 ):
@@ -1584,7 +1585,10 @@ def test_update_fabric_addressing_policy(
         status=200,
     )
 
-    resp = aos_logged_in.blueprint.update_fabric_addressing_policy(bp_id=bp_id, ipv6_enabled=True)
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        ipv6_enabled=True
+    )
     aos_session.request.assert_called_with(
         "PATCH",
         url,
@@ -1593,7 +1597,10 @@ def test_update_fabric_addressing_policy(
         headers=expected_auth_headers,
     )
 
-    resp = aos_logged_in.blueprint.update_fabric_addressing_policy(bp_id=bp_id, esi_mac_msb=4)
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        esi_mac_msb=4
+    )
     aos_session.request.assert_called_with(
         "PATCH",
         url,
@@ -1602,7 +1609,11 @@ def test_update_fabric_addressing_policy(
         headers=expected_auth_headers,
     )
 
-    resp = aos_logged_in.blueprint.update_fabric_addressing_policy(bp_id=bp_id, ipv6_enabled=True, esi_mac_msb=4)
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        ipv6_enabled=True,
+        esi_mac_msb=4
+    )
     aos_session.request.assert_called_with(
         "PATCH",
         url,
