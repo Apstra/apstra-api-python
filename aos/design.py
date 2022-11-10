@@ -479,9 +479,9 @@ class AosPropertySets(AosSubsystem):
             property_sets = self.get_all()
             if property_sets:
                 for ps in property_sets:
-                    if ps.get("display_name") == ps_name:
+                    if ps.get("label") == ps_name:
                         return ps
-                raise AosAPIError(f"Configlet {ps_name} not found")
+                raise AosAPIError(f"Property set {ps_name} not found")
 
         return self.rest.json_resp_get(f"/api/property-sets/{ps_id}")
 
