@@ -748,8 +748,8 @@ class AosBlueprint(AosSubsystem):
         c_path = f"/api/blueprints/{bp_id}/configlets"
         aos_configlets = AosConfiglets(self.rest)
         configlet = aos_configlets.get_configlet(conf_id=configlet_id)
-        role_in = f"role in {role}".replace("'",'"')
-        id_in = f"id in {system_id}".replace("'",'"')
+        role_in = f"role in {role}".replace("'", '"')
+        id_in = f"id in {system_id}".replace("'", '"')
 
         if role and system_id:
             condition = f"{role_in} and {id_in}"
