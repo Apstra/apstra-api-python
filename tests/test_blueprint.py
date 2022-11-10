@@ -883,7 +883,8 @@ def test_apply_configlet(
     json_body = {
         "configlet": conf_dict,
         "label": conf_dict["display_name"],
-        "condition": f"role in {conf_role}",
+        # apstra expects json with double quotes instead of single
+        "condition": f"role in {conf_role}".replace("'", '"'),
     }
 
     aos_session.request.assert_called_with(
@@ -960,7 +961,8 @@ def test_apply_configlet_combined_conditions(
     json_body = {
         "configlet": conf_dict,
         "label": conf_dict["display_name"],
-        "condition": f"role in {conf_role} and id in {conf_ids}",
+        # apstra expects json with double quote instead of single
+        "condition": f"role in {conf_role} and id in {conf_ids}".replace("'", '"'),
     }
 
     aos_session.request.assert_called_with(
