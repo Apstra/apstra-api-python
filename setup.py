@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 NAME = "apstra-api-python"
 
-VERSION = '0.1.21'
+VERSION = '0.2.0'
 
 
 REQUIRES = (["requests==2.24.0"],)
