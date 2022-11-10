@@ -1554,3 +1554,70 @@ def test_get_routing_policies(
         "static_routes": False,
         "l3edge_server_links": True,
     }
+
+
+def test_get_fabric_addressing_policy(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = 'test-bp-1'
+    aos_session.add_response(
+        'GET',
+        f"http://aos:80/api/blueprints/{bp_id}/fabric-addressing-policy",
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_fabric_addressing_policy.json'
+        ),
+    )
+
+    resp = aos_logged_in.blueprint.get_fabric_addressing_policy(bp_id=bp_id)
+    assert not resp['ipv6_enabled']
+    assert resp['esi_mac_msb'] % 2 == 0
+
+
+def test_update_fabric_addressing_policy(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = 'test-bp-1'
+    url = f"http://aos:80/api/blueprints/{bp_id}/fabric-addressing-policy"
+    aos_session.add_response(
+        'PATCH',
+        url,
+        status=200,
+    )
+
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        ipv6_enabled=True
+    )
+    aos_session.request.assert_called_with(
+        "PATCH",
+        url,
+        json={"ipv6_enabled": True},
+        params=None,
+        headers=expected_auth_headers,
+    )
+
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        esi_mac_msb=4
+    )
+    aos_session.request.assert_called_with(
+        "PATCH",
+        url,
+        json={"esi_mac_msb": 4},
+        params=None,
+        headers=expected_auth_headers,
+    )
+
+    aos_logged_in.blueprint.update_fabric_addressing_policy(
+        bp_id=bp_id,
+        ipv6_enabled=True,
+        esi_mac_msb=4
+    )
+    aos_session.request.assert_called_with(
+        "PATCH",
+        url,
+        json={"ipv6_enabled": True, "esi_mac_msb": 4},
+        params=None,
+        headers=expected_auth_headers,
+    )
