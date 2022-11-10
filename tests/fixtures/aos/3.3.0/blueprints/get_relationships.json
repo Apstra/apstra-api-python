@@ -1,0 +1,28 @@
+{
+  "relationships": {
+    "nnJEIevQlNSjwAgVE3I": {
+      "tags": null,
+      "source_id": "y0D9CFzGPmBmGILP3Mk",
+      "target_id": "C36GOMzvZZW1uQqGQQY",
+      "property_set": null,
+      "type": "composed_of_systems",
+      "id": "nnJEIevQlNSjwAgVE3I"
+    },
+    "jbQgo_63gfCxgiKIe6g": {
+      "tags": null,
+      "source_id": "Generic_Server_1RU_2x10G_Centos__AOS-2x10-1",
+      "target_id": "Nw5QmnTrk8-0_5ISLWs",
+      "property_set": null,
+      "type": "device_profile",
+      "id": "jbQgo_63gfCxgiKIe6g"
+    },
+    "TqXFFIYLduOVpqW9eU0": {
+      "tags": null,
+      "source_id": "xX00o5Alv6f6WGbMprw",
+      "target_id": "bTqiHdi9nhVWqt1jhUE",
+      "property_set": null,
+      "type": "composed_of",
+      "id": "TqXFFIYLduOVpqW9eU0"
+    }
+  }
+}

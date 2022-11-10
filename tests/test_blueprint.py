@@ -1623,3 +1623,91 @@ def test_update_fabric_addressing_policy(
         params=None,
         headers=expected_auth_headers,
     )
+
+
+def test_get_node_relationships(
+    aos_logged_in, aos_session, expected_auth_headers, aos_api_version
+):
+    bp_id = 'test-bp-1'
+    url = f"http://aos:80/api/blueprints/{bp_id}/relationships"
+    aos_session.add_response(
+        'GET',
+        url,
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
+        ),
+    )
+    aos_logged_in.blueprint.get_node_relationships(bp_id=bp_id)
+
+    url = (
+        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
+        "relationship_type=composed_of_systems"
+    )
+    aos_session.add_response(
+        'GET',
+        url,
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
+        ),
+    )
+    aos_logged_in.blueprint.get_node_relationships(
+        bp_id=bp_id,
+        relationship_type='composed_of_systems'
+    )
+
+    url = (
+        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
+        "source_id=y0D9CFzGPmBmGILP3Mk"
+    )
+    aos_session.add_response(
+        'GET',
+        url,
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
+        ),
+    )
+    aos_logged_in.blueprint.get_node_relationships(
+        bp_id=bp_id,
+        source_id='y0D9CFzGPmBmGILP3Mk'
+    )
+
+    url = (
+        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
+        "target_id=C36GOMzvZZW1uQqGQQY"
+    )
+    aos_session.add_response(
+        'GET',
+        url,
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
+        ),
+    )
+    aos_logged_in.blueprint.get_node_relationships(
+        bp_id=bp_id,
+        target_id='C36GOMzvZZW1uQqGQQY'
+    )
+
+    url = (
+        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
+        "relationship_type=composed_of_systems&"
+        "source_id=y0D9CFzGPmBmGILP3Mk&"
+        "target_id=C36GOMzvZZW1uQqGQQY"
+    )
+    aos_session.add_response(
+        'GET',
+        url,
+        status=200,
+        resp=read_fixture(
+            f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
+        ),
+    )
+    aos_logged_in.blueprint.get_node_relationships(
+        bp_id=bp_id,
+        relationship_type='composed_of_systems',
+        source_id='y0D9CFzGPmBmGILP3Mk',
+        target_id='C36GOMzvZZW1uQqGQQY'
+    )
