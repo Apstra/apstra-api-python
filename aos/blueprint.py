@@ -2238,3 +2238,35 @@ class AosBlueprint(AosSubsystem):
 
         url = f'/api/blueprints/{bp_id}/fabric-addressing-policy'
         return self.rest.patch(url, data=data)
+
+    def get_node_relationships(
+        self,
+        bp_id,
+        relationship_type: str = None,
+        source_id: str = None,
+        target_id: str = None
+    ):
+        """
+        Return node relationships in a given blueprint
+
+        Parameters
+        ---------
+        bp_id
+            (str) - ID of AOS Blueprint
+        relationship_type
+            (str) - (optional) type of relationship
+        source_id
+            (str) - (optional) ID of source of relationship
+        target_id
+            (str) - (optional) ID of target of relationship
+        """
+
+        url = f'/api/blueprints/{bp_id}/relationships'
+
+        params = {
+            'relationship_type': relationship_type,
+            'source_id': source_id,
+            'target_id': target_id
+        }
+
+        return self.rest.json_resp_get(url, params=params)['relationships']
