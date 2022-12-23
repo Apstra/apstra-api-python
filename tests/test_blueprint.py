@@ -1634,20 +1634,26 @@ def test_get_node_relationships(
         'GET',
         url,
         status=200,
+        params={
+            'relationship_type': None,
+            'source_id': None,
+            'target_id': None
+        },
         resp=read_fixture(
             f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
         ),
     )
     aos_logged_in.blueprint.get_node_relationships(bp_id=bp_id)
 
-    url = (
-        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
-        "relationship_type=composed_of_systems"
-    )
     aos_session.add_response(
         'GET',
         url,
         status=200,
+        params={
+            'relationship_type': 'composed_of_systems',
+            'source_id': None,
+            'target_id': None
+        },
         resp=read_fixture(
             f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
         ),
@@ -1657,14 +1663,15 @@ def test_get_node_relationships(
         relationship_type='composed_of_systems'
     )
 
-    url = (
-        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
-        "source_id=y0D9CFzGPmBmGILP3Mk"
-    )
     aos_session.add_response(
         'GET',
         url,
         status=200,
+        params={
+            'relationship_type': None,
+            'source_id': 'y0D9CFzGPmBmGILP3Mk',
+            'target_id': None
+        },
         resp=read_fixture(
             f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
         ),
@@ -1674,14 +1681,15 @@ def test_get_node_relationships(
         source_id='y0D9CFzGPmBmGILP3Mk'
     )
 
-    url = (
-        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
-        "target_id=C36GOMzvZZW1uQqGQQY"
-    )
     aos_session.add_response(
         'GET',
         url,
         status=200,
+        params={
+            'relationship_type': None,
+            'source_id': None,
+            'target_id': 'C36GOMzvZZW1uQqGQQY'
+        },
         resp=read_fixture(
             f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
         ),
@@ -1691,16 +1699,15 @@ def test_get_node_relationships(
         target_id='C36GOMzvZZW1uQqGQQY'
     )
 
-    url = (
-        f"http://aos:80/api/blueprints/{bp_id}/relationships?"
-        "relationship_type=composed_of_systems&"
-        "source_id=y0D9CFzGPmBmGILP3Mk&"
-        "target_id=C36GOMzvZZW1uQqGQQY"
-    )
     aos_session.add_response(
         'GET',
         url,
         status=200,
+        params={
+            'relationship_type': 'composed_of_systems',
+            'source_id': 'y0D9CFzGPmBmGILP3Mk',
+            'target_id': 'C36GOMzvZZW1uQqGQQY'
+        },
         resp=read_fixture(
             f'aos/{aos_api_version}/blueprints/' f'get_relationships.json'
         ),

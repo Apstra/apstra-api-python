@@ -2262,17 +2262,11 @@ class AosBlueprint(AosSubsystem):
         """
 
         url = f'/api/blueprints/{bp_id}/relationships'
-        queries = []
 
-        if relationship_type:
-            queries.append(f'relationship_type={relationship_type}')
-        if source_id:
-            queries.append(f'source_id={source_id}')
-        if target_id:
-            queries.append(f'target_id={target_id}')
+        params = {
+            'relationship_type': relationship_type,
+            'source_id': source_id,
+            'target_id': target_id
+        }
 
-        if queries:
-            query_str = '&'.join(queries)
-            url += f'?{query_str}'
-
-        return self.rest.json_resp_get(url)['relationships']
+        return self.rest.json_resp_get(url, params=params)['relationships']
