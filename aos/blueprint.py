@@ -2270,3 +2270,19 @@ class AosBlueprint(AosSubsystem):
         }
 
         return self.rest.json_resp_get(url, params=params)['relationships']
+
+    def revert(self, bp_id):
+        """
+        Revert changes in Staged in a given blueprint.
+
+        Parameters
+        ----------
+        bp_id
+            (str) - ID of AOS Blueprint
+
+        Returns
+        ----------
+            (str) empty str
+        """
+        path = f'/api/blueprints/{bp_id}/revert'
+        return self.rest.json_resp_post(uri=path)
