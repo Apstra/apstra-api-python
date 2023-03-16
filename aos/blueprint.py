@@ -1984,6 +1984,7 @@ class AosBlueprint(AosSubsystem):
         vn_type: VNType = VNType.vxlan,
         vn_id: str = None,
         tag_type: VNTagType = None,
+        ipv4_enabled: bool = True,
         ipv4_subnet: str = None,
         ipv4_gateway: str = None,
         ipv6_enabled: bool = False,
@@ -2018,6 +2019,9 @@ class AosBlueprint(AosSubsystem):
             (VNTagType) - (Optional) Default tag type.
             ['vlan_tagged', 'untagged', ''unassigned]
             Default: None
+        ipv4_enabled
+            (bool) - (Optional) Enable or disable IPv4 on the virtual-network
+            Default: True
         ipv4_subnet
             (str) - (optional) IPV4 subnet assigned to virtual-network. If none
             given the subnet will be assigned from resource pool
@@ -2062,12 +2066,15 @@ class AosBlueprint(AosSubsystem):
             "vn_type": vn_type.value,
             "vn_id": vn_id,
             "bound_to": bound_to,
-            "ipv4_enabled": True,
+            "ipv4_enabled": ipv4_enabled,
             "dhcp_service": "dhcpServiceEnabled",
             "ipv4_subnet": ipv4_subnet,
             "ipv4_gateway": ipv4_gateway,
         }
 
+        if ipv4_enabled == False:
+            virt_net["dhcp_service"] = "dhcpServiceDisabled"
+            
         if ipv6_enabled:
             virt_net["ipv6_subnet"] = ipv6_subnet
             virt_net["ipv6_gateway"] = ipv6_gateway
