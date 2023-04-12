@@ -987,7 +987,7 @@ class AosBlueprint(AosSubsystem):
         -------
             (dict) - cable map information
         """
-        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/cabling-map")
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/experience/web/cabling-map")
 
     def update_cabling_map(self, bp_id: str, links: List[dict]):
         """
