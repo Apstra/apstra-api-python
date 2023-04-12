@@ -972,7 +972,7 @@ class AosBlueprint(AosSubsystem):
     def create_switch_system_links(self, bp_id: str, data: dict):
         uri = f"/api/blueprints/{bp_id}/switch-system-links"
 
-        self.rest.json_resp_post(uri, data=data)
+        return self.rest.json_resp_post(uri, data=data)
 
     def get_cabling_map(self, bp_id: str) -> Dict:
         """
