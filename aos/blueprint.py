@@ -1650,6 +1650,7 @@ class AosBlueprint(AosSubsystem):
         vlan_id: int = None,
         vni_id: int = None,
         leaf_loopback_ip_pools: list = None,
+        leaf_loopback_ipv6_pools: list = None,
         dhcp_servers: list = None,
         timeout: int = 60,
     ):
@@ -1748,6 +1749,22 @@ class AosBlueprint(AosSubsystem):
                 f"'{leaf_loopback_ip_pools}' to Security-zone "
                 f"'{name}' in blueprint '{bp_id}'"
             )
+
+         # SZ leaf IPv6 loopback pool
+        if leaf_loopback_ipv6_pools:
+            group_path = requote_uri(f"sz:{sz.id},leaf_loopback_ips_ipv6")
+            self.apply_resource_groups(
+                bp_id=bp_id,
+                resource_type="ipv6",
+                group_name=group_path,
+                pool_ids=leaf_loopback_ipv6_pools,
+            )
+            logger.info(
+                f"Applying '{group_name}' resource IPv6 pool "
+                f"'{leaf_loopback_ipv6_pools}' to Security-zone "
+                f"'{name}' in blueprint '{bp_id}'"
+            )
+
         # DHCP servers (relay)
         if dhcp_servers:
             dhcp = {"items": dhcp_servers}

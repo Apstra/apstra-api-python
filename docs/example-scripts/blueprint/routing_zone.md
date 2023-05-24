@@ -46,6 +46,7 @@ aos.blueprint.create_security_zone(
     bp_id=bp.id,
     name=sz_name,
     leaf_loopback_ip_pools=[leaf_lo_pool.id],
+    leaf_loopback_ipv6_pools=[leaf_lo_pool.id],
     dhcp_servers=[dhcp_rely_addr],
 )
 ```
