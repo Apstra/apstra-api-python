@@ -553,6 +553,8 @@ class AosBlueprint(AosSubsystem):
             ]:
                 return True
             else:
+                if task["status"] in TaskStatus.failed.value:
+                    print(json.dumps(task["detailed_status"]['errors'], indent=2))
                 return False
 
         else:
@@ -833,6 +835,9 @@ class AosBlueprint(AosSubsystem):
     def get_bp_node_by_id(self, bp_id: str, node_id: str):
         return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/nodes/{node_id}")
 
+    def get_bp_node_asn(self, bp_id: str, node_id: str):
+        return self.rest.json_resp_get(f"/api/blueprints/{bp_id}/systems/{node_id}/domain")
+
     def get_bp_system_nodes(self, bp_id: str):
 
         return self.get_bp_nodes(bp_id, "system")
@@ -968,6 +973,10 @@ class AosBlueprint(AosSubsystem):
                 nodes.append(leaf["leaf"])
 
         return nodes
+
+    def get_device_rendered_context(self, bp_id: str, node_id: str):
+        uri = f"/api/blueprints/{bp_id}/nodes/{node_id}/config-context"
+        return self.rest.json_resp_get(uri)
 
     def create_switch_system_links(self, bp_id: str, data: dict):
         uri = f"/api/blueprints/{bp_id}/switch-system-links"
@@ -1299,6 +1308,71 @@ class AosBlueprint(AosSubsystem):
         return self.rest.json_resp_get(
             f"/api/blueprints/{bp_id}/routing-policies?type={bp_type}"
         )
+
+    def get_routing_policy(self, bp_id: str, rp_name: str) -> Dict:
+        for rp in self.get_routing_policies(bp_id)['items']:
+            if rp.get('label') == rp_name:
+                return rp
+
+    def get_floating_ips(self, bp_id: str, vn_id: str) -> Dict:
+        all_floating_ips = self.rest.json_resp_get(
+            f"/api/blueprints/{bp_id}/floating-ips"
+        )
+        filtered_results = list()
+        for i in all_floating_ips.get('items'):
+            print(i)
+            if i.get('virtual_network_id') == "WH2Qb8Yi2Dyot5A4qQc":
+                filtered_results.append(i)
+        return filtered_results
+
+    def create_routing_policy(self,
+                                bp_id: str,
+                                label : str,
+                                aggregate_prefixes: list = [],
+                                description: str = "",
+                                expect_default_ipv4_route: bool = False,
+                                expect_default_ipv6_route: bool = False,
+                                l2edge_subnets: bool = False,
+                                l3edge_server_links: bool = False,
+                                loopbacks: bool = False,
+                                spine_leaf_links: bool = False,
+                                spine_superspine_links: bool = False,
+                                static_routes: bool = False,
+                                extra_export_routes: list = [],
+                                extra_import_routes: list = [],
+                                import_policy: str = "default_only"
+                              ):
+        #Example of extra_import_routes or extra_export_routes
+        # export_routes = [{'action': 'permit',
+        #                         'ge_mask': None,
+        #                         'le_mask': 32,
+        #                         'prefix': '172.29.2.0/24'}]
+
+        if import_policy not in ("extra_only", "default_only", "all"):
+            raise AosAPIResourceNotFound("Import policy not allowed")
+
+        data = {
+        'aggregate_prefixes': aggregate_prefixes,
+        'description': description,
+        'expect_default_ipv4_route': expect_default_ipv4_route,
+        'expect_default_ipv6_route': expect_default_ipv6_route,
+        'export_policy': {
+                'l2edge_subnets': l2edge_subnets,
+                'l3edge_server_links': l3edge_server_links,
+                'loopbacks': loopbacks,
+                'spine_leaf_links': spine_leaf_links,
+                'spine_superspine_links': spine_superspine_links,
+                'static_routes': static_routes,
+                },
+        'extra_export_routes': extra_export_routes,
+        'extra_import_routes': extra_import_routes,
+        'import_policy': import_policy,
+        'label': label,
+        'policy_type': 'user_defined'}
+
+        rp_path = f"/api/blueprints/{bp_id}/routing-policies"
+        return self.rest.json_resp_post(rp_path, data=data)
+
 
     # External Routers
     def get_external_routers_all(self, bp_id: str):
@@ -1650,7 +1724,6 @@ class AosBlueprint(AosSubsystem):
         vlan_id: int = None,
         vni_id: int = None,
         leaf_loopback_ip_pools: list = None,
-        leaf_loopback_ipv6_pools: list = None,
         dhcp_servers: list = None,
         timeout: int = 60,
     ):
@@ -1749,22 +1822,6 @@ class AosBlueprint(AosSubsystem):
                 f"'{leaf_loopback_ip_pools}' to Security-zone "
                 f"'{name}' in blueprint '{bp_id}'"
             )
-
-         # SZ leaf IPv6 loopback pool
-        if leaf_loopback_ipv6_pools:
-            group_path = requote_uri(f"sz:{sz.id},leaf_loopback_ips_ipv6")
-            self.apply_resource_groups(
-                bp_id=bp_id,
-                resource_type="ipv6",
-                group_name=group_path,
-                pool_ids=leaf_loopback_ipv6_pools,
-            )
-            logger.info(
-                f"Applying '{group_name}' resource IPv6 pool "
-                f"'{leaf_loopback_ipv6_pools}' to Security-zone "
-                f"'{name}' in blueprint '{bp_id}'"
-            )
-
         # DHCP servers (relay)
         if dhcp_servers:
             dhcp = {"items": dhcp_servers}
@@ -2008,6 +2065,7 @@ class AosBlueprint(AosSubsystem):
         ipv6_gateway: str = None,
         tagged_ct: bool = False,
         untagged_ct: bool = False,
+        dhcp_service: bool = False,
         timeout: int = 60,
     ):
         """
@@ -2059,6 +2117,8 @@ class AosBlueprint(AosSubsystem):
         untagged_ct
             (bool) - (optional) Create untagged connectivity template for the given
             virtual-network.
+        dhcp_service
+            (bool) - (optimal) Enables DHCP service on virtual network
         timeout
             (int) - time (seconds) to wait for creation
 
@@ -2080,12 +2140,15 @@ class AosBlueprint(AosSubsystem):
             "vn_id": vn_id,
             "bound_to": bound_to,
             "ipv4_enabled": True,
-            "dhcp_service": "dhcpServiceEnabled",
             "ipv4_subnet": ipv4_subnet,
             "ipv4_gateway": ipv4_gateway,
         }
 
+        if dhcp_service:
+            virt_net['dhcp_service'] = "dhcpServiceEnabled"
+
         if ipv6_enabled:
+            virt_net["ipv6_enabled"] = True
             virt_net["ipv6_subnet"] = ipv6_subnet
             virt_net["ipv6_gateway"] = ipv6_gateway
 
@@ -2287,3 +2350,7 @@ class AosBlueprint(AosSubsystem):
         }
 
         return self.rest.json_resp_get(url, params=params)['relationships']
+
+    def get_protocol_sessions(self, bp_id: str):
+        url = f'/api/blueprints/{bp_id}/protocol-sessions'
+        return self.rest.json_resp_get(url)['protocol-sessions']
